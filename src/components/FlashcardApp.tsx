@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { TestingMode } from './TestingMode';
 import { ReviewMode } from './ReviewMode';
+import { BrowserMode } from './BrowserMode';
 
 export interface Flashcard {
   id: string;
@@ -29,7 +30,7 @@ const sampleFlashcards: Flashcard[] = [
 ];
 
 const FlashcardApp: React.FC = () => {
-  const [mode, setMode] = useState<'testing' | 'review'>('testing');
+  const [mode, setMode] = useState<'browser' | 'testing' | 'review'>('browser');
   const [results, setResults] = useState<FlashcardResult[]>([]);
 
   const handleTestComplete = (testResults: FlashcardResult[]) => {
@@ -42,17 +43,41 @@ const FlashcardApp: React.FC = () => {
     setMode('testing');
   };
 
+  const handleStartTest = () => {
+    setMode('testing');
+  };
+
+  const handleViewReview = () => {
+    if (results.length > 0) {
+      setMode('review');
+    }
+  };
+
+  const handleBackToBrowser = () => {
+    setMode('browser');
+  };
+
   return (
     <div className="min-h-screen bg-gradient-bg">
-      {mode === 'testing' ? (
+      {mode === 'browser' && (
+        <BrowserMode 
+          flashcards={sampleFlashcards}
+          onStartTest={handleStartTest}
+          onViewReview={handleViewReview}
+        />
+      )}
+      {mode === 'testing' && (
         <TestingMode 
           flashcards={sampleFlashcards} 
           onComplete={handleTestComplete}
+          onBackToBrowser={handleBackToBrowser}
         />
-      ) : (
+      )}
+      {mode === 'review' && (
         <ReviewMode 
           results={results} 
           onRestart={handleRestartTest}
+          onBackToBrowser={handleBackToBrowser}
         />
       )}
     </div>

@@ -3,14 +3,15 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { FlashcardComponent } from './FlashcardComponent';
 import { Flashcard, FlashcardResult } from './FlashcardApp';
-import { BookOpen, CheckCircle, XCircle } from 'lucide-react';
+import { BookOpen, CheckCircle, XCircle, ArrowLeft } from 'lucide-react';
 
 interface TestingModeProps {
   flashcards: Flashcard[];
   onComplete: (results: FlashcardResult[]) => void;
+  onBackToBrowser?: () => void;
 }
 
-export const TestingMode: React.FC<TestingModeProps> = ({ flashcards, onComplete }) => {
+export const TestingMode: React.FC<TestingModeProps> = ({ flashcards, onComplete, onBackToBrowser }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [results, setResults] = useState<FlashcardResult[]>([]);
@@ -42,6 +43,20 @@ export const TestingMode: React.FC<TestingModeProps> = ({ flashcards, onComplete
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-2xl">
+      {/* Back to Browser Button */}
+      {onBackToBrowser && (
+        <div className="mb-6">
+          <Button
+            variant="ghost"
+            onClick={onBackToBrowser}
+            className="gap-2"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to Browser
+          </Button>
+        </div>
+      )}
+      
       {/* Header */}
       <div className="text-center mb-8">
         <div className="flex items-center justify-center gap-2 mb-4">

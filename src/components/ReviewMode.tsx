@@ -3,14 +3,15 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { FlashcardResult } from './FlashcardApp';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle, XCircle, Trophy, RotateCcw, Brain, Target, Zap } from 'lucide-react';
+import { CheckCircle, XCircle, Trophy, RotateCcw, Brain, Target, Zap, ArrowLeft } from 'lucide-react';
 
 interface ReviewModeProps {
   results: FlashcardResult[];
   onRestart: () => void;
+  onBackToBrowser?: () => void;
 }
 
-export const ReviewMode: React.FC<ReviewModeProps> = ({ results, onRestart }) => {
+export const ReviewMode: React.FC<ReviewModeProps> = ({ results, onRestart, onBackToBrowser }) => {
   const correctAnswers = results.filter(r => r.remembered).length;
   const totalCards = results.length;
   const accuracy = Math.round((correctAnswers / totalCards) * 100);
@@ -36,6 +37,20 @@ export const ReviewMode: React.FC<ReviewModeProps> = ({ results, onRestart }) =>
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
+      {/* Back to Browser Button */}
+      {onBackToBrowser && (
+        <div className="mb-6">
+          <Button
+            variant="ghost"
+            onClick={onBackToBrowser}
+            className="gap-2"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to Browser
+          </Button>
+        </div>
+      )}
+      
       {/* Header */}
       <div className="text-center mb-8">
         <div className="flex items-center justify-center gap-3 mb-4">
@@ -167,7 +182,7 @@ export const ReviewMode: React.FC<ReviewModeProps> = ({ results, onRestart }) =>
       </div>
 
       {/* Action Buttons */}
-      <div className="text-center">
+      <div className="flex gap-4 justify-center">
         <Button
           onClick={onRestart}
           size="xl"
@@ -176,6 +191,17 @@ export const ReviewMode: React.FC<ReviewModeProps> = ({ results, onRestart }) =>
           <RotateCcw className="mr-2" />
           Take Test Again
         </Button>
+        {onBackToBrowser && (
+          <Button
+            variant="outline"
+            onClick={onBackToBrowser}
+            size="xl"
+            className="hover:scale-105 transform transition-all"
+          >
+            <ArrowLeft className="mr-2" />
+            Back to Browser
+          </Button>
+        )}
       </div>
     </div>
   );
