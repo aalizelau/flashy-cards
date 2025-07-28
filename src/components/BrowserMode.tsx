@@ -165,41 +165,50 @@ export const BrowserMode: React.FC<BrowserModeProps> = ({
           <ScrollArea className="h-[600px]">
             <div className="p-6">
               <div className="grid gap-4">
-                {flashcards.map((card) => {
-                  const progress = progressData.find(p => p.id === card.id);
-                  const percentage = progress ? getProgressPercentage(progress) : 0;
-                  const progressColor = percentage >= 80 ? 'green' : percentage >= 50 ? 'yellow' : 'red';
-                  
-                  return (
-                    <Card 
-                      key={card.id} 
-                      className="hover:shadow-elevated transition-all duration-300 hover:scale-[1.01] bg-gradient-card border border-border/50"
-                    >
-                      <CardContent className="p-4">
-                        <div className="flex items-center justify-between gap-4">
-                          {/* Card Content (left) */}
-                          <div className="flex-1 min-w-0">
-                            <div className="min-w-0">
-                              <div className="font-medium text-sm truncate">{card.front}</div>
-                              <div className="text-xs text-muted-foreground truncate">{card.back}</div>
+                {flashcards
+                  .slice() // create a shallow copy to avoid mutating props
+                  .sort((a, b) => {
+                    const progressA = progressData.find(p => p.id === a.id);
+                    const progressB = progressData.find(p => p.id === b.id);
+                    const percentageA = progressA ? getProgressPercentage(progressA) : 0;
+                    const percentageB = progressB ? getProgressPercentage(progressB) : 0;
+                    return percentageB - percentageA; // descending order
+                  })
+                  .map((card) => {
+                    const progress = progressData.find(p => p.id === card.id);
+                    const percentage = progress ? getProgressPercentage(progress) : 0;
+                    const progressColor = percentage >= 80 ? 'green' : percentage >= 50 ? 'yellow' : 'red';
+                    
+                    return (
+                      <Card 
+                        key={card.id} 
+                        className="hover:shadow-elevated transition-all duration-300 hover:scale-[1.01] bg-gradient-card border border-border/50"
+                      >
+                        <CardContent className="p-4">
+                          <div className="flex items-center justify-between gap-4">
+                            {/* Card Content (left) */}
+                            <div className="flex-1 min-w-0">
+                              <div className="min-w-0">
+                                <div className="font-medium text-sm truncate">{card.front}</div>
+                                <div className="text-xs text-muted-foreground truncate">{card.back}</div>
+                              </div>
+                            </div>
+                            {/* Progress Section (right) */}
+                            <div className="flex flex-col items-end gap-2 min-w-[80px]">
+                              <ProgressDots progress={percentage} />
+                              <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                progressColor === 'green' ? 'bg-green-100 text-green-800' :
+                                progressColor === 'yellow' ? 'bg-yellow-100 text-yellow-800' :
+                                'bg-red-100 text-red-800'
+                              }`}>
+                                {progress?.correctAnswers || 0}/{progress?.totalAttempts || 0}
+                              </span>
                             </div>
                           </div>
-                          {/* Progress Section (right) */}
-                          <div className="flex flex-col items-end gap-2 min-w-[80px]">
-                            <ProgressDots progress={percentage} />
-                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                              progressColor === 'green' ? 'bg-green-100 text-green-800' :
-                              progressColor === 'yellow' ? 'bg-yellow-100 text-yellow-800' :
-                              'bg-red-100 text-red-800'
-                            }`}>
-                              {progress?.correctAnswers || 0}/{progress?.totalAttempts || 0}
-                            </span>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  );
-                })}
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
               </div>
             </div>
           </ScrollArea>
