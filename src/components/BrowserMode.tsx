@@ -73,6 +73,9 @@ export const BrowserMode: React.FC<BrowserModeProps> = ({
   const averageProgress = Math.round(
     progressData.reduce((sum, p) => sum + getProgressPercentage(p), 0) / totalWords
   );
+  // New stats
+  const wordsRemembered = progressData.filter(p => p.correctAnswers > 0).length;
+  const timesRemembered = progressData.reduce((sum, p) => sum + p.correctAnswers, 0);
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">
@@ -88,7 +91,7 @@ export const BrowserMode: React.FC<BrowserModeProps> = ({
       </div>
 
       {/* Statistics */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <Card className="bg-gradient-card shadow-card">
           <CardContent className="p-6">
             <div className="flex items-center gap-3">
@@ -112,6 +115,36 @@ export const BrowserMode: React.FC<BrowserModeProps> = ({
               <div>
                 <div className="text-2xl font-bold text-success">{masteredWords}</div>
                 <div className="text-sm text-muted-foreground">Mastered</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Words Remembered (unique) */}
+        {/* <Card className="bg-gradient-card shadow-card">
+          <CardContent className="p-6">
+            <div className="flex items-center gap-3">
+              <div className="p-3 bg-accent/10 rounded-lg">
+                <Star className="w-6 h-6 text-accent" />
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-accent">{wordsRemembered}</div>
+                <div className="text-sm text-muted-foreground">Words Remembered</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card> */}
+
+        {/* Times Remembered (total count) */}
+        <Card className="bg-gradient-card shadow-card">
+          <CardContent className="p-6">
+            <div className="flex items-center gap-3">
+              <div className="p-3 bg-warning/10 rounded-lg">
+                <Zap className="w-6 h-6 text-warning" />
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-warning">{timesRemembered}</div>
+                <div className="text-sm text-muted-foreground">Times Remembered</div>
               </div>
             </div>
           </CardContent>
@@ -164,51 +197,85 @@ export const BrowserMode: React.FC<BrowserModeProps> = ({
         <CardContent className="p-0">
           <ScrollArea className="h-[600px]">
             <div className="p-6">
-              <div className="grid gap-4">
-                {flashcards
-                  .slice() // create a shallow copy to avoid mutating props
-                  .sort((a, b) => {
-                    const progressA = progressData.find(p => p.id === a.id);
-                    const progressB = progressData.find(p => p.id === b.id);
-                    const percentageA = progressA ? getProgressPercentage(progressA) : 0;
-                    const percentageB = progressB ? getProgressPercentage(progressB) : 0;
-                    return percentageB - percentageA; // descending order
-                  })
-                  .map((card) => {
-                    const progress = progressData.find(p => p.id === card.id);
-                    const percentage = progress ? getProgressPercentage(progress) : 0;
-                    const progressColor = percentage >= 80 ? 'green' : percentage >= 50 ? 'yellow' : 'red';
-                    
-                    return (
-                      <Card 
-                        key={card.id} 
-                        className="hover:shadow-elevated transition-all duration-300 hover:scale-[1.01] bg-gradient-card border border-border/50"
-                      >
-                        <CardContent className="p-4">
-                          <div className="flex items-center justify-between gap-4">
-                            {/* Card Content (left) */}
-                            <div className="flex-1 min-w-0">
-                              <div className="min-w-0">
-                                <div className="font-medium text-sm truncate">{card.front}</div>
-                                <div className="text-xs text-muted-foreground truncate">{card.back}</div>
-                              </div>
-                            </div>
-                            {/* Progress Section (right) */}
-                            <div className="flex flex-col items-end gap-2 min-w-[80px]">
-                              <ProgressDots progress={percentage} />
-                              <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                progressColor === 'green' ? 'bg-green-100 text-green-800' :
-                                progressColor === 'yellow' ? 'bg-yellow-100 text-yellow-800' :
-                                'bg-red-100 text-red-800'
-                              }`}>
-                                {progress?.correctAnswers || 0}/{progress?.totalAttempts || 0}
-                              </span>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    );
-                  })}
+              <div className="overflow-x-auto">
+                <table className="min-w-full text-left border-separate border-spacing-y-0">
+                  <thead>
+                    <tr className="border-b border-border">
+                      <th className="py-2 px-3 text-xs font-semibold text-muted-foreground">Word</th>
+                      <th className="py-2 px-3 text-xs font-semibold text-muted-foreground">Translation</th>
+                      <th className="py-2 px-3 text-xs font-semibold text-muted-foreground">Progress</th>
+                      <th className="py-2 px-3 text-xs font-semibold text-muted-foreground">Attempts</th>
+                      <th className="py-2 px-3 text-xs font-semibold text-muted-foreground">Last Reviewed</th>
+                      <th className="py-2 px-3 text-xs font-semibold text-muted-foreground">Edit</th>
+                      <th className="py-2 px-3 text-xs font-semibold text-muted-foreground">Delete</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {flashcards
+                      .slice()
+                      .sort((a, b) => {
+                        const progressA = progressData.find(p => p.id === a.id);
+                        const progressB = progressData.find(p => p.id === b.id);
+                        const percentageA = progressA ? getProgressPercentage(progressA) : 0;
+                        const percentageB = progressB ? getProgressPercentage(progressB) : 0;
+                        return percentageB - percentageA;
+                      })
+                      .map((card, idx, arr) => {
+                        const progress = progressData.find(p => p.id === card.id);
+                        const percentage = progress ? getProgressPercentage(progress) : 0;
+                        // const progressColor = percentage >= 80 ? 'green' : percentage >= 50 ? 'yellow' : 'red';
+                        const lastReviewed = progress?.lastAttempted
+                          ? progress.lastAttempted.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+                          : '—';
+                        return (
+                          <React.Fragment key={card.id}>
+                            <tr>
+                              <td className="py-3 px-3 align-middle max-w-[200px]">
+                                <span className="font-medium text-sm truncate block">{card.front}</span>
+                              </td>
+                              <td className="py-3 px-3 align-middle max-w-[300px]">
+                                <span className="text-xs text-muted-foreground truncate block">{card.back}</span>
+                              </td>
+                              <td className="py-3 px-3 align-middle">
+                                <ProgressDots progress={percentage} />
+                              </td>
+                              <td className="py-3 px-3 align-middle">
+                                <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                  'bg-gray-200 text-gray-800' 
+                                }`}>
+                                  {progress?.correctAnswers || 0}/{progress?.totalAttempts || 0}
+                                </span>
+                              </td>
+                              <td className="py-3 px-3 align-middle">
+                                <span className="text-xs text-muted-foreground">{lastReviewed}</span>
+                              </td>
+                              <td className="py-3 px-3 align-middle">
+                                <Button size="icon" variant="ghost" aria-label="Edit">
+                                  <svg width="18" height="18" viewBox="0 0 20 20" fill="none" className="text-muted-foreground">
+                                    <path d="M14.7 3.29a1 1 0 0 1 1.41 0l.6.6a1 1 0 0 1 0 1.41l-9.1 9.1-2.12.7.7-2.12 9.1-9.1z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                  </svg>
+                                </Button>
+                              </td>
+                              <td className="py-3 px-3 align-middle">
+                                <Button size="icon" variant="ghost" aria-label="Delete">
+                                  <svg width="18" height="18" viewBox="0 0 20 20" fill="none" className="text-destructive">
+                                    <path d="M6 7v7a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2V7M4 7h12M9 3h2a1 1 0 0 1 1 1v1H8V4a1 1 0 0 1 1-1z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                  </svg>
+                                </Button>
+                              </td>
+                            </tr>
+                            {idx < arr.length - 1 && (
+                              <tr>
+                                <td colSpan={7}>
+                                  <div className="border-b border-border" />
+                                </td>
+                              </tr>
+                            )}
+                          </React.Fragment>
+                        );
+                      })}
+                  </tbody>
+                </table>
               </div>
             </div>
           </ScrollArea>
