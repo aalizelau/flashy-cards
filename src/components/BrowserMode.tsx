@@ -6,6 +6,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Flashcard } from './FlashcardApp';
 import { Badge } from '@/components/ui/badge';
 import { BookOpen, TestTube, BarChart3, Brain, Zap, Trophy, Star } from 'lucide-react';
+import ProgressDots from './ProgressDots';
 
 interface FlashcardProgress {
   id: string;
@@ -167,6 +168,7 @@ export const BrowserMode: React.FC<BrowserModeProps> = ({
                 {flashcards.map((card) => {
                   const progress = progressData.find(p => p.id === card.id);
                   const percentage = progress ? getProgressPercentage(progress) : 0;
+                  const progressColor = percentage >= 80 ? 'green' : percentage >= 50 ? 'yellow' : 'red';
                   
                   return (
                     <Card 
@@ -175,55 +177,23 @@ export const BrowserMode: React.FC<BrowserModeProps> = ({
                     >
                       <CardContent className="p-4">
                         <div className="flex items-center justify-between gap-4">
-                          {/* Card Content */}
+                          {/* Card Content (left) */}
                           <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-3 mb-2">
-                              <div className="font-semibold text-foreground truncate">
-                                {card.front}
-                              </div>
-                              <div className="text-muted-foreground">→</div>
-                              <div className="text-muted-foreground truncate">
-                                {card.back}
-                              </div>
-                            </div>
-                            
-                            {/* Progress Section */}
-                            <div className="flex items-center gap-3">
-                              <div className="flex-1">
-                                <div className="flex justify-between items-center mb-1">
-                                  <span className="text-xs text-muted-foreground">
-                                    Progress
-                                  </span>
-                                  <span className="text-xs font-medium text-foreground">
-                                    {percentage}%
-                                  </span>
-                                </div>
-                                <div className="h-2 bg-muted rounded-full overflow-hidden">
-                                  <div 
-                                    className={`h-full transition-all duration-500 ${getProgressColor(percentage)}`}
-                                    style={{ width: `${percentage}%` }}
-                                  />
-                                </div>
-                              </div>
-                              
-                              {/* Attempt Stats */}
-                              <div className="text-xs text-muted-foreground">
-                                {progress?.correctAnswers || 0}/{progress?.totalAttempts || 0}
-                              </div>
+                            <div className="min-w-0">
+                              <div className="font-medium text-sm truncate">{card.front}</div>
+                              <div className="text-xs text-muted-foreground truncate">{card.back}</div>
                             </div>
                           </div>
-
-                          {/* Proficiency Badge */}
-                          <div className="flex items-center gap-2">
-                            <Badge 
-                              variant="outline" 
-                              className={`${getProficiencyColor(progress?.proficiencyLevel || 'beginner')} border-current/20 bg-current/5`}
-                            >
-                              {getProficiencyIcon(progress?.proficiencyLevel || 'beginner')}
-                              <span className="ml-1 capitalize">
-                                {progress?.proficiencyLevel || 'beginner'}
-                              </span>
-                            </Badge>
+                          {/* Progress Section (right) */}
+                          <div className="flex flex-col items-end gap-2 min-w-[80px]">
+                            <ProgressDots progress={percentage} />
+                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                              progressColor === 'green' ? 'bg-green-100 text-green-800' :
+                              progressColor === 'yellow' ? 'bg-yellow-100 text-yellow-800' :
+                              'bg-red-100 text-red-800'
+                            }`}>
+                              {progress?.correctAnswers || 0}/{progress?.totalAttempts || 0}
+                            </span>
                           </div>
                         </div>
                       </CardContent>

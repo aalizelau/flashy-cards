@@ -87,28 +87,26 @@ export const TestingMode: React.FC<TestingModeProps> = ({ flashcards, onComplete
       </div>
 
       {/* Action Buttons */}
-      {isFlipped && (
-        <div className="flex gap-4 justify-center animate-scale-in">
-          <Button
-            variant="forgot"
-            size="xl"
-            onClick={() => handleResponse(false)}
-            className="flex-1 max-w-48"
-          >
-            <XCircle className="mr-2" />
-            I Forgot
-          </Button>
-          <Button
-            variant="remembered"
-            size="xl"
-            onClick={() => handleResponse(true)}
-            className="flex-1 max-w-48"
-          >
-            <CheckCircle className="mr-2" />
-            I Remembered
-          </Button>
-        </div>
-      )}
+      <div className="flex gap-4 justify-center animate-scale-in">
+        <Button
+          variant="forgot"
+          size="xl"
+          onClick={() => handleResponse(false)}
+          className="flex-1 max-w-48"
+        >
+          <XCircle className="mr-2" />
+          I Forgot
+        </Button>
+        <Button
+          variant="remembered"
+          size="xl"
+          onClick={() => handleResponse(true)}
+          className="flex-1 max-w-48"
+        >
+          <CheckCircle className="mr-2" />
+          I Remembered
+        </Button>
+      </div>
 
       {!isFlipped && (
         <div className="text-center">
