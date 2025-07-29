@@ -29,7 +29,7 @@ const CollectionCard: React.FC<CollectionCardProps> = ({ collection, onClick }) 
       </CardHeader>
       <CardContent className="flex justify-between items-center pt-0">
         <div className="flex items-center space-x-2">
-          <BookOpen className="h-4 w-4 text-gray-600" />
+          <BookOpen className="h-4 w-4 text-gray-500" />
           <span className="text-muted-foreground">
             {collection.wordCount} words
           </span>
@@ -40,7 +40,9 @@ const CollectionCard: React.FC<CollectionCardProps> = ({ collection, onClick }) 
           </span>
           <div className="w-20 h-2 bg-gray-300 rounded-full overflow-hidden">
             <div 
-              className="h-full bg-gray-800 rounded-full transition-all duration-300"
+              className={`h-full rounded-full transition-all duration-300 ${
+                collection.progress > 50 ? 'bg-blue-500' : 'bg-red-400'
+              }`}
               style={{ width: `${collection.progress}%` }}
             />
           </div>
