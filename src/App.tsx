@@ -18,7 +18,7 @@ const App = () => (
       <BrowserRouter>
         <div className="flex">
           <SidebarNav />
-          <div className="flex-1">
+          <div className="flex-1 bg-gradient-bg">
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/listview" element={<ListView />} />

@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { TestingMode } from './TestingMode';
 import { ReviewMode } from './ReviewMode';
 import { BrowserMode } from './BrowserMode';
-import SidebarNav from './SidebarNav';
 
 export interface Flashcard {
   id: string;
@@ -60,7 +59,7 @@ const FlashcardApp: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-bg flex">
-      <div className="flex-1">
+      <div className="flex-1 ">
         {mode === 'browser' && (
           <BrowserMode 
             flashcards={sampleFlashcards}

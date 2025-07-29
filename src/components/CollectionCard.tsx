@@ -16,7 +16,7 @@ interface CollectionCardProps {
 const CollectionCard: React.FC<CollectionCardProps> = ({ collection, onClick }) => {
   return (
     <div
-      className="bg-white rounded-lg shadow-md p-6 cursor-pointer hover:scale-105 transition-transform border border-gray-200"
+      className="bg-white rounded-lg p-6 cursor-pointer hover:scale-105 transition-transform"
       onClick={onClick}
     >
       <div className="flex justify-between items-center mb-2">
