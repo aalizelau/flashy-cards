@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Flashcard } from './FlashcardApp';
+import { Flashcard } from '@/data/flashcards';
 import { RotateCcw } from 'lucide-react';
 
 interface FlashcardComponentProps {
