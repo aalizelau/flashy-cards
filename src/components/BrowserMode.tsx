@@ -120,20 +120,6 @@ export const BrowserMode: React.FC<BrowserModeProps> = ({
           </CardContent>
         </Card>
 
-        {/* Words Remembered (unique) */}
-        {/* <Card className="bg-gradient-card shadow-card">
-          <CardContent className="p-6">
-            <div className="flex items-center gap-3">
-              <div className="p-3 bg-accent/10 rounded-lg">
-                <Star className="w-6 h-6 text-accent" />
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-accent">{wordsRemembered}</div>
-                <div className="text-sm text-muted-foreground">Words Remembered</div>
-              </div>
-            </div>
-          </CardContent>
-        </Card> */}
 
         {/* Times Remembered (total count) */}
         <Card className="bg-gradient-card shadow-card">
