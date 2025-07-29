@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import ProgressDots from './ProgressDots';
+import { BookOpen } from 'lucide-react';
 
 export interface Chapter {
   id: string;
@@ -64,15 +64,23 @@ export const ListView: React.FC<ListViewProps> = ({
                 </div>
               </div>
               <CardContent className="p-4">
-                <div className="flex justify-between items-center mb-3">
+                <div className="flex items-center gap-2 mb-3">
+                  <BookOpen className="w-4 h-4 text-muted-foreground" />
                   <span className="text-sm text-muted-foreground">
                     {chapter.wordCount} words
                   </span>
-                  <span className="text-sm font-medium text-foreground">
-                    {chapter.progress}% learned
-                  </span>
                 </div>
-                <ProgressDots progress={chapter.progress} totalDots={5} />
+                <div className="flex items-center justify-between gap-3">
+                  <span className="text-sm font-medium text-foreground">
+                    {chapter.progress}%
+                  </span>
+                  <div className="flex-1 bg-muted rounded-full h-2">
+                    <div 
+                      className="bg-foreground h-2 rounded-full transition-all duration-300" 
+                      style={{ width: `${chapter.progress}%` }}
+                    />
+                  </div>
+                </div>
               </CardContent>
             </Card>
           ))}
