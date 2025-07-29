@@ -151,49 +151,6 @@ export const BrowserMode: React.FC<BrowserModeProps> = ({
         </Card>
       </div>
 
-      {/* Test Mode Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-        <Card className="bg-gradient-to-br from-primary/20 to-primary/10 border-primary/20 shadow-card hover:scale-105 transform transition-all cursor-pointer">
-          <CardContent className="p-6 text-center">
-            <div className="p-3 bg-primary/10 rounded-full w-fit mx-auto mb-4">
-              <TestTube className="w-6 h-6 text-primary" />
-            </div>
-            <h3 className="font-semibold text-foreground mb-2">Start Test on All</h3>
-            <p className="text-sm text-muted-foreground">Test yourself on all flashcards</p>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-gradient-to-br from-accent/20 to-accent/10 border-accent/20 shadow-card hover:scale-105 transform transition-all cursor-pointer">
-          <CardContent className="p-6 text-center">
-            <div className="p-3 bg-accent/10 rounded-full w-fit mx-auto mb-4">
-              <BookOpen className="w-6 h-6 text-accent" />
-            </div>
-            <h3 className="font-semibold text-foreground mb-2">Start Test on Specific Chapter</h3>
-            <p className="text-sm text-muted-foreground">Focus on a particular chapter</p>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-gradient-to-br from-warning/20 to-warning/10 border-warning/20 shadow-card hover:scale-105 transform transition-all cursor-pointer">
-          <CardContent className="p-6 text-center">
-            <div className="p-3 bg-warning/10 rounded-full w-fit mx-auto mb-4">
-              <Brain className="w-6 h-6 text-warning" />
-            </div>
-            <h3 className="font-semibold text-foreground mb-2">Start Test on Unfamiliar Words</h3>
-            <p className="text-sm text-muted-foreground">Review words you struggle with</p>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-gradient-to-br from-success/20 to-success/10 border-success/20 shadow-card hover:scale-105 transform transition-all cursor-pointer">
-          <CardContent className="p-6 text-center">
-            <div className="p-3 bg-success/10 rounded-full w-fit mx-auto mb-4">
-              <Star className="w-6 h-6 text-success" />
-            </div>
-            <h3 className="font-semibold text-foreground mb-2">Start Test on Newly Added Words</h3>
-            <p className="text-sm text-muted-foreground">Practice your newest flashcards</p>
-          </CardContent>
-        </Card>
-      </div>
-
       {/* Action Buttons */}
       <div className="flex gap-4 justify-center mb-8">
         <Button 

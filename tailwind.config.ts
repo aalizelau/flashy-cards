@@ -53,26 +53,6 @@ export default {
 					DEFAULT: 'hsl(var(--warning))',
 					foreground: 'hsl(var(--warning-foreground))'
 				},
-				'daily-challenges': {
-					DEFAULT: 'hsl(var(--daily-challenges))',
-					foreground: 'hsl(var(--daily-challenges-foreground))'
-				},
-				'test-newly': {
-					DEFAULT: 'hsl(var(--test-newly))',
-					foreground: 'hsl(var(--test-newly-foreground))'
-				},
-				'test-chapters': {
-					DEFAULT: 'hsl(var(--test-chapters))',
-					foreground: 'hsl(var(--test-chapters-foreground))'
-				},
-				'test-all': {
-					DEFAULT: 'hsl(var(--test-all))',
-					foreground: 'hsl(var(--test-all-foreground))'
-				},
-				'test-unfamiliar': {
-					DEFAULT: 'hsl(var(--test-unfamiliar))',
-					foreground: 'hsl(var(--test-unfamiliar-foreground))'
-				},
 				popover: {
 					DEFAULT: 'hsl(var(--popover))',
 					foreground: 'hsl(var(--popover-foreground))'

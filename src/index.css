@@ -17,36 +17,24 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 215 25% 15%;
 
-    --primary: 215 25% 45%;
-    --primary-foreground: 210 15% 98%;
-    --primary-glow: 215 30% 65%;
+    --primary: 215 85% 35%;
+    --primary-foreground: 210 40% 98%;
+    --primary-glow: 215 85% 55%;
 
-    --secondary: 210 15% 85%;
-    --secondary-foreground: 215 25% 25%;
+    --secondary: 155 60% 50%;
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 210 15% 96%;
-    --muted-foreground: 215 15% 55%;
+    --muted: 210 25% 95%;
+    --muted-foreground: 215 20% 50%;
 
-    --accent: 210 20% 75%;
-    --accent-foreground: 215 25% 25%;
+    --accent: 195 95% 65%;
+    --accent-foreground: 215 25% 15%;
     
-    --success: 155 25% 65%;
-    --success-foreground: 155 15% 15%;
+    --success: 155 60% 50%;
+    --success-foreground: 0 0% 100%;
     
-    --warning: 45 30% 70%;
-    --warning-foreground: 45 15% 25%;
-    
-    /* Practice Card Colors - Minimalistic */
-    --daily-challenges: 210 15% 92%;
-    --daily-challenges-foreground: 210 25% 35%;
-    --test-newly: 210 12% 88%;
-    --test-newly-foreground: 210 25% 40%;
-    --test-chapters: 215 10% 85%;
-    --test-chapters-foreground: 215 25% 35%;
-    --test-all: 200 15% 90%;
-    --test-all-foreground: 200 25% 35%;
-    --test-unfamiliar: 220 12% 87%;
-    --test-unfamiliar-foreground: 220 25% 40%;
+    --warning: 45 90% 60%;
+    --warning-foreground: 215 25% 15%;
     
     --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
     --gradient-card: linear-gradient(145deg, hsl(0 0% 100%), hsl(210 25% 98%));
