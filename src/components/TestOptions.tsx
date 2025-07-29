@@ -1,4 +1,5 @@
-import React from 'react';
+
+import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { 
@@ -10,13 +11,27 @@ import {
   ArrowRight,
   Circle
 } from 'lucide-react';
+// import { FlashcardStats } from './FlashcardStats';
+  import { Flashcard } from './FlashcardApp';
+  import {  TestTube, BarChart3, Zap, Trophy, Star } from 'lucide-react';
+  
 
 interface MainDashboardProps {
+  flashcards: Flashcard[];
   onStartTest: () => void;
   onViewReview: () => void;
 }
 
+interface FlashcardProgress {
+  id: string;
+  correctAnswers: number;
+  totalAttempts: number;
+  lastAttempted?: Date;
+  proficiencyLevel: 'beginner' | 'intermediate' | 'advanced' | 'mastered';
+}
+
 export const MainDashboard: React.FC<MainDashboardProps> = ({ 
+  flashcards, 
   onStartTest, 
   onViewReview 
 }) => {
@@ -28,6 +43,29 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
     { active: false },
     { active: false }
   ];
+
+  const [progressData] = useState<FlashcardProgress[]>(() => 
+      flashcards.map((card, index) => ({
+        id: card.id,
+        correctAnswers: Math.floor(Math.random() * 10),
+        totalAttempts: Math.floor(Math.random() * 15) + 1,
+        lastAttempted: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000),
+        proficiencyLevel: ['beginner', 'intermediate', 'advanced', 'mastered'][Math.floor(Math.random() * 4)] as any
+      }))
+    );
+  
+    const getProgressPercentage = (progress: FlashcardProgress): number => {
+      return Math.round((progress.correctAnswers / progress.totalAttempts) * 100);
+    };
+  
+    // Statistics
+    const totalWords = flashcards.length;
+    const masteredWords = progressData.filter(p => p.proficiencyLevel === 'mastered').length;
+    const averageProgress = Math.round(
+      progressData.reduce((sum, p) => sum + getProgressPercentage(p), 0) / totalWords
+    );
+    // New stats
+    const timesRemembered = progressData.reduce((sum, p) => sum + p.correctAnswers, 0);
 
   const practiceCards = [
     {
@@ -67,6 +105,9 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
       large: false
     }
   ];
+
+  
+  
 
   return (
     <div className="min-h-screen bg-gradient-bg flex">
@@ -109,6 +150,68 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
             </div>
           </div>
         </div>
+        {/* <h2 className="text-2xl font-bold text-foreground mb-6">Achievements</h2> */}
+
+        {/* Statistics */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <Card className="bg-gradient-card shadow-card">
+                  <CardContent className="p-6">
+                    <div className="flex items-center gap-3">
+                      <div className="p-3 bg-primary/10 rounded-lg">
+                        <BookOpen className="w-6 h-6 text-primary" />
+                      </div>
+                      <div>
+                        <div className="text-2xl font-bold text-foreground">{totalWords}</div>
+                        <div className="text-sm text-muted-foreground">Total Words</div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+        
+                <Card className="bg-gradient-card shadow-card">
+                  <CardContent className="p-6">
+                    <div className="flex items-center gap-3">
+                      <div className="p-3 bg-success/10 rounded-lg">
+                        <Trophy className="w-6 h-6 text-success" />
+                      </div>
+                      <div>
+                        <div className="text-2xl font-bold text-success">{masteredWords}</div>
+                        <div className="text-sm text-muted-foreground">Mastered</div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+        
+        
+                {/* Times Remembered (total count) */}
+                <Card className="bg-gradient-card shadow-card">
+                  <CardContent className="p-6">
+                    <div className="flex items-center gap-3">
+                      <div className="p-3 bg-warning/10 rounded-lg">
+                        <Zap className="w-6 h-6 text-warning" />
+                      </div>
+                      <div>
+                        <div className="text-2xl font-bold text-warning">{timesRemembered}</div>
+                        <div className="text-sm text-muted-foreground">Times Remembered</div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+        
+                <Card className="bg-gradient-card shadow-card">
+                  <CardContent className="p-6">
+                    <div className="flex items-center gap-3">
+                      <div className="p-3 bg-accent/10 rounded-lg">
+                        <BarChart3 className="w-6 h-6 text-accent" />
+                      </div>
+                      <div>
+                        <div className="text-2xl font-bold text-accent">{averageProgress}%</div>
+                        <div className="text-sm text-muted-foreground">Avg. Progress</div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
 
         {/* Start Practice Section */}
         <div className="mb-8">

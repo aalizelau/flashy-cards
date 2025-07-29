@@ -63,8 +63,8 @@ const FlashcardApp: React.FC = () => {
       <div className="flex-1 ">
         {mode === 'browser' && (
           // <BrowserMode 
-          //   flashcards={sampleFlashcards}
           <MainDashboard 
+            flashcards={sampleFlashcards}
             onStartTest={handleStartTest}
             onViewReview={handleViewReview}
           />
