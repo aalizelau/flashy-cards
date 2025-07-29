@@ -1,5 +1,6 @@
 import React from 'react';
 import { Bars3Icon, HomeIcon, PlusIcon, BookOpenIcon, ChartBarIcon, UserGroupIcon } from '@heroicons/react/24/outline';
+import { useNavigate } from 'react-router-dom';
 
 const navItems = [
   { icon: <Bars3Icon className="h-6 w-6" />, label: 'Menu' },
@@ -11,10 +12,16 @@ const navItems = [
 ];
 
 const SidebarNav: React.FC = () => {
+  const navigate = useNavigate();
   return (
     <nav className="flex flex-col items-center bg-white/80 backdrop-blur-lg h-screen w-16 py-4 shadow-lg border-r border-gray-200">
       {navItems.map((item, idx) => (
-        <button key={idx} className="mb-6 p-2 rounded hover:bg-gray-200 transition-colors" aria-label={item.label}>
+        <button
+          key={idx}
+          className="mb-6 p-2 rounded hover:bg-gray-200 transition-colors"
+          aria-label={item.label}
+          onClick={item.label === 'Browse' ? () => navigate('/listview') : undefined}
+        >
           {item.icon}
         </button>
       ))}

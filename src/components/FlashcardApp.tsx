@@ -60,7 +60,6 @@ const FlashcardApp: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-bg flex">
-      <SidebarNav />
       <div className="flex-1">
         {mode === 'browser' && (
           <BrowserMode 
