@@ -12,8 +12,8 @@ import {
   Circle
 } from 'lucide-react';
 // import { FlashcardStats } from './FlashcardStats';
-  import { Flashcard } from './FlashcardApp';
-  import {  TestTube, BarChart3, Zap, Trophy, Star } from 'lucide-react';
+import { Flashcard, FlashcardProgress } from '@/data/flashcards';
+import {  TestTube, BarChart3, Zap, Trophy, Star } from 'lucide-react';
   
 
 interface MainDashboardProps {
@@ -22,13 +22,6 @@ interface MainDashboardProps {
   onViewReview: () => void;
 }
 
-interface FlashcardProgress {
-  id: string;
-  correctAnswers: number;
-  totalAttempts: number;
-  lastAttempted?: Date;
-  proficiencyLevel: 'beginner' | 'intermediate' | 'advanced' | 'mastered';
-}
 
 export const MainDashboard: React.FC<MainDashboardProps> = ({ 
   flashcards, 
@@ -44,13 +37,15 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
     { active: false }
   ];
 
-  const [progressData] = useState<FlashcardProgress[]>(() => 
-      flashcards.map((card, index) => ({
+  const [progressData] = useState<FlashcardProgress[]>(() =>
+      flashcards.map((card) => ({
         id: card.id,
         correctAnswers: Math.floor(Math.random() * 10),
         totalAttempts: Math.floor(Math.random() * 15) + 1,
         lastAttempted: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000),
-        proficiencyLevel: ['beginner', 'intermediate', 'advanced', 'mastered'][Math.floor(Math.random() * 4)] as any
+        proficiencyLevel: ['beginner', 'intermediate', 'advanced', 'mastered'][
+          Math.floor(Math.random() * 4)
+        ] as FlashcardProgress['proficiencyLevel']
       }))
     );
   

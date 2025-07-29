@@ -6,20 +6,7 @@ import ProgressDots from './ProgressDots';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/components/ui/dropdown-menu';
 import { MoreVertical } from 'lucide-react';
-
-// You may want to pass these as props or fetch from context/store
-interface Flashcard {
-  id: string;
-  front: string;
-  back: string;
-}
-interface FlashcardProgress {
-  id: string;
-  correctAnswers: number;
-  totalAttempts: number;
-  lastAttempted?: Date;
-  proficiencyLevel: 'beginner' | 'intermediate' | 'advanced' | 'mastered';
-}
+import { Flashcard, FlashcardProgress } from '@/data/flashcards';
 
 interface ChapterDetailProps {
   collectionName: string;

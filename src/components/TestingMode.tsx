@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { FlashcardComponent } from './FlashcardComponent';
-import { Flashcard, FlashcardResult } from './FlashcardApp';
+import { Flashcard, FlashcardResult } from '@/data/flashcards';
 import { BookOpen, CheckCircle, XCircle, ArrowLeft } from 'lucide-react';
 
 interface TestingModeProps {

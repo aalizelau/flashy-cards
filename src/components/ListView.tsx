@@ -1,20 +1,7 @@
 import React, { useState } from 'react';
 import CollectionCard, { FlashcardCollection } from './CollectionCard';
-import { Flashcard } from './FlashcardApp';
+import { Flashcard, FlashcardProgress, sampleFlashcards } from '@/data/flashcards';
 
-// Copy sampleFlashcards here since it's not exported
-const sampleFlashcards: Flashcard[] = [
-	{ id: '1', front: 'Hello', back: 'Hola' },
-	{ id: '2', front: 'Thank you', back: 'Gracias' },
-	{ id: '3', front: 'Goodbye', back: 'Adiós' },
-	{ id: '4', front: 'Please', back: 'Por favor' },
-	{ id: '5', front: 'Water', back: 'Agua' },
-	{ id: '6', front: 'House', back: 'Casa' },
-	{ id: '7', front: 'Cat', back: 'Gato' },
-	{ id: '8', front: 'Dog', back: 'Perro' },
-	{ id: '9', front: 'Book', back: 'Libro' },
-	{ id: '10', front: 'Friend', back: 'Amigo' }
-];
 
 const mockCollections: FlashcardCollection[] = [
 	{
@@ -54,29 +41,23 @@ const mockCollections: FlashcardCollection[] = [
 	},
 ];
 
-// Define FlashcardProgress here since it's not exported from FlashcardApp
-interface FlashcardProgress {
-	id: string;
-	correctAnswers: number;
-	totalAttempts: number;
-	lastAttempted?: Date;
-	proficiencyLevel: 'beginner' | 'intermediate' | 'advanced' | 'mastered';
-}
 
 const ListView: React.FC = () => {
 	const [search, setSearch] = useState('');
 	const [selectedCollection, setSelectedCollection] = useState<FlashcardCollection | null>(null);
 	// Use sampleFlashcards for All Words
 	const [flashcards, setFlashcards] = useState<Flashcard[]>(sampleFlashcards);
-	const [progressData, setProgressData] = useState<FlashcardProgress[]>(() =>
-		sampleFlashcards.map(card => ({
+        const [progressData, setProgressData] = useState<FlashcardProgress[]>(() =>
+                sampleFlashcards.map(card => ({
 			id: card.id,
 			correctAnswers: Math.floor(Math.random() * 10),
 			totalAttempts: Math.floor(Math.random() * 15) + 1,
 			lastAttempted: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000),
-			proficiencyLevel: ['beginner', 'intermediate', 'advanced', 'mastered'][Math.floor(Math.random() * 4)] as any
-		}))
-	);
+                        proficiencyLevel: ['beginner', 'intermediate', 'advanced', 'mastered'][
+                                Math.floor(Math.random() * 4)
+                        ] as FlashcardProgress['proficiencyLevel']
+                }))
+        );
 
 	const filteredCollections = mockCollections.filter(collection =>
 		collection.name.toLowerCase().includes(search.toLowerCase())
