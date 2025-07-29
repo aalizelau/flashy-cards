@@ -93,7 +93,7 @@ const ListView: React.FC = () => {
 	return (
 		<main className="px-6 pb-8">
 			<div className="max-w-4xl mx-auto">
-				<h1 className="text-3xl font-bold mb-4 mt-16">Flashcard Collections</h1>
+				<h1 className="text-3xl font-semibold mb-4 mt-16">Flashcard Collections</h1>
 				<div className="mb-6">
 					<input
 						type="text"

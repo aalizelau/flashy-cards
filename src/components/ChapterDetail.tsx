@@ -4,6 +4,8 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { BookOpen } from 'lucide-react';
 import ProgressDots from './ProgressDots';
 import { Button } from '@/components/ui/button';
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/components/ui/dropdown-menu';
+import { MoreVertical } from 'lucide-react';
 
 // You may want to pass these as props or fetch from context/store
 interface Flashcard {
@@ -36,14 +38,38 @@ const ChapterDetail: React.FC<ChapterDetailProps> = ({ collectionName, flashcard
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-6xl">
+    <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-3xl font-semibold text-foreground mt-12">
+          {collectionName} ({totalWords} words)
+        </h2>
+        <Button
+          variant="outline"
+          onClick={() => window.history.back()}
+          className="hover:scale-105 transform transition-all mt-12"
+        >
+          ← Back to Collections
+        </Button>
+      </div>
+      {/* Search and Sort Controls */}
+      <div className="flex items-center gap-4 mb-6">
+        <input
+          type="text"
+          placeholder="Search words..."
+          className="w-64 p-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary"
+          // onChange={...} // dummy, not wired
+        />
+        <select
+          className="p-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary"
+          // onChange={...} // dummy, not wired
+        >
+          <option value="progress">Sort by Progress</option>
+          <option value="recent">Sort by Most Recent</option>
+          <option value="alphabet">Sort by Alphabet</option>
+          <option value="attempts">Sort by Attempts</option>
+        </select>
+      </div>
       <Card className="bg-gradient-card shadow-elevated">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <BookOpen className="w-5 h-5" />
-            All Flashcards ({totalWords})
-          </CardTitle>
-        </CardHeader>
         <CardContent className="p-0">
           <ScrollArea className="h-[600px]">
             <div className="p-6">
@@ -56,8 +82,7 @@ const ChapterDetail: React.FC<ChapterDetailProps> = ({ collectionName, flashcard
                       <th className="py-2 px-3 text-xs font-semibold text-muted-foreground">Progress</th>
                       <th className="py-2 px-3 text-xs font-semibold text-muted-foreground">Attempts</th>
                       <th className="py-2 px-3 text-xs font-semibold text-muted-foreground">Last Reviewed</th>
-                      <th className="py-2 px-3 text-xs font-semibold text-muted-foreground">Edit</th>
-                      <th className="py-2 px-3 text-xs font-semibold text-muted-foreground">Delete</th>
+                      <th className="py-2 px-3"></th>
                     </tr>
                   </thead>
                   <tbody>
@@ -97,18 +122,21 @@ const ChapterDetail: React.FC<ChapterDetailProps> = ({ collectionName, flashcard
                                 <span className="text-xs text-muted-foreground">{lastReviewed}</span>
                               </td>
                               <td className="py-3 px-3 align-middle">
-                                <Button size="icon" variant="ghost" aria-label="Edit">
-                                  <svg width="18" height="18" viewBox="0 0 20 20" fill="none" className="text-muted-foreground">
-                                    <path d="M14.7 3.29a1 1 0 0 1 1.41 0l.6.6a1 1 0 0 1 0 1.41l-9.1 9.1-2.12.7.7-2.12 9.1-9.1z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                                  </svg>
-                                </Button>
-                              </td>
-                              <td className="py-3 px-3 align-middle">
-                                <Button size="icon" variant="ghost" aria-label="Delete">
-                                  <svg width="18" height="18" viewBox="0 0 20 20" fill="none" className="text-destructive">
-                                    <path d="M6 7v7a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2V7M4 7h12M9 3h2a1 1 0 0 1 1 1v1H8V4a1 1 0 0 1 1-1z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                                  </svg>
-                                </Button>
+                                <DropdownMenu>
+                                  <DropdownMenuTrigger asChild>
+                                    <Button size="icon" variant="ghost" aria-label="Actions">
+                                      <MoreVertical className="w-5 h-5 text-muted-foreground" />
+                                    </Button>
+                                  </DropdownMenuTrigger>
+                                  <DropdownMenuContent align="end">
+                                    <DropdownMenuItem onClick={() => {/* handle edit */}}>
+                                      Edit
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem className="text-red-500"onClick={() => {/* handle delete */}}>
+                                      Delete
+                                    </DropdownMenuItem>
+                                  </DropdownMenuContent>
+                                </DropdownMenu>
                               </td>
                             </tr>
                             {idx < arr.length - 1 && (
