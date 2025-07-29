@@ -1,4 +1,6 @@
 import React from 'react';
+import { BookOpen } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export interface FlashcardCollection {
   id: number;
@@ -15,19 +17,36 @@ interface CollectionCardProps {
 
 const CollectionCard: React.FC<CollectionCardProps> = ({ collection, onClick }) => {
   return (
-    <div
-      className="bg-white rounded-lg p-6 cursor-pointer hover:scale-105 transition-transform"
+    <Card 
+      className="cursor-pointer hover:scale-105 transition-transform shadow-card"
       onClick={onClick}
     >
-      <div className="flex justify-between items-center mb-2">
-        <h2 className="text-xl font-bold text-gray-900 truncate">{collection.name}</h2>
-        <span className="text-xs px-2 py-1 rounded bg-gray-100 text-gray-600">{collection.category}</span>
-      </div>
-      <div className="flex justify-between items-center">
-        <span className="text-sm text-muted-foreground">Words: {collection.wordCount}</span>
-        <span className="text-sm text-muted-foreground">Progress: {collection.progress}%</span>
-      </div>
-    </div>
+      <CardHeader className="pb-2">
+        <CardTitle className="flex justify-between items-center">
+          <span className="text-lg font-medium truncate">{collection.name}</span>
+          <span className="text-xs px-2 py-1 rounded bg-gray-100 text-gray-600">{collection.category}</span>
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="flex justify-between items-center pt-0">
+        <div className="flex items-center space-x-2">
+          <BookOpen className="h-4 w-4 text-gray-600" />
+          <span className="text-muted-foreground">
+            {collection.wordCount} words
+          </span>
+        </div>
+        <div className="flex items-center space-x-3">
+          <span className="text-gray-900 font-semibold">
+            {collection.progress}%
+          </span>
+          <div className="w-20 h-2 bg-gray-300 rounded-full overflow-hidden">
+            <div 
+              className="h-full bg-gray-800 rounded-full transition-all duration-300"
+              style={{ width: `${collection.progress}%` }}
+            />
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 
