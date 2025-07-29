@@ -1,12 +1,9 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { Flashcard } from './FlashcardApp';
-import { Badge } from '@/components/ui/badge';
 import { BookOpen, TestTube, BarChart3, Brain, Zap, Trophy, Star } from 'lucide-react';
-import ProgressDots from './ProgressDots';
+
 
 interface FlashcardProgress {
   id: string;
@@ -42,31 +39,6 @@ export const BrowserMode: React.FC<BrowserModeProps> = ({
     return Math.round((progress.correctAnswers / progress.totalAttempts) * 100);
   };
 
-  const getProficiencyIcon = (level: string) => {
-    switch (level) {
-      case 'mastered': return <Trophy className="w-4 h-4 text-success" />;
-      case 'advanced': return <Star className="w-4 h-4 text-warning" />;
-      case 'intermediate': return <Zap className="w-4 h-4 text-accent" />;
-      default: return <Brain className="w-4 h-4 text-muted-foreground" />;
-    }
-  };
-
-  const getProficiencyColor = (level: string) => {
-    switch (level) {
-      case 'mastered': return 'text-success';
-      case 'advanced': return 'text-warning';
-      case 'intermediate': return 'text-accent';
-      default: return 'text-muted-foreground';
-    }
-  };
-
-  const getProgressColor = (percentage: number) => {
-    if (percentage >= 90) return 'bg-success';
-    if (percentage >= 70) return 'bg-warning';
-    if (percentage >= 50) return 'bg-accent';
-    return 'bg-muted-foreground';
-  };
-
   // Statistics
   const totalWords = flashcards.length;
   const masteredWords = progressData.filter(p => p.proficiencyLevel === 'mastered').length;
@@ -74,7 +46,6 @@ export const BrowserMode: React.FC<BrowserModeProps> = ({
     progressData.reduce((sum, p) => sum + getProgressPercentage(p), 0) / totalWords
   );
   // New stats
-  const wordsRemembered = progressData.filter(p => p.correctAnswers > 0).length;
   const timesRemembered = progressData.reduce((sum, p) => sum + p.correctAnswers, 0);
 
   return (
