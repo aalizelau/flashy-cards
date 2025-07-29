@@ -20,7 +20,7 @@ const SidebarNav: React.FC = () => {
           key={idx}
           className="mb-6 p-2 rounded hover:bg-gray-200 transition-colors"
           aria-label={item.label}
-          onClick={item.label === 'Browse' ? () => navigate('/listview') : undefined}
+          onClick={item.label === 'Browse' ? () => navigate('/listview') : item.label === 'Home' ? () => navigate('/') : undefined}
         >
           {item.icon}
         </button>
