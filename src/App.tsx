@@ -8,6 +8,7 @@ import NotFound from "./pages/NotFound";
 import ListView from "./components/ListView";
 import SidebarNav from "./components/SidebarNav";
 import ChapterDetailWrapper from "./components/ChapterDetailWrapper";
+import AnalyticsPage from "./components/AnalyticsPage";
 
 const queryClient = new QueryClient();
 
@@ -23,6 +24,7 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/listview" element={<ListView />} />
+              <Route path="/analytics" element={<AnalyticsPage />} />
               <Route path="/chapter/:collectionName" element={<ChapterDetailWrapper />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />

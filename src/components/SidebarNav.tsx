@@ -7,7 +7,7 @@ const navItems = [
   { icon: <HomeIcon className="h-6 w-6" />, label: 'Home' },
   { icon: <PlusIcon className="h-6 w-6" />, label: 'Create' },
   { icon: <BookOpenIcon className="h-6 w-6" />, label: 'Browse' },
-  { icon: <ChartBarIcon className="h-6 w-6" />, label: 'Statistics' },
+  { icon: <ChartBarIcon className="h-6 w-6" />, label: 'Analytics' },
   { icon: <UserGroupIcon className="h-6 w-6" />, label: 'Users' },
 ];
 
@@ -20,7 +20,12 @@ const SidebarNav: React.FC = () => {
           key={idx}
           className="mb-6 p-2 rounded hover:bg-gray-200 transition-colors"
           aria-label={item.label}
-          onClick={item.label === 'Browse' ? () => navigate('/listview') : item.label === 'Home' ? () => navigate('/') : undefined}
+          onClick={
+            item.label === 'Browse' ? () => navigate('/listview') : 
+            item.label === 'Home' ? () => navigate('/') : 
+            item.label === 'Analytics' ? () => navigate('/analytics') : 
+            undefined
+          }
         >
           {item.icon}
         </button>
