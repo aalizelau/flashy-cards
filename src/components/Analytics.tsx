@@ -115,7 +115,7 @@ const AnalyticsPage: React.FC = () => {
           {/* Weekly Progress Chart */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 font-normal text-xl">
                 <TrendingUp className="w-5 h-5" />
                 Weekly Progress
               </CardTitle>
@@ -150,7 +150,7 @@ const AnalyticsPage: React.FC = () => {
           {/* Study Streak Chart */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 font-normal text-xl">
                 <Calendar className="w-5 h-5" />
                 Study Streak
               </CardTitle>
@@ -179,7 +179,7 @@ const AnalyticsPage: React.FC = () => {
           {/* Category Progress Pie Chart */}
           <Card className="lg:col-span-2">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 font-normal text-xl">
                 <Target className="w-5 h-5" />
                 Progress by Category
               </CardTitle>
@@ -208,7 +208,7 @@ const AnalyticsPage: React.FC = () => {
                 </ChartContainer>
                 <div className="space-y-4">
                   {categoryProgress.map((category, index) => (
-                    <div key={index} className="flex items-center gap-3">
+                    <div key={index} className="flex items-center gap-3 ">
                       <div 
                         className="w-4 h-4 rounded-full" 
                         style={{ backgroundColor: category.color }}
@@ -225,7 +225,7 @@ const AnalyticsPage: React.FC = () => {
           {/* Achievements */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 font-normal text-xl">
                 <Award className="w-5 h-5" />
                 Achievements
               </CardTitle>
