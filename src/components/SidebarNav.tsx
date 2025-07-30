@@ -14,7 +14,7 @@ const navItems = [
 const SidebarNav: React.FC = () => {
   const navigate = useNavigate();
   return (
-    <nav className="flex flex-col items-center bg-white/80 backdrop-blur-lg h-screen w-16 py-4 shadow-lg border-r border-gray-200">
+    <nav className="flex flex-col items-center bg-muted/30 backdrop-blur-lg h-screen w-16 py-4 shadow-lg border-r border-border">
       {navItems.map((item, idx) => (
         <button
           key={idx}
