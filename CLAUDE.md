@@ -27,11 +27,43 @@ pytest --cov=app
 
 ## API Endpoints
 
-- `GET /decks` - Get all decks
-- `GET /decks/{deck_id}/cards` - Get cards for a specific deck
-- `POST /study/sessions` - Start a new study session
-- `POST /study/sessions/complete` - Complete a study session
-- `GET /analytics` - Get study analytics
+- `GET /decks` - Get all decks with metadata
+- `GET /decks/{deck_id}/cards` - Get cards for a specific deck with accuracy stats
+- `POST /study/sessions` - Start a new study session (body: `{"deck_id": int}`)
+- `POST /study/sessions/complete` - Complete a study session with results
+- `GET /analytics` - Get comprehensive study analytics
+
+### Session Complete Payload Example
+
+```json
+{
+  "deck_id": 1,
+  "passed_words": [1, 2, 3],
+  "missed_words": [4, 5],
+  "summary": {
+    "total_cards": 5,
+    "passed_count": 3,
+    "missed_count": 2,
+    "accuracy_percentage": 60.0,
+    "session_duration_minutes": 5.5
+  },
+  "completed_at": "2024-01-15T10:30:00"
+}
+```
+
+### Analytics Response Example
+
+```json
+{
+  "total_decks": 3,
+  "total_cards": 10,
+  "total_cards_studied": 8,
+  "total_correct_answers": 15,
+  "study_streak_days": 3,
+  "cards_mastered": 4,
+  "overall_average_progress": 0.735
+}
+```
 
 ## Development
 

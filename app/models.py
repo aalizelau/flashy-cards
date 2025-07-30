@@ -47,6 +47,5 @@ class Analytics(BaseModel):
     total_cards: int
     total_cards_studied: int  # unique cards studied
     total_correct_answers: int  # non-unique correct answers
-    study_streak_days: int
     cards_mastered: int
-    average_progress_per_card: Dict[int, float]  # card_id -> accuracy percentage
+    overall_average_progress: float  # overall average accuracy percentage

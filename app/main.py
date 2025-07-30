@@ -31,13 +31,10 @@ def create_study_session(deck_id: int):
 
 @app.post("/study/sessions/complete")
 def complete_study_session(session_data: SessionComplete):
-    success = data_layer.complete_session(
-        session_data.session_id, 
-        session_data.completed_cards
-    )
+    success = data_layer.complete_session(session_data)
     
     if not success:
-        raise HTTPException(status_code=404, detail="Session not found")
+        raise HTTPException(status_code=400, detail="Failed to complete session")
     
     return {"message": "Session completed successfully"}
 
