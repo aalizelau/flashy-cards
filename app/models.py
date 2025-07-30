@@ -1,13 +1,6 @@
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import List, Optional, Dict
 from datetime import datetime
-from enum import Enum
-
-
-class DifficultyLevel(str, Enum):
-    EASY = "easy"
-    MEDIUM = "medium"
-    HARD = "hard"
 
 
 class Deck(BaseModel):
@@ -23,38 +16,37 @@ class Card(BaseModel):
     deck_id: int
     front: str
     back: str
-    difficulty: DifficultyLevel = DifficultyLevel.MEDIUM
+    accuracy: float = 0.0
+    total_attempts: int = 0
+    last_reviewed_at: Optional[datetime] = None
     created_at: datetime
 
 
-class SessionStatus(str, Enum):
-    ACTIVE = "active"
-    COMPLETED = "completed"
-
-
 class StudySession(BaseModel):
-    id: int
     deck_id: int
     started_at: datetime
-    status: SessionStatus = SessionStatus.ACTIVE
 
 
-class SessionCard(BaseModel):
-    session_id: int
-    card_id: int
-    shown_at: datetime
-    response: Optional[DifficultyLevel] = None
+class SessionSummary(BaseModel):
+    total_cards: int
+    passed_count: int
+    missed_count: int
+    accuracy_percentage: float
 
 
 class SessionComplete(BaseModel):
-    session_id: int
-    completed_cards: List[SessionCard]
+    deck_id: int
+    passed_words: List[int]  # List of card IDs that were correct
+    missed_words: List[int]  # List of card IDs that were incorrect
+    summary: SessionSummary
+    completed_at: datetime
 
 
 class Analytics(BaseModel):
     total_decks: int
     total_cards: int
-    total_sessions: int
-    completed_sessions: int
-    cards_studied_today: int
-    average_session_duration_minutes: float
+    total_cards_studied: int  # unique cards studied
+    total_correct_answers: int  # non-unique correct answers
+    study_streak_days: int
+    cards_mastered: int
+    average_progress_per_card: Dict[int, float]  # card_id -> accuracy percentage

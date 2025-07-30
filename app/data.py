@@ -6,21 +6,18 @@ dummy_decks = [
     Deck(
         id=1,
         name="Spanish Vocabulary",
-        description="Basic Spanish words and phrases",
         created_at=datetime.now() - timedelta(days=30),
         card_count=15
     ),
     Deck(
         id=2,
         name="Python Programming",
-        description="Python concepts and syntax",
         created_at=datetime.now() - timedelta(days=20),
         card_count=12
     ),
     Deck(
         id=3,
         name="History Facts",
-        description="Important historical events",
         created_at=datetime.now() - timedelta(days=10),
         card_count=8
     )
