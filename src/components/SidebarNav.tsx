@@ -14,11 +14,11 @@ const navItems = [
 const SidebarNav: React.FC = () => {
   const navigate = useNavigate();
   return (
-    <nav className="flex flex-col items-center bg-white/80 backdrop-blur-lg h-screen w-16 py-4 shadow-lg border-r border-gray-200">
+    <nav className="flex flex-col items-center h-screen w-16 py-4  border-r border-gray-200">
       {navItems.map((item, idx) => (
         <button
           key={idx}
-          className="mb-6 p-2 rounded hover:bg-gray-200 transition-colors"
+          className="mb-6 p-2 rounded hover:bg-gray-200 transition-colors text-gray-600"
           aria-label={item.label}
           onClick={item.label === 'Browse' ? () => navigate('/listview') : item.label === 'Home' ? () => navigate('/') : undefined}
         >
