@@ -17,10 +17,10 @@ const AnalyticsPage: React.FC = () => {
   ];
 
   const categoryProgress = [
-    { category: 'Vocabulary', value: 85, color: 'hsl(var(--primary))' },
-    { category: 'Grammar', value: 72, color: 'hsl(var(--secondary))' },
-    { category: 'Reading', value: 68, color: 'hsl(var(--accent))' },
-    { category: 'Writing', value: 45, color: 'hsl(var(--muted))' },
+    { category: 'Vocabulary', value: 85, color: 'hsl(var(--muted-foreground))' },
+    { category: 'Grammar', value: 72, color: 'hsl(var(--muted-foreground))' },
+    { category: 'Reading', value: 68, color: 'hsl(var(--muted-foreground))' },
+    { category: 'Writing', value: 45, color: 'hsl(var(--muted-foreground))' },
   ];
 
   const studyStreak = [
@@ -35,15 +35,15 @@ const AnalyticsPage: React.FC = () => {
   const chartConfig = {
     studied: {
       label: "Cards Studied",
-      color: "hsl(var(--primary))",
+      color: "hsl(var(--muted-foreground))",
     },
     mastered: {
-      label: "Cards Mastered",
-      color: "hsl(var(--secondary))",
+      label: "Cards Mastered", 
+      color: "hsl(var(--muted-foreground))",
     },
     days: {
       label: "Study Days",
-      color: "hsl(var(--accent))",
+      color: "hsl(var(--muted-foreground))",
     },
   };
 
@@ -53,55 +53,55 @@ const AnalyticsPage: React.FC = () => {
       value: "1,247",
       change: "+12%",
       icon: Brain,
-      color: "text-primary"
+      color: "text-muted-foreground"
     },
     {
-      title: "Current Streak",
+      title: "Current Streak", 
       value: "23 days",
       change: "+5 days",
       icon: Calendar,
-      color: "text-secondary"
+      color: "text-muted-foreground"
     },
     {
       title: "Study Time",
       value: "47h 32m",
       change: "+8h",
       icon: Clock,
-      color: "text-accent"
+      color: "text-muted-foreground"
     },
     {
       title: "Accuracy Rate",
       value: "89.2%",
       change: "+3.1%",
       icon: Target,
-      color: "text-primary"
+      color: "text-muted-foreground"
     }
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-bg p-6">
+    <div className="min-h-screen bg-gradient-bg p-6 font-inter">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-foreground mb-2">Analytics Dashboard</h1>
-          <p className="text-muted-foreground">Track your learning progress and achievements</p>
+          <h1 className="text-4xl font-light text-foreground mb-2">Analytics</h1>
+          <p className="text-muted-foreground font-light">Track your learning progress</p>
         </div>
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {stats.map((stat, index) => (
-            <Card key={index} className="hover:shadow-lg transition-shadow">
+            <Card key={index} className="hover:shadow-md transition-shadow border-muted/20">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-muted-foreground">{stat.title}</p>
-                    <p className="text-2xl font-bold text-foreground">{stat.value}</p>
-                    <p className={`text-sm ${stat.color} flex items-center mt-1`}>
+                    <p className="text-sm font-normal text-muted-foreground">{stat.title}</p>
+                    <p className="text-2xl font-light text-foreground">{stat.value}</p>
+                    <p className={`text-sm ${stat.color} flex items-center mt-1 font-light`}>
                       <TrendingUp className="w-4 h-4 mr-1" />
                       {stat.change}
                     </p>
                   </div>
-                  <div className={`p-3 rounded-full bg-muted/20`}>
+                  <div className={`p-3 rounded-full bg-muted/10`}>
                     <stat.icon className={`w-6 h-6 ${stat.color}`} />
                   </div>
                 </div>
@@ -113,10 +113,10 @@ const AnalyticsPage: React.FC = () => {
         {/* Charts Row */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Weekly Progress Chart */}
-          <Card>
+          <Card className="border-muted/20">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <TrendingUp className="w-5 h-5" />
+              <CardTitle className="flex items-center gap-2 font-normal text-lg">
+                <TrendingUp className="w-5 h-5 text-muted-foreground" />
                 Weekly Progress
               </CardTitle>
             </CardHeader>
@@ -131,15 +131,15 @@ const AnalyticsPage: React.FC = () => {
                       type="monotone" 
                       dataKey="studied" 
                       stroke="var(--color-studied)" 
-                      strokeWidth={3}
-                      dot={{ r: 4 }}
+                      strokeWidth={2}
+                      dot={{ r: 3 }}
                     />
                     <Line 
                       type="monotone" 
                       dataKey="mastered" 
                       stroke="var(--color-mastered)" 
-                      strokeWidth={3}
-                      dot={{ r: 4 }}
+                      strokeWidth={2}
+                      dot={{ r: 3 }}
                     />
                   </LineChart>
                 </ResponsiveContainer>
@@ -148,10 +148,10 @@ const AnalyticsPage: React.FC = () => {
           </Card>
 
           {/* Study Streak Chart */}
-          <Card>
+          <Card className="border-muted/20">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Calendar className="w-5 h-5" />
+              <CardTitle className="flex items-center gap-2 font-normal text-lg">
+                <Calendar className="w-5 h-5 text-muted-foreground" />
                 Study Streak
               </CardTitle>
             </CardHeader>
@@ -177,10 +177,10 @@ const AnalyticsPage: React.FC = () => {
         {/* Category Progress and Achievement Section */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Category Progress Pie Chart */}
-          <Card className="lg:col-span-2">
+          <Card className="lg:col-span-2 border-muted/20">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Target className="w-5 h-5" />
+              <CardTitle className="flex items-center gap-2 font-normal text-lg">
+                <Target className="w-5 h-5 text-muted-foreground" />
                 Progress by Category
               </CardTitle>
             </CardHeader>
@@ -223,39 +223,39 @@ const AnalyticsPage: React.FC = () => {
           </Card>
 
           {/* Achievements */}
-          <Card>
+          <Card className="border-muted/20">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Award className="w-5 h-5" />
-                Achievements
+              <CardTitle className="flex items-center gap-2 font-normal text-lg">
+                <Award className="w-5 h-5 text-muted-foreground" />
+                Recent Activity
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/20">
-                <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
-                  <Award className="w-5 h-5 text-primary" />
+              <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/10">
+                <div className="w-10 h-10 rounded-full bg-muted/20 flex items-center justify-center">
+                  <Award className="w-5 h-5 text-muted-foreground" />
                 </div>
                 <div>
-                  <p className="font-medium text-foreground">Week Warrior</p>
-                  <p className="text-sm text-muted-foreground">7 day streak</p>
+                  <p className="font-normal text-foreground">Completed session</p>
+                  <p className="text-sm text-muted-foreground">2 hours ago</p>
                 </div>
               </div>
-              <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/20">
-                <div className="w-10 h-10 rounded-full bg-secondary/20 flex items-center justify-center">
-                  <Brain className="w-5 h-5 text-secondary" />
+              <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/10">
+                <div className="w-10 h-10 rounded-full bg-muted/20 flex items-center justify-center">
+                  <Brain className="w-5 h-5 text-muted-foreground" />
                 </div>
                 <div>
-                  <p className="font-medium text-foreground">Quick Learner</p>
-                  <p className="text-sm text-muted-foreground">100 cards mastered</p>
+                  <p className="font-normal text-foreground">Studied 45 cards</p>
+                  <p className="text-sm text-muted-foreground">Yesterday</p>
                 </div>
               </div>
-              <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/20">
-                <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center">
-                  <Target className="w-5 h-5 text-accent" />
+              <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/10">
+                <div className="w-10 h-10 rounded-full bg-muted/20 flex items-center justify-center">
+                  <Target className="w-5 h-5 text-muted-foreground" />
                 </div>
                 <div>
-                  <p className="font-medium text-foreground">Accuracy Expert</p>
-                  <p className="text-sm text-muted-foreground">90% accuracy rate</p>
+                  <p className="font-normal text-foreground">New milestone</p>
+                  <p className="text-sm text-muted-foreground">3 days ago</p>
                 </div>
               </div>
             </CardContent>
