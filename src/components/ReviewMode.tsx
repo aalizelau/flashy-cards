@@ -97,7 +97,7 @@ export const ReviewMode: React.FC<ReviewModeProps> = ({ results, onRestart, onBa
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-success">
               <CheckCircle className="w-5 h-5" />
-              Mastered ({masteredCards.length})
+              Passed ({masteredCards.length})
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -155,7 +155,7 @@ export const ReviewMode: React.FC<ReviewModeProps> = ({ results, onRestart, onBa
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-destructive">
               <XCircle className="w-5 h-5" />
-              Unfamiliar ({unfamiliarCards.length})
+              Missed ({unfamiliarCards.length})
             </CardTitle>
           </CardHeader>
           <CardContent>
