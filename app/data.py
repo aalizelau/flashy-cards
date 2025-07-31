@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from typing import List, Optional, Dict
-from .models import Deck, Card, StudySession, SessionComplete, SessionSummary, Analytics
+from .models import Deck, Card, StudySession, SessionComplete, SessionSummary, Analytics, TestResults
 
 dummy_decks = [
     Deck(
@@ -104,6 +104,49 @@ class DataLayer:
         
         return True
     
+    def complete_session_from_results(self, test_results: TestResults) -> Optional[SessionComplete]:
+        # Convert card_id strings to integers and separate passed/missed
+        passed_words = []
+        missed_words = []
+        
+        for result in test_results.test_results:
+            try:
+                card_id = int(result.card_id.replace('c', ''))  # Convert 'c1' to 1
+                if result.remembered:
+                    passed_words.append(card_id)
+                else:
+                    missed_words.append(card_id)
+            except ValueError:
+                continue  # Skip invalid card IDs
+        
+        # Calculate summary
+        total_cards = len(test_results.test_results)
+        passed_count = len(passed_words)
+        missed_count = len(missed_words)
+        accuracy_percentage = (passed_count / total_cards * 100) if total_cards > 0 else 0.0
+        
+        summary = SessionSummary(
+            total_cards=total_cards,
+            passed_count=passed_count,
+            missed_count=missed_count,
+            accuracy_percentage=round(accuracy_percentage, 2)
+        )
+        
+        # Create session complete data
+        completed_at = datetime.now()
+        session_data = SessionComplete(
+            deck_id=test_results.deck_id,
+            passed_words=passed_words,
+            missed_words=missed_words,
+            summary=summary,
+            completed_at=completed_at
+        )
+        
+        # Update card statistics using existing complete_session method
+        success = self.complete_session(session_data)
+        
+        return session_data if success else None
+    
     def get_analytics(self) -> Analytics:
         # Calculate unique cards studied
         all_studied_cards = set()
@@ -113,19 +156,6 @@ class DataLayer:
             all_studied_cards.update(session["passed_words"])
             all_studied_cards.update(session["missed_words"])
             total_correct += len(session["passed_words"])      
-        
-        # Calculate study streak (simplified - consecutive days with sessions)
-        session_dates = [s["completed_at"].date() for s in self.completed_sessions]
-        unique_dates = sorted(set(session_dates), reverse=True)
-        
-        streak_days = 0
-        if unique_dates:
-            current_date = datetime.now().date()
-            for date in unique_dates:
-                if (current_date - date).days == streak_days:
-                    streak_days += 1
-                else:
-                    break
         
         # Cards mastered (accuracy >= 0.8)
         cards_mastered = len([c for c in self.cards if c.accuracy >= 0.8])
@@ -139,7 +169,6 @@ class DataLayer:
             total_cards=len(self.cards),
             total_cards_studied=len(all_studied_cards),
             total_correct_answers=total_correct,
-            study_streak_days=streak_days,
             cards_mastered=cards_mastered,
             overall_average_progress=round(overall_average_progress, 3)
         )

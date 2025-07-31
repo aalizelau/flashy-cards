@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from typing import List
-from .models import Deck, Card, StudySession, SessionComplete, Analytics
+from .models import Deck, Card, StudySession, SessionComplete, Analytics, TestResults
 from .data import data_layer
 
 app = FastAPI(title="Flashcard API", version="1.0.0")
@@ -29,14 +29,14 @@ def create_study_session(deck_id: int):
     session = data_layer.create_session(deck_id)
     return session
 
-@app.post("/study/sessions/complete")
-def complete_study_session(session_data: SessionComplete):
-    success = data_layer.complete_session(session_data)
+@app.post("/study/sessions/complete", response_model=SessionComplete)
+def complete_study_session(test_results: TestResults):
+    session_data = data_layer.complete_session_from_results(test_results)
     
-    if not success:
+    if not session_data:
         raise HTTPException(status_code=400, detail="Failed to complete session")
     
-    return {"message": "Session completed successfully"}
+    return session_data
 
 @app.get("/analytics", response_model=Analytics)
 def get_analytics():

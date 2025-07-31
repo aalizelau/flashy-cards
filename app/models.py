@@ -18,6 +18,7 @@ class Card(BaseModel):
     back: str
     accuracy: float = 0.0
     total_attempts: int = 0
+    correct_answers: int = 0
     last_reviewed_at: Optional[datetime] = None
     created_at: datetime
 
@@ -40,6 +41,16 @@ class SessionComplete(BaseModel):
     missed_words: List[int]  # List of card IDs that were incorrect
     summary: SessionSummary
     completed_at: datetime
+
+
+class TestResult(BaseModel):
+    card_id: str
+    remembered: bool
+
+
+class TestResults(BaseModel):
+    deck_id: int
+    test_results: List[TestResult]
 
 
 class Analytics(BaseModel):
