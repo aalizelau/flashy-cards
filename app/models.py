@@ -44,7 +44,7 @@ class SessionComplete(BaseModel):
 
 
 class TestResult(BaseModel):
-    card_id: str
+    card_id: int
     remembered: bool
 
 

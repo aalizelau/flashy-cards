@@ -105,19 +105,14 @@ class DataLayer:
         return True
     
     def complete_session_from_results(self, test_results: TestResults) -> Optional[SessionComplete]:
-        # Convert card_id strings to integers and separate passed/missed
         passed_words = []
         missed_words = []
         
         for result in test_results.test_results:
-            try:
-                card_id = int(result.card_id.replace('c', ''))  # Convert 'c1' to 1
-                if result.remembered:
-                    passed_words.append(card_id)
-                else:
-                    missed_words.append(card_id)
-            except ValueError:
-                continue  # Skip invalid card IDs
+            if result.remembered:
+                passed_words.append(result.card_id)
+            else:
+                missed_words.append(result.card_id)
         
         # Calculate summary
         total_cards = len(test_results.test_results)
