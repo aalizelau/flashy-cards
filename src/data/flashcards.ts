@@ -1,33 +1,61 @@
-export interface Flashcard {
-  id: string;
+// API-based TypeScript interfaces matching the backend API
+
+export interface Deck {
+  id: number;
+  name: string;
+  description: string;
+  created_at: string;
+  card_count: number;
+}
+
+export interface Card {
+  id: number;
+  deck_id: number;
   front: string;
   back: string;
+  accuracy: number;
+  total_attempts: number;
+  correct_answers: number;
+  last_reviewed_at: string;
+  created_at: string;
 }
 
-export interface FlashcardResult {
-  flashcard: Flashcard;
+export interface TestResult {
+  card_id: number;
   remembered: boolean;
-  attempts: number;
 }
 
-export interface FlashcardProgress {
-  id: string;
-  correctAnswers: number;
-  totalAttempts: number;
-  lastAttempted?: Date;
-  proficiencyLevel: 'beginner' | 'intermediate' | 'advanced' | 'mastered';
+export interface StudySession {
+  deck_id: number;
+  started_at: string;
 }
 
-// Sample flashcards for demonstration
-export const sampleFlashcards: Flashcard[] = [
-  { id: '1', front: 'Hello', back: 'Hola' },
-  { id: '2', front: 'Thank you', back: 'Gracias' },
-  { id: '3', front: 'Goodbye', back: 'Adiós' },
-  { id: '4', front: 'Please', back: 'Por favor' },
-  { id: '5', front: 'Water', back: 'Agua' },
-  { id: '6', front: 'House', back: 'Casa' },
-  { id: '7', front: 'Cat', back: 'Gato' },
-  { id: '8', front: 'Dog', back: 'Perro' },
-  { id: '9', front: 'Book', back: 'Libro' },
-  { id: '10', front: 'Friend', back: 'Amigo' },
-];
+export interface StudySessionComplete {
+  deck_id: number;
+  test_results: TestResult[];
+}
+
+export interface SessionSummary {
+  total_cards: number;
+  passed_count: number;
+  missed_count: number;
+  accuracy_percentage: number;
+}
+
+export interface StudySessionResponse {
+  deck_id: number;
+  passed_words: number[];
+  missed_words: number[];
+  summary: SessionSummary;
+  completed_at: string;
+}
+
+export interface Analytics {
+  total_decks: number;
+  total_cards: number;
+  total_cards_studied: number;
+  total_correct_answers: number;
+  cards_mastered: number;
+  overall_average_progress: number;
+}
+

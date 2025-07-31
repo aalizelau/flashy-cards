@@ -2,19 +2,22 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { FlashcardComponent } from './FlashcardComponent';
-import { Flashcard, FlashcardResult } from '@/data/flashcards';
+import { Card, TestResult } from '@/data/flashcards';
+import { useCompleteStudySession } from '@/hooks/useApi';
 import { BookOpen, CheckCircle, XCircle, ArrowLeft } from 'lucide-react';
 
 interface TestingModeProps {
-  flashcards: Flashcard[];
-  onComplete: (results: FlashcardResult[]) => void;
+  flashcards: Card[];
+  onComplete: (results: TestResult[]) => void;
   onBackToBrowser?: () => void;
+  deckId?: number;
 }
 
-export const TestingMode: React.FC<TestingModeProps> = ({ flashcards, onComplete, onBackToBrowser }) => {
+export const TestingMode: React.FC<TestingModeProps> = ({ flashcards, onComplete, onBackToBrowser, deckId }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
-  const [results, setResults] = useState<FlashcardResult[]>([]);
+  const [results, setResults] = useState<TestResult[]>([]);
+  const completeSessionMutation = useCompleteStudySession();
 
   const currentCard = flashcards[currentIndex];
   const progress = ((currentIndex) / flashcards.length) * 100;
@@ -23,17 +26,29 @@ export const TestingMode: React.FC<TestingModeProps> = ({ flashcards, onComplete
     setIsFlipped(true);
   };
 
-  const handleResponse = (remembered: boolean) => {
-    const result: FlashcardResult = {
-      flashcard: currentCard,
+  const handleResponse = async (remembered: boolean) => {
+    const result: TestResult = {
+      card_id: currentCard.id,
       remembered,
-      attempts: 1,
     };
 
     const newResults = [...results, result];
     setResults(newResults);
 
     if (currentIndex === flashcards.length - 1) {
+      // Test complete - submit to API if deckId is provided
+      if (deckId) {
+        try {
+          await completeSessionMutation.mutateAsync({
+            deck_id: deckId,
+            test_results: newResults
+          });
+        } catch (error) {
+          console.error('Failed to submit test results:', error);
+          // Still proceed with completing the test locally
+        }
+      }
+      
       onComplete(newResults);
     } else {
       setCurrentIndex(currentIndex + 1);

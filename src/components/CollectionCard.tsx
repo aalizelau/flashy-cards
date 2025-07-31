@@ -8,6 +8,7 @@ export interface FlashcardCollection {
   wordCount: number;
   progress: number;
   category: string;
+  description?: string;
 }
 
 interface CollectionCardProps {

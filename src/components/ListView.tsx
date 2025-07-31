@@ -1,75 +1,68 @@
 import React, { useState } from 'react';
 import CollectionCard, { FlashcardCollection } from './CollectionCard';
-import { Flashcard, FlashcardProgress, sampleFlashcards } from '@/data/flashcards';
+import { useDecks } from '@/hooks/useApi';
 
 
-const mockCollections: FlashcardCollection[] = [
-	{
-		id: 1,
-		name: 'All Words',
-		wordCount: 150,
-		progress: 15,
-		category: 'General',
-	},
-	{
-		id: 2,
-		name: 'Object Pronouns',
-		wordCount: 34,
-		progress: 15,
-		category: 'Grammar',
-	},
-	{
-		id: 3,
-		name: 'Verb Conjugations',
-		wordCount: 45,
-		progress: 32,
-		category: 'Grammar',
-	},
-	{
-		id: 4,
-		name: 'Common Phrases',
-		wordCount: 28,
-		progress: 67,
-		category: 'Vocabulary',
-	},
-	{
-		id: 5,
-		name: 'Numbers 1-100',
-		wordCount: 100,
-		progress: 89,
-		category: 'Numbers',
-	},
-];
 
 
 const ListView: React.FC = () => {
 	const [search, setSearch] = useState('');
-	const [selectedCollection, setSelectedCollection] = useState<FlashcardCollection | null>(null);
-	// Use sampleFlashcards for All Words
-	const [flashcards, setFlashcards] = useState<Flashcard[]>(sampleFlashcards);
-        const [progressData, setProgressData] = useState<FlashcardProgress[]>(() =>
-                sampleFlashcards.map(card => ({
-			id: card.id,
-			correctAnswers: Math.floor(Math.random() * 10),
-			totalAttempts: Math.floor(Math.random() * 15) + 1,
-			lastAttempted: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000),
-                        proficiencyLevel: ['beginner', 'intermediate', 'advanced', 'mastered'][
-                                Math.floor(Math.random() * 4)
-                        ] as FlashcardProgress['proficiencyLevel']
-                }))
-        );
+	
+	// Fetch decks from API
+	const { data: decks, isLoading, error } = useDecks();
+	
+	// Convert API decks to FlashcardCollection format
+	const collections: FlashcardCollection[] = decks?.map(deck => ({
+		id: deck.id,
+		name: deck.name,
+		wordCount: deck.card_count,
+		progress: Math.floor(Math.random() * 100), // TODO: Calculate real progress from analytics
+		category: 'Vocabulary', // Default category, could be enhanced
+		description: deck.description,
+	})) || [];
 
-	const filteredCollections = mockCollections.filter(collection =>
+	const filteredCollections = collections.filter(collection =>
 		collection.name.toLowerCase().includes(search.toLowerCase())
 	);
 
 	const handleCollectionClick = (collection: FlashcardCollection) => {
-		if (collection.name === 'All Words') {
-			window.location.href = `/chapter/All%20Words`;
-		} else {
-			alert(`Clicked: ${collection.name}`);
-		}
+		// Navigate to the chapter detail page with the collection name
+		window.location.href = `/chapter/${encodeURIComponent(collection.name)}`;
 	};
+
+	// Show loading state
+	if (isLoading) {
+		return (
+			<main className="px-6 pb-8">
+				<div className="max-w-4xl mx-auto">
+					<div className="text-center py-12">
+						<div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900 mx-auto"></div>
+						<p className="mt-4 text-lg">Loading collections...</p>
+					</div>
+				</div>
+			</main>
+		);
+	}
+
+	// Show error state
+	if (error) {
+		return (
+			<main className="px-6 pb-8">
+				<div className="max-w-4xl mx-auto">
+					<div className="text-center text-red-600 py-12">
+						<h2 className="text-2xl font-bold mb-4">Error Loading Collections</h2>
+						<p className="mb-4">{error.message}</p>
+						<button 
+							onClick={() => window.location.reload()}
+							className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+						>
+							Retry
+						</button>
+					</div>
+				</div>
+			</main>
+		);
+	}
 
 	return (
 		<main className="px-6 pb-8">
@@ -96,7 +89,7 @@ const ListView: React.FC = () => {
 					</div>
 				) : (
 					<div className="text-center text-muted-foreground py-12">
-						No collections found.
+						{collections.length === 0 ? 'No collections available.' : 'No collections found matching your search.'}
 					</div>
 				)}
 			</div>

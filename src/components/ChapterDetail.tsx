@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { BookOpen } from 'lucide-react';
@@ -6,29 +6,53 @@ import ProgressDots from './ProgressDots';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/components/ui/dropdown-menu';
 import { MoreVertical } from 'lucide-react';
-import { Flashcard, FlashcardProgress } from '@/data/flashcards';
+import { Card as FlashCard, Deck } from '@/data/flashcards';
 
 interface ChapterDetailProps {
   collectionName: string;
-  flashcards: Flashcard[];
-  progressData: FlashcardProgress[];
+  cards: FlashCard[];
+  deck: Deck;
 }
 
-const ChapterDetail: React.FC<ChapterDetailProps> = ({ collectionName, flashcards, progressData }) => {
-  const totalWords = flashcards.length;
-  const getProgressPercentage = (progress: FlashcardProgress): number => {
-    return Math.round((progress.correctAnswers / progress.totalAttempts) * 100);
+const ChapterDetail: React.FC<ChapterDetailProps> = ({ collectionName, cards, deck }) => {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [sortBy, setSortBy] = useState<'progress' | 'recent' | 'alphabet' | 'attempts'>('progress');
+  
+  const totalWords = cards.length;
+  const getProgressPercentage = (card: FlashCard): number => {
+    return Math.round(card.accuracy * 100);
   };
 
-  if (collectionName !== 'All Words') {
-    return <div className="p-8">No details for this collection.</div>;
-  }
+  // Filter and sort cards based on search and sort criteria
+  const filteredAndSortedCards = useMemo(() => {
+    let filtered = cards.filter(card => 
+      card.front.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      card.back.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    return filtered.sort((a, b) => {
+      switch (sortBy) {
+        case 'progress':
+          return getProgressPercentage(b) - getProgressPercentage(a);
+        case 'recent':
+          const dateA = new Date(a.last_reviewed_at || 0);
+          const dateB = new Date(b.last_reviewed_at || 0);
+          return dateB.getTime() - dateA.getTime();
+        case 'alphabet':
+          return a.front.localeCompare(b.front);
+        case 'attempts':
+          return b.total_attempts - a.total_attempts;
+        default:
+          return 0;
+      }
+    });
+  }, [cards, searchTerm, sortBy, getProgressPercentage]);
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-3xl font-semibold text-foreground mt-12">
-          {collectionName} ({totalWords} words)
+          {collectionName} ({searchTerm ? `${filteredAndSortedCards.length}/${totalWords}` : totalWords} words)
         </h2>
         <Button
           variant="outline"
@@ -43,12 +67,14 @@ const ChapterDetail: React.FC<ChapterDetailProps> = ({ collectionName, flashcard
         <input
           type="text"
           placeholder="Search words..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
           className="w-64 p-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary"
-          // onChange={...} // dummy, not wired
         />
         <select
+          value={sortBy}
+          onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
           className="p-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary"
-          // onChange={...} // dummy, not wired
         >
           <option value="progress">Sort by Progress</option>
           <option value="recent">Sort by Most Recent</option>
@@ -73,20 +99,10 @@ const ChapterDetail: React.FC<ChapterDetailProps> = ({ collectionName, flashcard
                     </tr>
                   </thead>
                   <tbody>
-                    {flashcards
-                      .slice()
-                      .sort((a, b) => {
-                        const progressA = progressData.find(p => p.id === a.id);
-                        const progressB = progressData.find(p => p.id === b.id);
-                        const percentageA = progressA ? getProgressPercentage(progressA) : 0;
-                        const percentageB = progressB ? getProgressPercentage(progressB) : 0;
-                        return percentageB - percentageA;
-                      })
-                      .map((card, idx, arr) => {
-                        const progress = progressData.find(p => p.id === card.id);
-                        const percentage = progress ? getProgressPercentage(progress) : 0;
-                        const lastReviewed = progress?.lastAttempted
-                          ? progress.lastAttempted.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+                    {filteredAndSortedCards.map((card, idx, arr) => {
+                        const percentage = getProgressPercentage(card);
+                        const lastReviewed = card.last_reviewed_at
+                          ? new Date(card.last_reviewed_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
                           : '—';
                         return (
                           <React.Fragment key={card.id}>
@@ -102,7 +118,7 @@ const ChapterDetail: React.FC<ChapterDetailProps> = ({ collectionName, flashcard
                               </td>
                               <td className="py-3 px-3 align-middle">
                                 <span className={`px-2 py-1 rounded-full text-xs font-medium bg-gray-200 text-gray-800`}>
-                                  {progress?.correctAnswers || 0}/{progress?.totalAttempts || 0}
+                                  {card.correct_answers}/{card.total_attempts}
                                 </span>
                               </td>
                               <td className="py-3 px-3 align-middle">
@@ -119,7 +135,7 @@ const ChapterDetail: React.FC<ChapterDetailProps> = ({ collectionName, flashcard
                                     <DropdownMenuItem onClick={() => {/* handle edit */}}>
                                       Edit
                                     </DropdownMenuItem>
-                                    <DropdownMenuItem className="text-red-500"onClick={() => {/* handle delete */}}>
+                                    <DropdownMenuItem className="text-red-500" onClick={() => {/* handle delete */}}>
                                       Delete
                                     </DropdownMenuItem>
                                   </DropdownMenuContent>

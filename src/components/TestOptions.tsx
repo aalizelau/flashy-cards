@@ -12,22 +12,31 @@ import {
   Circle
 } from 'lucide-react';
 // import { FlashcardStats } from './FlashcardStats';
-import { Flashcard, FlashcardProgress } from '@/data/flashcards';
+import { Card as FlashCard, Deck } from '@/data/flashcards';
+import { useAnalytics } from '@/hooks/useApi';
 import {  TestTube, BarChart3, Zap, Trophy, Star } from 'lucide-react';
   
 
 interface MainDashboardProps {
-  flashcards: Flashcard[];
+  flashcards: FlashCard[];
   onStartTest: () => void;
   onViewReview: () => void;
+  decks?: Deck[];
+  selectedDeckId?: number;
+  onDeckChange?: (deckId: number) => void;
 }
 
 
 export const MainDashboard: React.FC<MainDashboardProps> = ({ 
   flashcards, 
   onStartTest, 
-  onViewReview 
+  onViewReview,
+  decks,
+  selectedDeckId,
+  onDeckChange
 }) => {
+  // Fetch analytics data
+  const { data: analytics } = useAnalytics();
   // Navigation dots data
   const navDots = [
     { active: true },
@@ -37,30 +46,11 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
     { active: false }
   ];
 
-  const [progressData] = useState<FlashcardProgress[]>(() =>
-      flashcards.map((card) => ({
-        id: card.id,
-        correctAnswers: Math.floor(Math.random() * 10),
-        totalAttempts: Math.floor(Math.random() * 15) + 1,
-        lastAttempted: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000),
-        proficiencyLevel: ['beginner', 'intermediate', 'advanced', 'mastered'][
-          Math.floor(Math.random() * 4)
-        ] as FlashcardProgress['proficiencyLevel']
-      }))
-    );
-  
-    const getProgressPercentage = (progress: FlashcardProgress): number => {
-      return Math.round((progress.correctAnswers / progress.totalAttempts) * 100);
-    };
-  
-    // Statistics
-    const totalWords = flashcards.length;
-    const masteredWords = progressData.filter(p => p.proficiencyLevel === 'mastered').length;
-    const averageProgress = Math.round(
-      progressData.reduce((sum, p) => sum + getProgressPercentage(p), 0) / totalWords
-    );
-    // New stats
-    const timesRemembered = progressData.reduce((sum, p) => sum + p.correctAnswers, 0);
+  // Statistics from analytics API
+  const totalWords = analytics?.total_cards || 0;
+  const masteredWords = analytics?.cards_mastered || 0;
+  const averageProgress = Math.round((analytics?.overall_average_progress || 0) * 100);
+  const timesRemembered = analytics?.total_correct_answers || 0;
 
   const practiceCards = [
     {
