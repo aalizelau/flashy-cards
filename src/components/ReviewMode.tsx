@@ -19,11 +19,6 @@ export const ReviewMode: React.FC<ReviewModeProps> = ({ results, onRestart, onBa
   const totalCards = results.length;
   const accuracy = Math.round((correctAnswers / totalCards) * 100);
 
-  // Use session response data for passed/missed cards
-  const passedCardIds = studySessionResponse?.passed_words || [];
-  const missedCardIds = studySessionResponse?.missed_words || [];
-
-
   const getAccuracyColor = (acc: number) => {
     if (acc >= 80) return 'text-success';
     if (acc >= 60) return 'text-warning';
