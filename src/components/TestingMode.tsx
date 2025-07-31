@@ -29,6 +29,8 @@ export const TestingMode: React.FC<TestingModeProps> = ({ flashcards, onComplete
   const handleResponse = async (remembered: boolean) => {
     const result: TestResult = {
       card_id: currentCard.id,
+      front: currentCard.front,
+      back: currentCard.back,
       remembered,
     };
 

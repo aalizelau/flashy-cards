@@ -22,6 +22,8 @@ export interface Card {
 
 export interface TestResult {
   card_id: number;
+  front: string;
+  back: string;
   remembered: boolean;
 }
 

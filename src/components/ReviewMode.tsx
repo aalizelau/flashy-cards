@@ -13,16 +13,16 @@ interface ReviewModeProps {
 
 export const ReviewMode: React.FC<ReviewModeProps> = ({ results, onRestart, onBackToBrowser, studySessionResponse }) => {
   // Use session response data if available, otherwise fall back to local results
-  const correctAnswers = studySessionResponse?.summary.passed_count || results.filter(r => r.remembered).length;
-  const totalCards = studySessionResponse?.summary.total_cards || results.length;
-  const accuracy = studySessionResponse?.summary.accuracy_percentage || Math.round((correctAnswers / totalCards) * 100);
+  const passed = results.filter((r) => r.remembered);
+  const missed = results.filter((r) => !r.remembered);
+  const correctAnswers = results.filter(r => r.remembered).length;
+  const totalCards = results.length;
+  const accuracy = Math.round((correctAnswers / totalCards) * 100);
 
   // Use session response data for passed/missed cards
   const passedCardIds = studySessionResponse?.passed_words || [];
   const missedCardIds = studySessionResponse?.missed_words || [];
-  
-  // For this demo, we'll use simple logic - in a real app, this would be based on historical data
-  const inProgressCards: TestResult[] = []; // No "in progress" in first attempt
+
 
   const getAccuracyColor = (acc: number) => {
     if (acc >= 80) return 'text-success';
@@ -98,17 +98,27 @@ export const ReviewMode: React.FC<ReviewModeProps> = ({ results, onRestart, onBa
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-success">
               <CheckCircle className="w-5 h-5" />
-              Passed ({passedCardIds.length})
+              Passed ({passed.length})
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {passedCardIds.length > 0 ? (
-              <div className="text-center py-8">
-                <div className="text-4xl font-bold text-success mb-2">{passedCardIds.length}</div>
-                <p className="text-muted-foreground">Cards you remembered correctly!</p>
+            {passed.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                {passed.map((result) => (
+                  <div
+                    key={result.card_id}
+                    className="flex items-center gap-2 p-3 bg-success/10 rounded-lg border border-success/20"
+                  >
+                    <CheckCircle className="w-4 h-4 text-success flex-shrink-0" />
+                    <div className="min-w-0">
+                      <div className="font-medium text-sm truncate">{result.front}</div>
+                      <div className="text-xs text-muted-foreground truncate">{result.back}</div>
+                    </div>
+                  </div>
+                ))}
               </div>
             ) : (
-              <p className="text-muted-foreground">No cards passed yet. Keep practicing!</p>
+              <p className="text-muted-foreground">Great job! You remembered all the cards.</p>
             )}
           </CardContent>
         </Card>
@@ -119,18 +129,28 @@ export const ReviewMode: React.FC<ReviewModeProps> = ({ results, onRestart, onBa
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-destructive">
               <XCircle className="w-5 h-5" />
-              Missed ({missedCardIds.length})
+              Missed ({missed.length})
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {missedCardIds.length > 0 ? (
-              <div className="text-center py-8">
-                <div className="text-4xl font-bold text-destructive mb-2">{missedCardIds.length}</div>
-                <p className="text-muted-foreground">Cards to review and practice more.</p>
-              </div>
-            ) : (
-              <p className="text-muted-foreground">Great! You knew all the cards.</p>
-            )}
+          {missed.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+              {missed.map((result) => (
+                <div
+                  key={result.card_id}
+                  className="flex items-center gap-2 p-3 bg-destructive/10 rounded-lg border border-destructive/20"
+                >
+                  <XCircle className="w-4 h-4 text-destructive flex-shrink-0" />
+                  <div className="min-w-0">
+                    <div className="font-medium text-sm truncate">{result.front}</div>
+                    <div className="text-xs text-muted-foreground truncate">{result.back}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-muted-foreground">Great! You knew all the cards.</p>
+          )}
           </CardContent>
         </Card>
       </div>
