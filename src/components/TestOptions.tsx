@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { 
@@ -19,8 +20,8 @@ import {  TestTube, BarChart3, Zap, Trophy, Star } from 'lucide-react';
 
 interface MainDashboardProps {
   flashcards: FlashCard[];
-  onStartTest: () => void;
-  onViewReview: () => void;
+  onStartTest?: () => void; // Made optional for backwards compatibility
+  onViewReview?: () => void; // Made optional for backwards compatibility
   decks?: Deck[];
   selectedDeckId?: number;
   onDeckChange?: (deckId: number) => void;
@@ -35,8 +36,29 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
   selectedDeckId,
   onDeckChange
 }) => {
+  const navigate = useNavigate();
+  
   // Fetch analytics data
   const { data: analytics } = useAnalytics();
+  
+  // Default navigation handlers if props not provided
+  const handleStartTest = () => {
+    if (onStartTest) {
+      onStartTest();
+    } else {
+      // Default behavior - navigate to study session with selected deck
+      navigate(`/study/${selectedDeckId || 1}`);
+    }
+  };
+  
+  const handleViewReview = () => {
+    if (onViewReview) {
+      onViewReview();
+    } else {
+      // Default behavior - navigate to study session in review mode
+      navigate(`/study/${selectedDeckId || 1}?mode=review`);
+    }
+  };
   // Navigation dots data
   const navDots = [
     { active: true },
@@ -206,7 +228,7 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
             {/* Daily Challenges - Large card */}
             <Card 
               className={`bg-daily-challenges hover:scale-105 transform transition-all cursor-pointer col-span-1 row-span-2`}
-              onClick={onStartTest}
+              onClick={handleStartTest}
             >
               <CardContent className="p-6 h-full flex flex-col justify-between">
                 <div>
@@ -233,7 +255,7 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
             {/* Test Newly Added */}
             <Card 
               className="bg-test-newly hover:scale-105 transform transition-all cursor-pointer"
-              onClick={onStartTest}
+              onClick={handleStartTest}
             >
               <CardContent className="p-6 flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -253,7 +275,7 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
             {/* Test By Chapters */}
             <Card 
               className="bg-test-chapters hover:scale-105 transform transition-all cursor-pointer"
-              onClick={onStartTest}
+              onClick={handleStartTest}
             >
               <CardContent className="p-6 flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -273,7 +295,7 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
             {/* Test All Words */}
             <Card 
               className="bg-test-all hover:scale-105 transform transition-all cursor-pointer"
-              onClick={onStartTest}
+              onClick={handleStartTest}
             >
               <CardContent className="p-6 flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -293,7 +315,7 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
             {/* Test Unfamiliar */}
             <Card 
               className="bg-test-unfamiliar hover:scale-105 transform transition-all cursor-pointer"
-              onClick={onStartTest}
+              onClick={handleStartTest}
             >
               <CardContent className="p-6 flex items-center justify-between">
                 <div className="flex items-center gap-3">

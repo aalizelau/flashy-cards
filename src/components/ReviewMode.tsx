@@ -2,7 +2,6 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TestResult, StudySessionResponse, Card as FlashCard } from '@/data/flashcards';
-import { Badge } from '@/components/ui/badge';
 import { CheckCircle, XCircle, Trophy, RotateCcw, Brain, Target, Zap, ArrowLeft } from 'lucide-react';
 
 interface ReviewModeProps {

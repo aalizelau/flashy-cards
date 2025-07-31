@@ -28,21 +28,27 @@ npm run preview
 ## Architecture Overview
 
 ### Core Structure
-- **Entry Point**: `src/main.tsx` → `src/App.tsx` → `src/pages/Index.tsx` → `src/components/FlashcardApp.tsx`
+- **Entry Point**: `src/main.tsx` → `src/App.tsx` → Router-based pages
 - **Router Setup**: Uses React Router with sidebar navigation and main content area
-- **State Management**: Uses React Query for data fetching, local state for UI modes
+- **Main Pages**: Dashboard (`/dashboard`), StudySession (`/study/:deckId`), ListView (`/listview`), Analytics (`/analytics`)
+- **State Management**: Uses React Query for data fetching, URL parameters for navigation state
 - **UI Framework**: shadcn/ui components built on Radix UI primitives + Tailwind CSS
 
 ### Key Components Architecture
 
-**FlashcardApp** (`src/components/FlashcardApp.tsx`)
-- Main application component managing 3 modes: 'browser', 'testing', 'review'
-- Handles mode transitions and test result state
-- Uses sample data from `src/data/flashcards.ts`
+**Dashboard Page** (`src/pages/Dashboard.tsx`)
+- Main dashboard with statistics and practice options
+- Uses MainDashboard component with proper navigation
+- Redirects to study sessions via routing
+
+**StudySession Page** (`src/pages/StudySession.tsx`)
+- Handles testing and review modes based on URL parameters
+- Manages study session state and API calls
+- Supports `/study/:deckId` and `/study/:deckId?mode=review` routes
 
 **Navigation** (`src/components/SidebarNav.tsx`)
-- Vertical sidebar with icon-based navigation
-- Routes: "/" (Home), "/listview" (Browse), "/chapter/:collectionName" (Chapter Details)
+- Vertical sidebar with icon-based navigation  
+- Routes: "/dashboard" (Home), "/listview" (Browse), "/analytics" (Analytics), "/chapter/:collectionName" (Chapter Details)
 
 **Data Layer** (`src/data/flashcards.ts`)
 - TypeScript interfaces: `Flashcard`, `FlashcardResult`, `FlashcardProgress`
@@ -75,16 +81,9 @@ Add routes in `src/App.tsx` above the catch-all "*" route as indicated by the co
 - Maintain consistent gradient background theme
 
 ### State Management Patterns
-- Mode-based state management in FlashcardApp
-- React Query for server state (when implemented)
+- URL-based navigation state management
+- React Query for server state and API data
 - Local state for UI interactions and temporary data
+- Route parameters for passing data between pages
 
 ## Planning 
-
-### Before starting work
-- Always in plan mode to make a plan
-- After get the plan, make sure you write the plan to `.claude/tasks/TASK_NAME.md`
-- The plan should be a detailed implementation plan and the reasoning behind them, as well as tasks broken down
-- If the task require external knowledge or certain package, also research to get latest knowledge (Use Task tool for research)
-- Don’t over plan it, always think MVP
-- Once you write the plan, firstly ask me to review it. Do not continue until I approve the plan

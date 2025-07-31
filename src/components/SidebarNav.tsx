@@ -22,7 +22,7 @@ const SidebarNav: React.FC = () => {
           aria-label={item.label}
           onClick={
             item.label === 'Browse' ? () => navigate('/listview') : 
-            item.label === 'Home' ? () => navigate('/') : 
+            item.label === 'Home' ? () => navigate('/dashboard') : 
             item.label === 'Analytics' ? () => navigate('/analytics') : 
             undefined
           }
