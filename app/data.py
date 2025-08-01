@@ -33,7 +33,11 @@ dummy_cards = [
     Card(id=3, deck_id=1, front="Thank you", back="Gracias", accuracy=0.7, total_attempts=8, last_reviewed_at=datetime.now() - timedelta(days=1), created_at=datetime.now() - timedelta(days=29)),
     Card(id=4, deck_id=1, front="Good morning", back="Buenos días", accuracy=0.6, total_attempts=12, created_at=datetime.now() - timedelta(days=29)),
     Card(id=5, deck_id=1, front="How are you?", back="¿Cómo estás?", accuracy=0.5, total_attempts=15, created_at=datetime.now() - timedelta(days=28)),
-    
+    Card(id=6, deck_id=1, front="What is your name?", back="¿Cuál es tu nombre?", accuracy=0.4, total_attempts=10, created_at=datetime.now() - timedelta(days=27)),
+    Card(id=7, deck_id=1, front="Where are you from?", back="¿De dónde eres?", accuracy=0.3, total_attempts=5, created_at=datetime.now() - timedelta(days=26)),
+    Card(id=8, deck_id=1, front="I love you", back="Te quiero", accuracy=0.2, total_attempts=20, created_at=datetime.now() - timedelta(days=25)),
+    Card(id=9, deck_id=1, front="Friend", back="Amigo", accuracy=0.5, total_attempts=15, created_at=datetime.now() - timedelta(days=28)),
+
     # Python deck cards
     Card(id=6, deck_id=2, front="What is a list comprehension?", back="A concise way to create lists: [x for x in iterable]", accuracy=0.75, total_attempts=8, last_reviewed_at=datetime.now() - timedelta(days=3), created_at=datetime.now() - timedelta(days=20)),
     Card(id=7, deck_id=2, front="What does 'self' refer to?", back="The instance of the class", accuracy=0.95, total_attempts=6, last_reviewed_at=datetime.now() - timedelta(days=1), created_at=datetime.now() - timedelta(days=20)),
