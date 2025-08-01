@@ -3,12 +3,19 @@ from fastapi.middleware.cors import CORSMiddleware
 from typing import List
 from .models import Deck, Card, StudySession, SessionComplete, Analytics, TestResults
 from .data import data_layer
+from fastapi import Depends
+from sqlalchemy.orm import Session
+from .database import SessionLocal
+from . import db_models, database, schema
 
 app = FastAPI(title="Flashcard API", version="1.0.0")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:8080"],
+    allow_origins=[
+        "http://localhost:8080",
+        "http://192.168.1.141:8080"  
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -18,9 +25,9 @@ app.add_middleware(
 def read_root():
     return {"message": "Flashcard API"}
 
-@app.get("/decks", response_model=List[Deck])
-def get_decks():
-    return data_layer.get_all_decks()
+# @app.get("/decks", response_model=List[Deck])
+# def get_decks():
+#     return data_layer.get_all_decks()
 
 @app.get("/decks/{deck_id}/cards", response_model=List[Card])
 def get_deck_cards(deck_id: int):
@@ -50,3 +57,14 @@ def complete_study_session(test_results: TestResults):
 @app.get("/analytics", response_model=Analytics)
 def get_analytics():
     return data_layer.get_analytics()
+
+def get_db():
+    db = database.SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+@app.get("/decks", response_model=list[schema.DeckOut]) 
+def read_decks(db: Session = Depends(get_db)):
+    return db.query(db_models.Deck).all()
