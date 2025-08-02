@@ -1,12 +1,15 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from typing import List
-from .models import Deck, Card, StudySession, SessionComplete, Analytics, TestResults
+from .models import Deck, StudySession, SessionComplete, Analytics, TestResults
 from .data import data_layer
 from fastapi import Depends
 from sqlalchemy.orm import Session
 from .database import SessionLocal
-from . import db_models, database, schema
+from . import db_models, database, schemas
+from app.schemas import Card
+from app.db_models import Card as CardORM
+
 
 app = FastAPI(title="Flashcard API", version="1.0.0")
 
@@ -29,12 +32,12 @@ def read_root():
 # def get_decks():
 #     return data_layer.get_all_decks()
 
-@app.get("/decks/{deck_id}/cards", response_model=List[Card])
-def get_deck_cards(deck_id: int):
-    cards = data_layer.get_cards_by_deck_id(deck_id)
-    if not cards:
-        raise HTTPException(status_code=404, detail="Deck not found or has no cards")
-    return cards
+# @app.get("/decks/{deck_id}/cards", response_model=List[Card])
+# def get_deck_cards(deck_id: int):
+#     cards = data_layer.get_cards_by_deck_id(deck_id)
+#     if not cards:
+#         raise HTTPException(status_code=404, detail="Deck not found or has no cards")
+#     return cards
 
 @app.post("/study/sessions", response_model=StudySession)
 def create_study_session(deck_id: int):
@@ -45,14 +48,10 @@ def create_study_session(deck_id: int):
     session = data_layer.create_session(deck_id)
     return session
 
-@app.post("/study/sessions/complete", response_model=SessionComplete)
+@app.post("/study/sessions/complete")
 def complete_study_session(test_results: TestResults):
-    session_data = data_layer.complete_session_from_results(test_results)
-    
-    if not session_data:
-        raise HTTPException(status_code=400, detail="Failed to complete session")
-    
-    return session_data
+    data_layer.complete_session_from_results(test_results)
+    return {"message": "Session completed successfully"}
 
 @app.get("/analytics", response_model=Analytics)
 def get_analytics():
@@ -65,6 +64,13 @@ def get_db():
     finally:
         db.close()
 
-@app.get("/decks", response_model=list[schema.DeckOut]) 
+@app.get("/decks", response_model=list[schemas.DeckOut]) 
 def read_decks(db: Session = Depends(get_db)):
     return db.query(db_models.Deck).all()
+
+@app.get("/decks/{deck_id}/cards", response_model=List[Card])
+def get_deck_cards(deck_id: int, db: Session = Depends(get_db)):
+    cards = db.query(CardORM).filter(CardORM.deck_id == deck_id).all()
+    if not cards:
+        raise HTTPException(status_code=404, detail="Deck not found or has no cards")
+    return cards

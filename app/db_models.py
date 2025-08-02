@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, ARRAY
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from .database import Base
@@ -27,3 +27,18 @@ class Card(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
     deck = relationship("Deck", back_populates="cards")
+
+class StudySession(Base):
+    __tablename__ = "study_sessions"
+
+    id = Column(Integer, primary_key=True)
+    deck_id = Column(Integer, ForeignKey("decks.id"), nullable=False)
+    passed_words = Column(ARRAY(Integer), nullable=False)  
+    missed_words = Column(ARRAY(Integer), nullable=False)
+    total_cards = Column(Integer, nullable=False)
+    passed_count = Column(Integer, nullable=False)
+    missed_count = Column(Integer, nullable=False)
+    accuracy_percentage = Column(Float, nullable=False)
+    completed_at = Column(DateTime, default=datetime.utcnow)
+
+    deck = relationship("Deck")

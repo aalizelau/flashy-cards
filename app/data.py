@@ -123,28 +123,9 @@ class DataLayer:
         passed_count = len(passed_words)
         missed_count = len(missed_words)
         accuracy_percentage = (passed_count / total_cards * 100) if total_cards > 0 else 0.0
+    
         
-        summary = SessionSummary(
-            total_cards=total_cards,
-            passed_count=passed_count,
-            missed_count=missed_count,
-            accuracy_percentage=round(accuracy_percentage, 2)
-        )
-        
-        # Create session complete data
-        completed_at = datetime.now()
-        session_data = SessionComplete(
-            deck_id=test_results.deck_id,
-            passed_words=passed_words,
-            missed_words=missed_words,
-            summary=summary,
-            completed_at=completed_at
-        )
-        
-        # Update card statistics using existing complete_session method
-        success = self.complete_session(session_data)
-        
-        return session_data if success else None
+        return 
     
     def get_analytics(self) -> Analytics:
         # Calculate unique cards studied
