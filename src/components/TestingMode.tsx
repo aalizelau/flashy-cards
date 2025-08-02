@@ -1,26 +1,42 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { FlashcardComponent } from './FlashcardComponent';
 import { Card, TestResult } from '@/data/flashcards';
-import { useCompleteStudySession } from '@/hooks/useApi';
+import { useStartStudySession, useCompleteStudySession } from '@/hooks/useApi';
 import { BookOpen, CheckCircle, XCircle, ArrowLeft } from 'lucide-react';
 
 interface TestingModeProps {
-  flashcards: Card[];
+  deckId: number;
   onComplete: (results: TestResult[]) => void;
   onBackToBrowser?: () => void;
-  deckId?: number;
 }
 
-export const TestingMode: React.FC<TestingModeProps> = ({ flashcards, onComplete, onBackToBrowser, deckId }) => {
+export const TestingMode: React.FC<TestingModeProps> = ({ deckId, onComplete, onBackToBrowser }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [results, setResults] = useState<TestResult[]>([]);
+  const [flashcards, setFlashcards] = useState<Card[]>([]);
+  
+  const startStudySessionMutation = useStartStudySession();
   const completeSessionMutation = useCompleteStudySession();
 
+  // Start study session when component mounts
+  useEffect(() => {
+    const initializeStudySession = async () => {
+      try {
+        const studySession = await startStudySessionMutation.mutateAsync(deckId);
+        setFlashcards(studySession.cards);
+      } catch (error) {
+        console.error('Failed to start study session:', error);
+      }
+    };
+
+    initializeStudySession();
+  }, [deckId]); // Remove startStudySessionMutation from dependencies
+
   const currentCard = flashcards[currentIndex];
-  const progress = ((currentIndex) / flashcards.length) * 100;
+  const progress = flashcards.length > 0 ? ((currentIndex) / flashcards.length) * 100 : 0;
 
   const handleCardFlip = () => {
     setIsFlipped(true);
@@ -38,17 +54,15 @@ export const TestingMode: React.FC<TestingModeProps> = ({ flashcards, onComplete
     setResults(newResults);
 
     if (currentIndex === flashcards.length - 1) {
-      // Test complete - submit to API if deckId is provided
-      if (deckId) {
-        try {
-          await completeSessionMutation.mutateAsync({
-            deck_id: deckId,
-            test_results: newResults
-          });
-        } catch (error) {
-          console.error('Failed to submit test results:', error);
-          // Still proceed with completing the test locally
-        }
+      // Test complete - submit to API
+      try {
+        await completeSessionMutation.mutateAsync({
+          deck_id: deckId,
+          test_results: newResults
+        });
+      } catch (error) {
+        console.error('Failed to submit test results:', error);
+        // Still proceed with completing the test locally
       }
       
       onComplete(newResults);
@@ -57,6 +71,46 @@ export const TestingMode: React.FC<TestingModeProps> = ({ flashcards, onComplete
       setIsFlipped(false);
     }
   };
+
+  // Show loading state while initializing study session
+  if (startStudySessionMutation.isPending || flashcards.length === 0) {
+    return (
+      <div className="container mx-auto px-4 py-8 max-w-2xl">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900 mx-auto mb-4"></div>
+          <p className="text-lg">Starting study session...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (startStudySessionMutation.isError) {
+    return (
+      <div className="container mx-auto px-4 py-8 max-w-2xl">
+        <div className="text-center text-red-600">
+          <h2 className="text-2xl font-bold mb-4">Error Starting Study Session</h2>
+          <p className="mb-4">{startStudySessionMutation.error?.message || 'Failed to start study session'}</p>
+          <div className="space-x-4">
+            <Button 
+              onClick={() => window.location.reload()}
+              variant="destructive"
+            >
+              Retry
+            </Button>
+            {onBackToBrowser && (
+              <Button 
+                onClick={onBackToBrowser}
+                variant="outline"
+              >
+                Back to Dashboard
+              </Button>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-2xl">

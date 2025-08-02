@@ -47,7 +47,7 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
       onStartTest();
     } else {
       // Default behavior - navigate to study session with selected deck
-      navigate(`/study/${selectedDeckId || 1}`);
+      navigate(`/study/${selectedDeckId || 3}`);
     }
   };
 

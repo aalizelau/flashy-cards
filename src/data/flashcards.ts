@@ -30,6 +30,7 @@ export interface TestResult {
 export interface StudySession {
   deck_id: number;
   started_at: string;
+  cards: Card[];
 }
 
 export interface StudySessionComplete {

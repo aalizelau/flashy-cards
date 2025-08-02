@@ -1,15 +1,14 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MainDashboard } from '@/components/TestOptions';
-import { useDecks, useDeckCards } from '@/hooks/useApi';
+import { useDecks } from '@/hooks/useApi';
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   
-  // Fetch decks and default to first deck for initial load
+  // Fetch decks for dashboard display (don't fetch cards here)
   const { data: decks, isLoading: decksLoading, error: decksError } = useDecks();
-  const selectedDeckId = decks?.[0]?.id || 1;
-  const { data: cards, isLoading: cardsLoading, error: cardsError } = useDeckCards(selectedDeckId);
+  const selectedDeckId = decks?.[2]?.id || 1;
 
   // Navigation handlers
   const handleStartTest = () => {
@@ -28,7 +27,7 @@ const Dashboard: React.FC = () => {
   };
 
   // Show loading state
-  if (decksLoading || cardsLoading) {
+  if (decksLoading) {
     return (
       <div className="min-h-screen bg-gradient-bg flex items-center justify-center">
         <div className="text-center">
@@ -40,13 +39,13 @@ const Dashboard: React.FC = () => {
   }
 
   // Show error state
-  if (decksError || cardsError) {
+  if (decksError) {
     return (
       <div className="min-h-screen bg-gradient-bg flex items-center justify-center">
         <div className="text-center text-red-600">
           <h2 className="text-2xl font-bold mb-4">Error Loading Dashboard</h2>
           <p className="mb-4">
-            {decksError?.message || cardsError?.message || 'Failed to load dashboard data'}
+            {decksError?.message || 'Failed to load dashboard data'}
           </p>
           <button 
             onClick={() => window.location.reload()}
@@ -61,7 +60,7 @@ const Dashboard: React.FC = () => {
 
   return (
     <MainDashboard
-      flashcards={cards || []}
+      flashcards={[]} // Empty array since we don't fetch cards at dashboard level
       onStartTest={handleStartTest}
       onViewReview={handleViewReview}
       decks={decks}
