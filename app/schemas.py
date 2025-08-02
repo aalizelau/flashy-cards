@@ -20,6 +20,9 @@ class StudySession(BaseModel):
     started_at: datetime
     cards: List[Card]
 
+class CreateSessionRequest(BaseModel):
+    deck_id: int
+
 class DeckBase(BaseModel):
     name: str
 

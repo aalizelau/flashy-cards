@@ -7,7 +7,7 @@ from fastapi import Depends
 from sqlalchemy.orm import Session
 from .database import SessionLocal
 from . import db_models, database, schemas
-from app.schemas import Card, StudySession
+from app.schemas import Card, StudySession, CreateSessionRequest
 from app.db_models import Card as CardORM
 from sqlalchemy.orm import Session
 from app.session_service import SessionService
@@ -78,10 +78,10 @@ def get_deck_cards(deck_id: int, db: Session = Depends(get_db)):
     return cards
 
 @app.post("/study/sessions", response_model=StudySession)
-def create_study_session(deck_id: int, db: Session = Depends(get_db)):
+def create_study_session(request: CreateSessionRequest, db: Session = Depends(get_db)):
     try:
         session_service = SessionService(db)
-        return session_service.create_study_session(deck_id)
+        return session_service.create_study_session(request.deck_id)
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
     
