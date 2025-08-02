@@ -56,10 +56,12 @@ export const TestingMode: React.FC<TestingModeProps> = ({ deckId, onComplete, on
     if (currentIndex === flashcards.length - 1) {
       // Test complete - submit to API
       try {
-        await completeSessionMutation.mutateAsync({
-          deck_id: deckId,
-          test_results: newResults
-        });
+        const apiPayload = newResults.map(result => ({
+          card_id: result.card_id,
+          remembered: result.remembered
+        }));
+        
+        await completeSessionMutation.mutateAsync(apiPayload);
       } catch (error) {
         console.error('Failed to submit test results:', error);
         // Still proceed with completing the test locally

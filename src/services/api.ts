@@ -58,7 +58,7 @@ class ApiClient {
 
   // Complete a study session
   async completeStudySession(
-    sessionData: StudySessionComplete
+    sessionData: StudySessionComplete[]
   ): Promise<StudySessionResponse> {
     return this.request<StudySessionResponse>('/study/sessions/complete', {
       method: 'POST',

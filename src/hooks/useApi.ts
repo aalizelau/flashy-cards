@@ -46,12 +46,12 @@ export const useCompleteStudySession = () => {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: (sessionData: StudySessionComplete) => 
+    mutationFn: (sessionData: StudySessionComplete[]) => 
       apiClient.completeStudySession(sessionData),
-    onSuccess: (data) => {
+    onSuccess: () => {
       // Invalidate related queries to refresh data
-      queryClient.invalidateQueries({ queryKey: queryKeys.deckCards(data.deck_id) });
       queryClient.invalidateQueries({ queryKey: queryKeys.analytics });
+      queryClient.invalidateQueries({ queryKey: queryKeys.decks });
     },
   });
 };

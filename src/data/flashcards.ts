@@ -34,8 +34,8 @@ export interface StudySession {
 }
 
 export interface StudySessionComplete {
-  deck_id: number;
-  test_results: TestResult[];
+  card_id: number;
+  remembered: boolean;
 }
 
 export interface SessionSummary {
