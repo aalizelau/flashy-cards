@@ -16,9 +16,8 @@ const ListView: React.FC = () => {
 		id: deck.id,
 		name: deck.name,
 		wordCount: deck.card_count,
-		progress: Math.floor(Math.random() * 100), // TODO: Calculate real progress from analytics
+		progress: Math.floor(deck.progress * 100), // TODO: Calculate real progress from analytics
 		category: 'Vocabulary', // Default category, could be enhanced
-		description: deck.description,
 	})) || [];
 
 	const filteredCollections = collections.filter(collection =>

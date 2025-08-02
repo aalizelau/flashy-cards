@@ -3,8 +3,8 @@
 export interface Deck {
   id: number;
   name: string;
-  description: string;
   created_at: string;
+  progress: number;
   card_count: number;
 }
 

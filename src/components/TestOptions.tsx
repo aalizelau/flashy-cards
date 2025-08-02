@@ -50,23 +50,7 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
       navigate(`/study/${selectedDeckId || 1}`);
     }
   };
-  
-  const handleViewReview = () => {
-    if (onViewReview) {
-      onViewReview();
-    } else {
-      // Default behavior - navigate to study session in review mode
-      navigate(`/study/${selectedDeckId || 1}?mode=review`);
-    }
-  };
-  // Navigation dots data
-  const navDots = [
-    { active: true },
-    { active: false },
-    { active: false },
-    { active: false },
-    { active: false }
-  ];
+
 
   // Statistics from analytics API
   const totalWords = analytics?.total_cards || 0;
@@ -118,19 +102,6 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
 
   return (
     <div className="min-h-screen bg-gradient-bg flex">
-      {/* Sidebar with dots */}
-      {/* <div className="w-20 bg-muted/30 flex flex-col items-center py-8 space-y-4">
-        {navDots.map((dot, index) => (
-          <div
-            key={index}
-            className={`w-4 h-4 rounded-full transition-all ${
-              dot.active 
-                ? 'bg-foreground' 
-                : 'bg-muted-foreground/30'
-            }`}
-          />
-        ))}
-      </div> */}
 
       {/* Main content */}
       <div className="flex-1 px-8 py-12 max-w-4xl mx-auto">
