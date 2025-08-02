@@ -76,11 +76,11 @@ class DataLayer:
     def get_cards_by_deck_id(self, deck_id: int) -> List[Card]:
         return [card for card in self.cards if card.deck_id == deck_id]
     
-    def create_session(self, deck_id: int) -> StudySession:
-        return StudySession(
-            deck_id=deck_id,
-            started_at=datetime.now()
-        )
+    # def create_session(self, deck_id: int) -> StudySession:
+    #     return StudySession(
+    #         deck_id=deck_id,
+    #         started_at=datetime.now()
+    #     )
     
     def complete_session(self, session_data: SessionComplete) -> bool:
         # Update card statistics

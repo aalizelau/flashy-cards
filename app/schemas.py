@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from datetime import datetime
 from typing import Optional
+from typing import List
 
 class Card(BaseModel):
     id: int
@@ -12,6 +13,12 @@ class Card(BaseModel):
     correct_answers: int = 0
     last_reviewed_at: Optional[datetime] = None
     created_at: datetime
+    model_config = {"from_attributes": True}
+
+class StudySession(BaseModel):
+    deck_id: int
+    started_at: datetime
+    cards: List[Card]
 
 class DeckBase(BaseModel):
     name: str

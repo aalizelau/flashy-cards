@@ -4,12 +4,31 @@ from typing import List
 from sqlalchemy.orm import Session
 
 from app.models import Card, SessionComplete, SessionSummary, TestResults
-from app.db_models import StudySession 
+from app.db_models import StudySession as StudySessionORM, Card as CardORM
+from app.schemas import StudySession, Card as CardSchema
 from fastapi import HTTPException
+import random
 
 class SessionService:
     def __init__(self, db: Session):
         self.db = db
+
+    def create_study_session(self, deck_id: int) -> StudySession:
+        cards = self.db.query(CardORM).filter(CardORM.deck_id == deck_id).all()
+        if not cards:
+            raise HTTPException(status_code=404, detail="Deck not found or has no cards")
+        
+        # Shuffle cards for randomness
+        random.shuffle(cards)
+        
+        # Convert ORM models to Pydantic models
+        card_models = [CardSchema.model_validate(card) for card in cards]
+
+        return StudySession(
+            deck_id=deck_id,
+            started_at=datetime.now(),
+            cards=card_models  
+        )
 
     def complete_session(self, test_results: TestResults) -> SessionComplete:
         passed = []

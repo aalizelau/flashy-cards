@@ -1,14 +1,16 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from typing import List
-from .models import Deck, StudySession, SessionComplete, Analytics, TestResults
+from .models import Deck, SessionComplete, Analytics, TestResults
 from .data import data_layer
 from fastapi import Depends
 from sqlalchemy.orm import Session
 from .database import SessionLocal
 from . import db_models, database, schemas
-from app.schemas import Card
+from app.schemas import Card, StudySession
 from app.db_models import Card as CardORM
+from sqlalchemy.orm import Session
+from app.session_service import SessionService
 
 
 app = FastAPI(title="Flashcard API", version="1.0.0")
@@ -39,14 +41,14 @@ def read_root():
 #         raise HTTPException(status_code=404, detail="Deck not found or has no cards")
 #     return cards
 
-@app.post("/study/sessions", response_model=StudySession)
-def create_study_session(deck_id: int):
-    deck_cards = data_layer.get_cards_by_deck_id(deck_id)
-    if not deck_cards:
-        raise HTTPException(status_code=404, detail="Deck not found")
+# @app.post("/study/sessions", response_model=StudySession)
+# def create_study_session(deck_id: int):
+#     deck_cards = data_layer.get_cards_by_deck_id(deck_id)
+#     if not deck_cards:
+#         raise HTTPException(status_code=404, detail="Deck not found")
     
-    session = data_layer.create_session(deck_id)
-    return session
+#     session = data_layer.create_session(deck_id)
+#     return session
 
 @app.post("/study/sessions/complete")
 def complete_study_session(test_results: TestResults):
@@ -74,3 +76,15 @@ def get_deck_cards(deck_id: int, db: Session = Depends(get_db)):
     if not cards:
         raise HTTPException(status_code=404, detail="Deck not found or has no cards")
     return cards
+
+@app.post("/study/sessions", response_model=StudySession)
+def create_study_session(deck_id: int, db: Session = Depends(get_db)):
+    try:
+        session_service = SessionService(db)
+        return session_service.create_study_session(deck_id)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    
+    
+
+
