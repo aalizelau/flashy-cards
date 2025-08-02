@@ -23,6 +23,10 @@ class StudySession(BaseModel):
 class CreateSessionRequest(BaseModel):
     deck_id: int
 
+class TestResult(BaseModel):
+    card_id: int
+    remembered: bool
+
 class DeckBase(BaseModel):
     name: str
 

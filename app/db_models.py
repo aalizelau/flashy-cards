@@ -23,6 +23,7 @@ class Card(Base):
     back = Column(String, nullable=False)
     accuracy = Column(Float, default=0.0)
     total_attempts = Column(Integer, default=0)
+    correct_answers = Column(Integer, default=0)
     last_reviewed_at = Column(DateTime, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 

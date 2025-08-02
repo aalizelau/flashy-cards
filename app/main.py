@@ -1,13 +1,13 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from typing import List
-from .models import Deck, SessionComplete, Analytics, TestResults
+from .models import Deck, SessionComplete, Analytics
 from .data import data_layer
 from fastapi import Depends
 from sqlalchemy.orm import Session
 from .database import SessionLocal
 from . import db_models, database, schemas
-from app.schemas import Card, StudySession, CreateSessionRequest
+from app.schemas import Card, StudySession, CreateSessionRequest, TestResult
 from app.db_models import Card as CardORM
 from sqlalchemy.orm import Session
 from app.session_service import SessionService
@@ -50,11 +50,6 @@ def read_root():
 #     session = data_layer.create_session(deck_id)
 #     return session
 
-@app.post("/study/sessions/complete")
-def complete_study_session(test_results: TestResults):
-    data_layer.complete_session_from_results(test_results)
-    return {"message": "Session completed successfully"}
-
 @app.get("/analytics", response_model=Analytics)
 def get_analytics():
     return data_layer.get_analytics()
@@ -84,6 +79,12 @@ def create_study_session(request: CreateSessionRequest, db: Session = Depends(ge
         return session_service.create_study_session(request.deck_id)
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
+
+@app.post("/study/sessions/complete")
+def complete_study_session(results: List[TestResult], db: Session = Depends(get_db)):
+    session_service = SessionService(db)
+    session_service.complete_session(results)
+    return {"message": "Session completed successfully"}
     
     
 
