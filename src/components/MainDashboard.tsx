@@ -58,44 +58,6 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
   const averageProgress = Math.round((analytics?.overall_average_progress || 0) * 100);
   const timesRemembered = analytics?.total_correct_answers || 0;
 
-  const practiceCards = [
-    {
-      id: 'daily',
-      title: 'Daily Challenges',
-      description: 'Random set each day. Maybe 5-10 words, mixed difficulty.',
-      color: 'daily-challenges',
-      icon: Rocket,
-      large: true
-    },
-    {
-      id: 'newly',
-      title: 'Test Newly Added',
-      color: 'test-newly',
-      icon: Plus,
-      large: false
-    },
-    {
-      id: 'chapters',
-      title: 'Test By Chapters',
-      color: 'test-chapters',
-      icon: BookOpen,
-      large: false
-    },
-    {
-      id: 'all',
-      title: 'Test All Words',
-      color: 'test-all',
-      icon: Target,
-      large: false
-    },
-    {
-      id: 'unfamiliar',
-      title: 'Test Unfamiliar',
-      color: 'test-unfamiliar',
-      icon: Brain,
-      large: false
-    }
-  ];
 
   
   

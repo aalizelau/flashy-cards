@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MainDashboard } from '@/components/TestOptions';
+import { MainDashboard } from '@/components/MainDashboard';
 import { useDecks } from '@/hooks/useApi';
 
 const Dashboard: React.FC = () => {

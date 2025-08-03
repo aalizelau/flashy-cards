@@ -9,7 +9,7 @@ import StudySession from "./pages/StudySession";
 import NotFound from "./pages/NotFound";
 import ListView from "./components/ListView";
 import SidebarNav from "./components/SidebarNav";
-import ChapterDetailWrapper from "./components/ChapterDetailWrapper";
+import ChapterDetail from "./components/ChapterDetail";
 import AnalyticsPage from "./components/Analytics";
 
 const queryClient = new QueryClient();
@@ -28,7 +28,7 @@ const App = () => (
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/study/:deckId" element={<StudySession />} />
               <Route path="/listview" element={<ListView />} />
-              <Route path="/chapter/:collectionName" element={<ChapterDetailWrapper />} />
+              <Route path="/chapter/:collectionName" element={<ChapterDetail />} />
               <Route path="/analytics" element={<AnalyticsPage />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
