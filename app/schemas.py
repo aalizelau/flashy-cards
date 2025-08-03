@@ -15,6 +15,20 @@ class Card(BaseModel):
     created_at: datetime
     model_config = {"from_attributes": True}
 
+class DeckBase(BaseModel):
+    name: str
+
+
+class DeckOut(BaseModel):
+    id: int
+    name: str
+    created_at: datetime
+    progress: float
+    card_count: int
+
+    class Config:
+        orm_mode = True 
+
 class StudySession(BaseModel):
     deck_id: int
     started_at: datetime
@@ -35,18 +49,18 @@ class TestAnalytics(BaseModel):
     updated_at: datetime | None = None
 
     class Config:
-        orm_mode = True
+        orm_mode = True 
 
-class DeckBase(BaseModel):
-    name: str
+class SessionSummary(BaseModel):
+    total_cards: int
+    passed_count: int
+    missed_count: int
+    accuracy_percentage: float
 
 
-class DeckOut(BaseModel):
-    id: int
-    name: str
-    created_at: datetime
-    progress: float
-    card_count: int
-
-    class Config:
-        orm_mode = True  # ✅ Needed to allow returning SQLAlchemy models
+class SessionComplete(BaseModel):
+    deck_id: int
+    passed_words: List[int]  # List of card IDs that were correct
+    missed_words: List[int]  # List of card IDs that were incorrect
+    summary: SessionSummary
+    completed_at: datetime

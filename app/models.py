@@ -1,62 +1,56 @@
-from pydantic import BaseModel
-from typing import List, Optional, Dict
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, ARRAY, func
+from sqlalchemy.orm import relationship
 from datetime import datetime
+from .database import Base
 
 
-class Deck(BaseModel):
-    id: int
-    name: str
-    description: Optional[str] = None
-    created_at: datetime
-    card_count: int
+class Deck(Base):
+    __tablename__ = "decks"
 
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    progress = Column(Float, default=0.0)
+    card_count = Column(Integer, default=0)
 
-class Card(BaseModel):
-    id: int
-    deck_id: int
-    front: str
-    back: str
-    accuracy: float = 0.0
-    total_attempts: int = 0
-    correct_answers: int = 0
-    last_reviewed_at: Optional[datetime] = None
-    created_at: datetime
+    cards = relationship("Card", back_populates="deck")
 
+class Card(Base):
+    __tablename__ = "cards"
 
-class StudySession(BaseModel):
-    deck_id: int
-    started_at: datetime
+    id = Column(Integer, primary_key=True, index=True)
+    deck_id = Column(Integer, ForeignKey("decks.id"))
+    front = Column(String, nullable=False)
+    back = Column(String, nullable=False)
+    accuracy = Column(Float, default=0.0)
+    total_attempts = Column(Integer, default=0)
+    correct_answers = Column(Integer, default=0)
+    last_reviewed_at = Column(DateTime, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
 
+    deck = relationship("Deck", back_populates="cards")
 
-class SessionSummary(BaseModel):
-    total_cards: int
-    passed_count: int
-    missed_count: int
-    accuracy_percentage: float
+class StudySession(Base):
+    __tablename__ = "study_sessions"
 
+    id = Column(Integer, primary_key=True)
+    deck_id = Column(Integer, ForeignKey("decks.id"), nullable=False)
+    passed_words = Column(ARRAY(Integer), nullable=False)  
+    missed_words = Column(ARRAY(Integer), nullable=False)
+    total_cards = Column(Integer, nullable=False)
+    passed_count = Column(Integer, nullable=False)
+    missed_count = Column(Integer, nullable=False)
+    accuracy_percentage = Column(Float, nullable=False)
+    completed_at = Column(DateTime, default=datetime.utcnow)
 
-class SessionComplete(BaseModel):
-    deck_id: int
-    passed_words: List[int]  # List of card IDs that were correct
-    missed_words: List[int]  # List of card IDs that were incorrect
-    summary: SessionSummary
-    completed_at: datetime
+    deck = relationship("Deck")
 
+class TestAnalytics(Base):
+    __tablename__ = "test_analytics"
 
-class TestResult(BaseModel):
-    card_id: int
-    remembered: bool
-
-
-class TestResults(BaseModel):
-    deck_id: int
-    test_results: List[TestResult]
-
-
-class Analytics(BaseModel):
-    total_decks: int
-    total_cards: int
-    total_cards_studied: int  # unique cards studied
-    total_correct_answers: int  # non-unique correct answers
-    cards_mastered: int
-    overall_average_progress: float  # overall average accuracy percentage
+    id = Column(Integer, primary_key=True, index=True)
+    total_cards_studied = Column(Integer)
+    total_correct_answers = Column(Integer)
+    cards_mastered = Column(Integer)
+    overall_average_progress = Column(Float)
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())

@@ -1,14 +1,12 @@
 from fastapi import FastAPI, HTTPException, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from typing import List
-from .models import Deck, SessionComplete
-from .data import data_layer
 from fastapi import Depends
 from sqlalchemy.orm import Session
 from .database import SessionLocal
-from . import db_models, database, schemas
+from . import database, models, schemas
 from app.schemas import Card, StudySession, CreateSessionRequest, TestResult, TestAnalytics
-from app.db_models import Card as CardORM, TestAnalytics as TestAnalyticsORM
+from app.models import Card as CardORM, TestAnalytics as TestAnalyticsORM
 from sqlalchemy.orm import Session
 from app.session_service import SessionService
 
@@ -30,30 +28,6 @@ app.add_middleware(
 def read_root():
     return {"message": "Flashcard API"}
 
-# @app.get("/decks", response_model=List[Deck])
-# def get_decks():
-#     return data_layer.get_all_decks()
-
-# @app.get("/decks/{deck_id}/cards", response_model=List[Card])
-# def get_deck_cards(deck_id: int):
-#     cards = data_layer.get_cards_by_deck_id(deck_id)
-#     if not cards:
-#         raise HTTPException(status_code=404, detail="Deck not found or has no cards")
-#     return cards
-
-# @app.post("/study/sessions", response_model=StudySession)
-# def create_study_session(deck_id: int):
-#     deck_cards = data_layer.get_cards_by_deck_id(deck_id)
-#     if not deck_cards:
-#         raise HTTPException(status_code=404, detail="Deck not found")
-    
-#     session = data_layer.create_session(deck_id)
-#     return session
-
-# @app.get("/analytics", response_model=Analytics)
-# def get_analytics():
-#     return data_layer.get_analytics()
-
 def get_db():
     db = database.SessionLocal()
     try:
@@ -63,7 +37,7 @@ def get_db():
 
 @app.get("/decks", response_model=list[schemas.DeckOut]) 
 def read_decks(db: Session = Depends(get_db)):
-    return db.query(db_models.Deck).all()
+    return db.query(models.Deck).all()
 
 @app.get("/decks/{deck_id}/cards", response_model=List[Card])
 def get_deck_cards(deck_id: int, db: Session = Depends(get_db)):

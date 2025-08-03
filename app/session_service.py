@@ -4,9 +4,8 @@ from typing import List
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 
-from app.models import Card, SessionComplete, SessionSummary, TestResult
-from app.db_models import StudySession as StudySessionORM, Card as CardORM, TestAnalytics as TestAnalyticsORM
-from app.schemas import StudySession, Card as CardSchema
+from app.models import Card as CardORM, TestAnalytics as TestAnalyticsORM
+from app.schemas import StudySession, Card as CardSchema, TestResult, SessionComplete
 from fastapi import HTTPException
 import random
 
@@ -31,7 +30,7 @@ class SessionService:
             cards=card_models  
         )
 
-    def complete_session(self, results: List[TestResult]) -> SessionComplete:
+    def complete_session(self, results: List[TestResult]) :
         passed = []
         missed = []
 
