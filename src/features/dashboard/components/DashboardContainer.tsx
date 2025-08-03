@@ -15,14 +15,6 @@ const DashboardContainer: React.FC = () => {
     navigate(`/test/${selectedDeckId}`);
   };
 
-  const handleViewReview = () => {
-    navigate(`/test/${selectedDeckId}?mode=review`);
-  };
-
-  const handleDeckChange = (deckId: number) => {
-    window.location.href = `/dashboard?deck=${deckId}`;
-  };
-
   const isLoading = decksLoading || analyticsLoading;
   const error = decksError || analyticsError;
 
@@ -58,12 +50,7 @@ const DashboardContainer: React.FC = () => {
 
   return (
     <MainDashboard
-      flashcards={[]}
       onStartTest={handleStartTest}
-      onViewReview={handleViewReview}
-      decks={decks}
-      selectedDeckId={selectedDeckId}
-      onDeckChange={handleDeckChange}
       analytics={analytics}
     />
   );
