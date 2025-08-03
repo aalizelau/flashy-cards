@@ -6,6 +6,7 @@ import NotFound from "../pages/NotFound";
 import ListView from "../features/collections/components/ListView";
 import ChapterDetail from "../features/collections/components/ChapterDetail";
 import AnalyticsPage from "../features/analytics/components/Analytics";
+import CreateDeck from "../features/deck-creation/pages/CreateDeck";
 
 export const AppRouter = () => (
   <Routes>
@@ -15,6 +16,7 @@ export const AppRouter = () => (
     <Route path="/listview" element={<ListView />} />
     <Route path="/chapter/:collectionName" element={<ChapterDetail />} />
     <Route path="/analytics" element={<AnalyticsPage />} />
+    <Route path="/create-deck" element={<CreateDeck />} />
     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
     <Route path="*" element={<NotFound />} />
   </Routes>
