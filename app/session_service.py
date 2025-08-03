@@ -99,7 +99,7 @@ class SessionService:
             total_cards_studied=total_cards_studied,
             total_correct_answers=int(total_correct_answers),
             cards_mastered=cards_mastered,
-            overall_average_progress=round(overall_average_progress * 100, 2),
+            overall_average_progress=round(overall_average_progress, 2),
         )
 
         self.db.add(analytics_entry)

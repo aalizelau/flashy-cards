@@ -1,14 +1,14 @@
 from fastapi import FastAPI, HTTPException, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from typing import List
-from .models import Deck, SessionComplete, Analytics
+from .models import Deck, SessionComplete
 from .data import data_layer
 from fastapi import Depends
 from sqlalchemy.orm import Session
 from .database import SessionLocal
 from . import db_models, database, schemas
-from app.schemas import Card, StudySession, CreateSessionRequest, TestResult
-from app.db_models import Card as CardORM
+from app.schemas import Card, StudySession, CreateSessionRequest, TestResult, TestAnalytics
+from app.db_models import Card as CardORM, TestAnalytics as TestAnalyticsORM
 from sqlalchemy.orm import Session
 from app.session_service import SessionService
 
@@ -92,7 +92,12 @@ def complete_study_session(
     return {"message": "Session completed successfully"}
 
 
-    
+@app.get("/analytics", response_model=TestAnalytics)
+def get_analytics(db: Session = Depends(get_db)):
+    analytics = db.query(TestAnalyticsORM).order_by(TestAnalyticsORM.updated_at.desc()).first()
+    if not analytics:
+        raise HTTPException(status_code=404, detail="No analytics data found")
+    return analytics
     
 
 

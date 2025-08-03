@@ -27,9 +27,7 @@ class TestResult(BaseModel):
     card_id: int
     remembered: bool
 
-class Analytics(BaseModel):
-    total_decks: int
-    total_cards: int
+class TestAnalytics(BaseModel):
     total_cards_studied: int
     total_correct_answers: int
     cards_mastered: int
