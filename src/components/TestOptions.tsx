@@ -53,7 +53,7 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
 
 
   // Statistics from analytics API
-  const totalWords = analytics?.total_cards || 0;
+  const totalWords = analytics?.total_cards_studied || 0;
   const masteredWords = analytics?.cards_mastered || 0;
   const averageProgress = Math.round((analytics?.overall_average_progress || 0) * 100);
   const timesRemembered = analytics?.total_correct_answers || 0;

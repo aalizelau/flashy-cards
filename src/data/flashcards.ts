@@ -53,9 +53,7 @@ export interface StudySessionResponse {
   completed_at: string;
 }
 
-export interface Analytics {
-  total_decks: number;
-  total_cards: number;
+export interface TestAnalytics {
   total_cards_studied: number;
   total_correct_answers: number;
   cards_mastered: number;

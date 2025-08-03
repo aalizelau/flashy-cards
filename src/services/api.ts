@@ -4,7 +4,7 @@ import {
   StudySession, 
   StudySessionComplete, 
   StudySessionResponse, 
-  Analytics 
+  TestAnalytics 
 } from '@/data/flashcards';
 
 const BASE_URL = 'http://localhost:8000';
@@ -67,8 +67,8 @@ class ApiClient {
   }
 
   // Get analytics data
-  async getAnalytics(): Promise<Analytics> {
-    return this.request<Analytics>('/analytics');
+  async getAnalytics(): Promise<TestAnalytics> {
+    return this.request<TestAnalytics>('/analytics');
   }
 }
 
