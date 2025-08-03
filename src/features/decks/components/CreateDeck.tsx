@@ -1,8 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Plus, Trash2, BookOpen, Upload, Edit3, } from 'lucide-react';
+import { Plus, Trash2, Upload, Edit3, Loader2 } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/components/ui/select';
 import { Label } from '@/shared/components/ui/label';
 import { Input } from '@/shared/components/ui/input';
+import { useNavigate } from 'react-router-dom';
+import { apiClient } from '@/shared/services/api';
+import { DeckWithCardsCreate, CardCreate } from '@/shared/types/api';
 
 interface Flashcard {
   id: string;
@@ -20,6 +23,7 @@ interface DropdownOption {
 }
 
 function CreateDeck() {
+  const navigate = useNavigate();
   const [deckTitle, setDeckTitle] = useState('');
   const [importMode, setImportMode] = useState<ImportMode>('individual');
   const [flashcards, setFlashcards] = useState<Flashcard[]>([
@@ -31,6 +35,7 @@ function CreateDeck() {
   const [customTermDelimiter, setCustomTermDelimiter] = useState('');
   const [customCardDelimiter, setCustomCardDelimiter] = useState('');
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [isLoading, setIsLoading] = useState(false);
   const lastCardRef = useRef<HTMLInputElement>(null);
 
   const termDelimiterOptions: DropdownOption[] = [
@@ -140,15 +145,41 @@ function CreateDeck() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (validateForm()) {
+    if (!validateForm()) return;
+
+    setIsLoading(true);
+    setErrors({});
+
+    try {
       const cardsToSubmit = importMode === 'individual' 
         ? flashcards.filter(card => card.front.trim() && card.back.trim())
         : bulkCards.filter(card => card.front.trim() && card.back.trim());
       
-      console.log('Creating deck:', { title: deckTitle, cards: cardsToSubmit });
-      alert(`Deck "${deckTitle}" created with ${cardsToSubmit.length} flashcards!`);
+      // Transform to API format
+      const apiCards: CardCreate[] = cardsToSubmit.map(card => ({
+        front: card.front.trim(),
+        back: card.back.trim()
+      }));
+
+      const deckData: DeckWithCardsCreate = {
+        name: deckTitle.trim(),
+        cards: apiCards
+      };
+
+      const response = await apiClient.createDeckWithCards(deckData);
+      
+      // Navigate to the newly created deck detail page
+      navigate(`/chapter/${encodeURIComponent(response.name)}`);
+      
+    } catch (error) {
+      console.error('Failed to create deck:', error);
+      setErrors({
+        submit: error instanceof Error ? error.message : 'Failed to create deck. Please try again.'
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -169,7 +200,7 @@ function CreateDeck() {
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-8">
+        <form onSubmit={handleSubmit} className={`space-y-8 ${isLoading ? 'pointer-events-none opacity-70' : ''}`}>
           {/* Deck Title */}
           <div>
             <label htmlFor="deckTitle" className="block text-md font-semibold text-gray-700 mb-3">
@@ -472,14 +503,28 @@ function CreateDeck() {
             </div>
           )}
 
+          {/* Error Display */}
+          {errors.submit && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+              <p className="text-sm text-red-600">{errors.submit}</p>
+            </div>
+          )}
+
           {/* Create Deck Button */}
           <div className="flex justify-end pt-8">
             <button
               type="submit"
-              className="flex items-center gap-3 px-6 py-4 bg-muted-foreground/90 text-white font-semibold rounded-xl hover:shadow-xl hover:from-blue-700 hover:to-indigo-700 transform hover:scale-105 transition-all duration-200 text-lg"
+              disabled={isLoading}
+              className="flex items-center gap-3 px-6 py-4 bg-muted-foreground/90 text-white font-semibold rounded-xl hover:shadow-xl hover:from-blue-700 hover:to-indigo-700 transform hover:scale-105 transition-all duration-200 text-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
             >
-              {/* <Save className="w-6 h-6" /> */}
-             Create
+              {isLoading ? (
+                <>
+                  <Loader2 className="w-6 h-6 animate-spin" />
+                  Creating...
+                </>
+              ) : (
+                'Create'
+              )}
             </button>
           </div>
         </form>

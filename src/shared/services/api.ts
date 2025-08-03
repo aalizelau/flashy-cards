@@ -4,7 +4,9 @@ import {
   StudySession, 
   StudySessionComplete, 
   StudySessionResponse, 
-  TestAnalytics 
+  TestAnalytics,
+  DeckWithCardsCreate,
+  DeckWithCardsResponse
 } from '@/shared/types/api';
 
 const BASE_URL = 'http://localhost:8000';
@@ -69,6 +71,14 @@ class ApiClient {
   // Get analytics data
   async getAnalytics(): Promise<TestAnalytics> {
     return this.request<TestAnalytics>('/analytics');
+  }
+
+  // Create deck with cards
+  async createDeckWithCards(deckData: DeckWithCardsCreate): Promise<DeckWithCardsResponse> {
+    return this.request<DeckWithCardsResponse>('/decks/with-cards', {
+      method: 'POST',
+      body: JSON.stringify(deckData),
+    });
   }
 }
 

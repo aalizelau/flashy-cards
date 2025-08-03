@@ -59,3 +59,22 @@ export interface TestAnalytics {
   cards_mastered: number;
   overall_average_progress: number;
 }
+
+export interface CardCreate {
+  front: string;
+  back: string;
+}
+
+export interface DeckWithCardsCreate {
+  name: string;
+  cards: CardCreate[];
+}
+
+export interface DeckWithCardsResponse {
+  id: number;
+  name: string;
+  created_at: string;
+  progress: number;
+  card_count: number;
+  cards: Card[];
+}
