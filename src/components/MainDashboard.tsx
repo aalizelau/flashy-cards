@@ -1,30 +1,33 @@
 
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { 
   Rocket, 
   Plus, 
   BookOpen, 
   Target, 
   Brain,
-  ArrowRight,
-  Circle
+  ArrowRight
 } from 'lucide-react';
-// import { FlashcardStats } from './FlashcardStats';
 import { Card as FlashCard, Deck } from '@/data/flashcards';
-import { useAnalytics } from '@/hooks/useApi';
-import {  TestTube, BarChart3, Zap, Trophy, Star } from 'lucide-react';
+import { BarChart3, Zap, Trophy } from 'lucide-react';
   
+
+interface Analytics {
+  total_cards_studied?: number;
+  cards_mastered?: number;
+  overall_average_progress?: number;
+  total_correct_answers?: number;
+}
 
 interface MainDashboardProps {
   flashcards: FlashCard[];
-  onStartTest?: () => void; // Made optional for backwards compatibility
-  onViewReview?: () => void; // Made optional for backwards compatibility
+  onStartTest: () => void;
+  onViewReview?: () => void;
   decks?: Deck[];
   selectedDeckId?: number;
   onDeckChange?: (deckId: number) => void;
+  analytics?: Analytics;
 }
 
 
@@ -34,22 +37,9 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
   onViewReview,
   decks,
   selectedDeckId,
-  onDeckChange
+  onDeckChange,
+  analytics
 }) => {
-  const navigate = useNavigate();
-  
-  // Fetch analytics data
-  const { data: analytics } = useAnalytics();
-  
-  // Default navigation handlers if props not provided
-  const handleStartTest = () => {
-    if (onStartTest) {
-      onStartTest();
-    } else {
-      // Default behavior - navigate to study session with selected deck
-      navigate(`/study/${selectedDeckId || 3}`);
-    }
-  };
 
 
   // Statistics from analytics API
@@ -161,7 +151,7 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
             {/* Daily Challenges - Large card */}
             <Card 
               className={`bg-daily-challenges hover:scale-105 transform transition-all cursor-pointer col-span-1 row-span-2`}
-              onClick={handleStartTest}
+              onClick={onStartTest}
             >
               <CardContent className="p-6 h-full flex flex-col justify-between">
                 <div>
@@ -188,7 +178,7 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
             {/* Test Newly Added */}
             <Card 
               className="bg-test-newly hover:scale-105 transform transition-all cursor-pointer"
-              onClick={handleStartTest}
+              onClick={onStartTest}
             >
               <CardContent className="p-6 flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -208,7 +198,7 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
             {/* Test By Chapters */}
             <Card 
               className="bg-test-chapters hover:scale-105 transform transition-all cursor-pointer"
-              onClick={handleStartTest}
+              onClick={onStartTest}
             >
               <CardContent className="p-6 flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -228,7 +218,7 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
             {/* Test All Words */}
             <Card 
               className="bg-test-all hover:scale-105 transform transition-all cursor-pointer"
-              onClick={handleStartTest}
+              onClick={onStartTest}
             >
               <CardContent className="p-6 flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -248,7 +238,7 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
             {/* Test Unfamiliar */}
             <Card 
               className="bg-test-unfamiliar hover:scale-105 transform transition-all cursor-pointer"
-              onClick={handleStartTest}
+              onClick={onStartTest}
             >
               <CardContent className="p-6 flex items-center justify-between">
                 <div className="flex items-center gap-3">
