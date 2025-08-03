@@ -24,6 +24,7 @@ const SidebarNav: React.FC = () => {
             item.label === 'Browse' ? () => navigate('/listview') : 
             item.label === 'Home' ? () => navigate('/dashboard') : 
             item.label === 'Analytics' ? () => navigate('/analytics') : 
+            item.label === 'Create' ? () => navigate('/create-deck') :
             undefined
           }
         >

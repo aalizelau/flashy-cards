@@ -6,11 +6,13 @@ import NotFound from "../pages/NotFound";
 import ListView from "../features/collections/components/ListView";
 import ChapterDetail from "../features/collections/components/ChapterDetail";
 import AnalyticsPage from "../features/analytics/components/Analytics";
+import CreateDeck from "../features/decks/components/CreateDeck";
 
 export const AppRouter = () => (
   <Routes>
     <Route path="/" element={<Index />} />
     <Route path="/dashboard" element={<Dashboard />} />
+    <Route path="/create-deck" element={<CreateDeck />} />
     <Route path="/test/:deckId" element={<TestSession />} />
     <Route path="/listview" element={<ListView />} />
     <Route path="/chapter/:collectionName" element={<ChapterDetail />} />
