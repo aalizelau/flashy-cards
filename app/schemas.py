@@ -27,6 +27,18 @@ class TestResult(BaseModel):
     card_id: int
     remembered: bool
 
+class Analytics(BaseModel):
+    total_decks: int
+    total_cards: int
+    total_cards_studied: int
+    total_correct_answers: int
+    cards_mastered: int
+    overall_average_progress: float
+    updated_at: datetime | None = None
+
+    class Config:
+        orm_mode = True
+
 class DeckBase(BaseModel):
     name: str
 

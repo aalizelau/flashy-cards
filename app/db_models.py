@@ -1,7 +1,8 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, ARRAY
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, ARRAY, func
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from .database import Base
+
 
 class Deck(Base):
     __tablename__ = "decks"
@@ -43,3 +44,13 @@ class StudySession(Base):
     completed_at = Column(DateTime, default=datetime.utcnow)
 
     deck = relationship("Deck")
+
+class TestAnalytics(Base):
+    __tablename__ = "test_analytics"
+
+    id = Column(Integer, primary_key=True, index=True)
+    total_cards_studied = Column(Integer)
+    total_correct_answers = Column(Integer)
+    cards_mastered = Column(Integer)
+    overall_average_progress = Column(Float)
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())

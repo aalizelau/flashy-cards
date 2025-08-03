@@ -2,9 +2,10 @@ from datetime import datetime
 from typing import List
 
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 
 from app.models import Card, SessionComplete, SessionSummary, TestResult
-from app.db_models import StudySession as StudySessionORM, Card as CardORM
+from app.db_models import StudySession as StudySessionORM, Card as CardORM, TestAnalytics as TestAnalyticsORM
 from app.schemas import StudySession, Card as CardSchema
 from fastapi import HTTPException
 import random
@@ -83,3 +84,24 @@ class SessionService:
             completed_at=session.completed_at
         )
         self.db.add(new_session)
+    
+    def update_analytics(self):
+        total_cards_studied = self.db.query(CardORM).filter(CardORM.total_attempts > 0).count()
+        total_correct_answers = self.db.query(CardORM).with_entities(
+            func.sum(CardORM.accuracy * CardORM.total_attempts)
+        ).scalar() or 0
+        cards_mastered = self.db.query(CardORM).filter(CardORM.accuracy >= 0.9).count()
+        overall_average_progress = (
+            self.db.query(func.avg(CardORM.accuracy)).scalar() or 0.0
+        )
+
+        analytics_entry = TestAnalyticsORM(
+            total_cards_studied=total_cards_studied,
+            total_correct_answers=int(total_correct_answers),
+            cards_mastered=cards_mastered,
+            overall_average_progress=round(overall_average_progress * 100, 2),
+        )
+
+        self.db.add(analytics_entry)
+        self.db.commit()
+

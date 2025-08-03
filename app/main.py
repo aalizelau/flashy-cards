@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from typing import List
 from .models import Deck, SessionComplete, Analytics
@@ -50,9 +50,9 @@ def read_root():
 #     session = data_layer.create_session(deck_id)
 #     return session
 
-@app.get("/analytics", response_model=Analytics)
-def get_analytics():
-    return data_layer.get_analytics()
+# @app.get("/analytics", response_model=Analytics)
+# def get_analytics():
+#     return data_layer.get_analytics()
 
 def get_db():
     db = database.SessionLocal()
@@ -81,10 +81,17 @@ def create_study_session(request: CreateSessionRequest, db: Session = Depends(ge
         raise HTTPException(status_code=404, detail=str(e))
 
 @app.post("/study/sessions/complete")
-def complete_study_session(results: List[TestResult], db: Session = Depends(get_db)):
+def complete_study_session(
+        results: List[TestResult],
+        background_tasks: BackgroundTasks,  
+        db: Session = Depends(get_db),
+):
     session_service = SessionService(db)
     session_service.complete_session(results)
+    background_tasks.add_task(session_service.update_analytics)
     return {"message": "Session completed successfully"}
+
+
     
     
 
