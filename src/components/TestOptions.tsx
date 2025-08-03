@@ -140,7 +140,7 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
                       </div>
                       <div>
                         <div className="text-2xl font-bold text-foreground">{totalWords}</div>
-                        <div className="text-sm text-muted-foreground">Total Words</div>
+                        <div className="text-sm text-muted-foreground">Words Studied</div>
                       </div>
                     </div>
                   </CardContent>
@@ -154,7 +154,7 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
                       </div>
                       <div>
                         <div className="text-2xl font-bold text-success">{masteredWords}</div>
-                        <div className="text-sm text-muted-foreground">Mastered</div>
+                        <div className="text-sm text-muted-foreground">Words Mastered</div>
                       </div>
                     </div>
                   </CardContent>
