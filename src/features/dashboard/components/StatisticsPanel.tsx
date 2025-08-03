@@ -1,20 +1,19 @@
 import React from 'react';
 import { Card, CardContent } from '@/shared/components/ui/card';
 import { BookOpen, Trophy, Zap, BarChart3 } from 'lucide-react';
+import { TestAnalytics } from '@/shared/types/api';
 
-export interface FlashcardStatsProps {
-  totalWords: number;
-  masteredWords: number;
-  timesRemembered: number;
-  averageProgress: number;
+export interface StatisticsPanelProps {
+  analytics?: TestAnalytics;
 }
 
-export const FlashcardStats: React.FC<FlashcardStatsProps> = ({
-  totalWords,
-  masteredWords,
-  timesRemembered,
-  averageProgress
+export const StatisticsPanel: React.FC<StatisticsPanelProps> = ({
+  analytics
 }) => {
+  const totalWords = analytics?.total_cards_studied || 0;
+  const masteredWords = analytics?.cards_mastered || 0;
+  const averageProgress = Math.round((analytics?.overall_average_progress || 0) * 100);
+  const timesRemembered = analytics?.total_correct_answers || 0;
   return (
     <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
       <Card className="bg-gradient-card shadow-card">
@@ -25,7 +24,7 @@ export const FlashcardStats: React.FC<FlashcardStatsProps> = ({
             </div>
             <div>
               <div className="text-2xl font-bold text-foreground">{totalWords}</div>
-              <div className="text-sm text-muted-foreground">Total Words</div>
+              <div className="text-sm text-muted-foreground">Words Studied</div>
             </div>
           </div>
         </CardContent>
@@ -39,7 +38,7 @@ export const FlashcardStats: React.FC<FlashcardStatsProps> = ({
             </div>
             <div>
               <div className="text-2xl font-bold text-success">{masteredWords}</div>
-              <div className="text-sm text-muted-foreground">Mastered</div>
+              <div className="text-sm text-muted-foreground">Words Mastered</div>
             </div>
           </div>
         </CardContent>

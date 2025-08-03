@@ -9,48 +9,18 @@ import {
   Brain,
   ArrowRight
 } from 'lucide-react';
-import { Card as FlashCard, Deck } from '@/shared/types/api';
-import { BarChart3, Zap, Trophy } from 'lucide-react';
-  
-
-interface Analytics {
-  total_cards_studied?: number;
-  cards_mastered?: number;
-  overall_average_progress?: number;
-  total_correct_answers?: number;
-}
+import { TestAnalytics } from '@/shared/types/api';
+import { StatisticsPanel } from './StatisticsPanel';
 
 interface MainDashboardProps {
-  flashcards: FlashCard[];
   onStartTest: () => void;
-  onViewReview?: () => void;
-  decks?: Deck[];
-  selectedDeckId?: number;
-  onDeckChange?: (deckId: number) => void;
-  analytics?: Analytics;
+  analytics?: TestAnalytics;
 }
 
-
 export const MainDashboard: React.FC<MainDashboardProps> = ({ 
-  flashcards, 
   onStartTest, 
-  onViewReview,
-  decks,
-  selectedDeckId,
-  onDeckChange,
   analytics
 }) => {
-
-
-  // Statistics from analytics API
-  const totalWords = analytics?.total_cards_studied || 0;
-  const masteredWords = analytics?.cards_mastered || 0;
-  const averageProgress = Math.round((analytics?.overall_average_progress || 0) * 100);
-  const timesRemembered = analytics?.total_correct_answers || 0;
-
-
-  
-  
 
   return (
     <div className="min-h-screen bg-gradient-bg flex">
@@ -80,68 +50,8 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
             </div>
           </div>
         </div>
-        {/* <h2 className="text-2xl font-bold text-foreground mb-6">Achievements</h2> */}
-
         {/* Statistics */}
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                <Card className="bg-gradient-card shadow-card">
-                  <CardContent className="p-6">
-                    <div className="flex items-center gap-3">
-                      <div className="p-3 bg-primary/10 rounded-lg">
-                        <BookOpen className="w-6 h-6 text-primary" />
-                      </div>
-                      <div>
-                        <div className="text-2xl font-bold text-foreground">{totalWords}</div>
-                        <div className="text-sm text-muted-foreground">Words Studied</div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-        
-                <Card className="bg-gradient-card shadow-card">
-                  <CardContent className="p-6">
-                    <div className="flex items-center gap-3">
-                      <div className="p-3 bg-success/10 rounded-lg">
-                        <Trophy className="w-6 h-6 text-success" />
-                      </div>
-                      <div>
-                        <div className="text-2xl font-bold text-success">{masteredWords}</div>
-                        <div className="text-sm text-muted-foreground">Words Mastered</div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-        
-        
-                {/* Times Remembered (total count) */}
-                <Card className="bg-gradient-card shadow-card">
-                  <CardContent className="p-6">
-                    <div className="flex items-center gap-3">
-                      <div className="p-3 bg-warning/10 rounded-lg">
-                        <Zap className="w-6 h-6 text-warning" />
-                      </div>
-                      <div>
-                        <div className="text-2xl font-bold text-warning">{timesRemembered}</div>
-                        <div className="text-sm text-muted-foreground">Times Remembered</div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-        
-                <Card className="bg-gradient-card shadow-card">
-                  <CardContent className="p-6">
-                    <div className="flex items-center gap-3">
-                      <div className="p-3 bg-accent/10 rounded-lg">
-                        <BarChart3 className="w-6 h-6 text-accent" />
-                      </div>
-                      <div>
-                        <div className="text-2xl font-bold text-accent">{averageProgress}%</div>
-                        <div className="text-sm text-muted-foreground">Avg. Progress</div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
+        <StatisticsPanel analytics={analytics} />
 
         {/* Start Practice Section */}
         <div className="mb-8">
