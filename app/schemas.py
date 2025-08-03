@@ -19,12 +19,38 @@ class DeckBase(BaseModel):
     name: str
 
 
+class DeckCreate(DeckBase):
+    pass
+
+
 class DeckOut(BaseModel):
     id: int
     name: str
     created_at: datetime
     progress: float
     card_count: int
+
+    class Config:
+        orm_mode = True
+
+
+class CardCreate(BaseModel):
+    front: str
+    back: str
+
+
+class DeckWithCardsCreate(BaseModel):
+    name: str
+    cards: List[CardCreate]
+
+
+class DeckWithCardsResponse(BaseModel):
+    id: int
+    name: str
+    created_at: datetime
+    progress: float
+    card_count: int
+    cards: List[Card]
 
     class Config:
         orm_mode = True 
