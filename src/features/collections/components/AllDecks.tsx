@@ -5,7 +5,7 @@ import { useDecks } from '@/shared/hooks/useApi';
 
 
 
-const ListView: React.FC = () => {
+const AllDecks: React.FC = () => {
 	const [search, setSearch] = useState('');
 	
 	// Fetch decks from API
@@ -26,7 +26,7 @@ const ListView: React.FC = () => {
 
 	const handleCollectionClick = (collection: FlashcardCollection) => {
 		// Navigate to the chapter detail page with the collection name
-		window.location.href = `/chapter/${encodeURIComponent(collection.name)}`;
+		window.location.href = `/decks/${encodeURIComponent(collection.name)}`;
 	};
 
 	// Show loading state
@@ -96,4 +96,4 @@ const ListView: React.FC = () => {
 	);
 };
 
-export default ListView;
+export default AllDecks;

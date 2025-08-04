@@ -19,11 +19,11 @@ export const StatisticsPanel: React.FC<StatisticsPanelProps> = ({
       <Card className="bg-gradient-card shadow-card">
         <CardContent className="p-6">
           <div className="flex items-center gap-3">
-            <div className="p-3 bg-primary/10 rounded-lg">
-              <BookOpen className="w-6 h-6 text-primary" />
+            <div className="p-3 bg-studied/10 rounded-lg">
+              <BookOpen className="w-6 h-6 text-studied" />
             </div>
             <div>
-              <div className="text-2xl font-bold text-foreground">{totalWords}</div>
+              <div className="text-2xl font-bold text-studied">{totalWords}</div>
               <div className="text-sm text-muted-foreground">Words Studied</div>
             </div>
           </div>
@@ -33,11 +33,11 @@ export const StatisticsPanel: React.FC<StatisticsPanelProps> = ({
       <Card className="bg-gradient-card shadow-card">
         <CardContent className="p-6">
           <div className="flex items-center gap-3">
-            <div className="p-3 bg-success/10 rounded-lg">
-              <Trophy className="w-6 h-6 text-success" />
+            <div className="p-3 bg-vibrant-cyan/10 rounded-lg">
+              <Trophy className="w-6 h-6 text-vibrant-cyan" />
             </div>
             <div>
-              <div className="text-2xl font-bold text-success">{masteredWords}</div>
+              <div className="text-2xl font-bold text-vibrant-cyan">{masteredWords}</div>
               <div className="text-sm text-muted-foreground">Words Mastered</div>
             </div>
           </div>
@@ -61,11 +61,11 @@ export const StatisticsPanel: React.FC<StatisticsPanelProps> = ({
       <Card className="bg-gradient-card shadow-card">
         <CardContent className="p-6">
           <div className="flex items-center gap-3">
-            <div className="p-3 bg-accent/10 rounded-lg">
-              <BarChart3 className="w-6 h-6 text-accent" />
+            <div className="p-3 bg-progress/10 rounded-lg">
+              <BarChart3 className="w-6 h-6 text-progress" />
             </div>
             <div>
-              <div className="text-2xl font-bold text-accent">{averageProgress}%</div>
+              <div className="text-2xl font-bold text-progress">{averageProgress}%</div>
               <div className="text-sm text-muted-foreground">Avg. Progress</div>
             </div>
           </div>

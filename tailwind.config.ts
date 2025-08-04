@@ -49,34 +49,16 @@ export default {
 					DEFAULT: 'hsl(var(--accent))',
 					foreground: 'hsl(var(--accent-foreground))'
 				},
-				success: {
-					DEFAULT: 'hsl(var(--success))',
-					foreground: 'hsl(var(--success-foreground))'
-				},
-				warning: {
-					DEFAULT: 'hsl(var(--warning))',
-					foreground: 'hsl(var(--warning-foreground))'
-				},
-				'daily-challenges': {
-					DEFAULT: 'hsl(var(--daily-challenges))',
-					foreground: 'hsl(var(--daily-challenges-foreground))'
-				},
-				'test-newly': {
-					DEFAULT: 'hsl(var(--test-newly))',
-					foreground: 'hsl(var(--test-newly-foreground))'
-				},
-				'test-chapters': {
-					DEFAULT: 'hsl(var(--test-chapters))',
-					foreground: 'hsl(var(--test-chapters-foreground))'
-				},
-				'test-all': {
-					DEFAULT: 'hsl(var(--test-all))',
-					foreground: 'hsl(var(--test-all-foreground))'
-				},
-				'test-unfamiliar': {
-					DEFAULT: 'hsl(var(--test-unfamiliar))',
-					foreground: 'hsl(var(--test-unfamiliar-foreground))'
-				},
+				'vibrant-dark-blue': 'var(--sharp-blue)',
+				'vibrant-yellow': 'var(--vibrant-yellow)',
+				'vibrant-green': 'var(--vibrant-green)',
+				'vibrant-light-blue': 'var(--vibrant-light-blue)',
+				'main-foreground': 'var(--main-foreground)',
+				'main-secondary': 'var(--main-secondary)',
+				'home-light-gary': 'var(--home-light-gray)',
+				'home-gray-green': 'var(--home-gray-green)',
+				'home-gray-neutral': 'var(--home-gray-neutral)',
+				'home-gray-beige': 'var(--home-gray-beige)',
 				popover: {
 					DEFAULT: 'hsl(var(--popover))',
 					foreground: 'hsl(var(--popover-foreground))'

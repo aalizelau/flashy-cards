@@ -9,7 +9,7 @@ import { MoreVertical } from 'lucide-react';
 import { useDecks, useDeckCards } from '@/shared/hooks/useApi';
 import { Card as FlashCard } from '@/shared/types/api';
 
-const ChapterDetail: React.FC = () => {
+const DeckDetail: React.FC = () => {
   const { collectionName } = useParams();
   const decodedName = decodeURIComponent(collectionName || '');
 
@@ -177,4 +177,4 @@ const ChapterDetail: React.FC = () => {
   );
 };
 
-export default ChapterDetail;
+export default DeckDetail;

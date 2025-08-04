@@ -6,7 +6,7 @@ const navItems = [
   { icon: <Bars3Icon className="h-6 w-6" />, label: 'Menu', path: null },
   { icon: <HomeIcon className="h-6 w-6" />, label: 'Home', path: '/dashboard' },
   { icon: <PlusIcon className="h-6 w-6" />, label: 'Create', path: '/create-deck' },
-  { icon: <BookOpenIcon className="h-6 w-6" />, label: 'Browse', path: '/listview' },
+  { icon: <BookOpenIcon className="h-6 w-6" />, label: 'Browse', path: '/all-decks' },
   { icon: <ChartBarIcon className="h-6 w-6" />, label: 'Analytics', path: '/analytics' },
   { icon: <UserGroupIcon className="h-6 w-6" />, label: 'Users', path: null },
 ];

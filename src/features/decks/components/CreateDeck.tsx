@@ -235,7 +235,7 @@ function CreateDeck() {
                     onClick={() => setImportMode('individual')}
                     className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 transition-all duration-200 ${
                         importMode === 'individual'
-                        ? 'border-muted-foreground/80 bg-muted-foreground/10 '
+                        ? 'border-sharp-blue bg-sharp-blue/10 '
                         : 'border-gray-200 hover:border-gray-300'
                     }`}
                     >
@@ -308,7 +308,7 @@ function CreateDeck() {
                         <input
                           value={card.front}
                           onChange={(e) => updateFlashcard(card.id, 'front', e.target.value)}
-                          className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 transition-all duration-200 resize-none h-14"
+                          className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-sharp-blue transition-all duration-200 resize-none h-14"
                         //   rows={2}
                           ref={index === flashcards.length - 1 ? lastCardRef : undefined}
                         />
