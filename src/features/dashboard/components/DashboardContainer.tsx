@@ -3,10 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import { MainDashboard } from './MainDashboard';
 import { useDecks, useAnalytics } from '@/shared/hooks/useApi';
 import { TestConfigModal } from '@/features/test/components/Popup';
+import { apiClient } from '@/shared/services/api';
+import { TestStats } from '@/shared/types/api';
 
 const DashboardContainer: React.FC = () => {
   const navigate = useNavigate();
   const [showTestConfig, setShowTestConfig] = useState(false);
+  const [testStats, setTestStats] = useState<TestStats | null>(null);
+  const [currentTestType, setCurrentTestType] = useState<string>('');
+  const [isLoadingStats, setIsLoadingStats] = useState(false);
   
   const { data: decks, isLoading: decksLoading, error: decksError } = useDecks();
   const { data: analytics, isLoading: analyticsLoading, error: analyticsError } = useAnalytics();
@@ -14,8 +19,27 @@ const DashboardContainer: React.FC = () => {
   const selectedDeckId = decks?.[0]?.id || 1;
   const selectedDeck = decks?.find(deck => deck.id === selectedDeckId);
 
-  const handleStartTest = () => {
-    setShowTestConfig(true);
+  const handleStartTest = async (testType: string) => {
+    // Skip daily challenge for now as per requirements
+    if (testType === 'daily_challenge') {
+      return;
+    }
+    
+    setCurrentTestType(testType);
+    setIsLoadingStats(true);
+    
+    try {
+      const stats = await apiClient.getTestStats(testType);
+      setTestStats(stats);
+      setShowTestConfig(true);
+    } catch (error) {
+      console.error('Failed to fetch test stats:', error);
+      // Show modal anyway with fallback behavior
+      setTestStats(null);
+      setShowTestConfig(true);
+    } finally {
+      setIsLoadingStats(false);
+    }
   };
 
   const handleTestStart = (wordCount: number) => {
@@ -25,6 +49,8 @@ const DashboardContainer: React.FC = () => {
 
   const handleTestConfigClose = () => {
     setShowTestConfig(false);
+    setTestStats(null);
+    setCurrentTestType('');
   };
 
   const isLoading = decksLoading || analyticsLoading;
@@ -69,9 +95,19 @@ const DashboardContainer: React.FC = () => {
       {showTestConfig && selectedDeck && (
         <TestConfigModal
           deck={selectedDeck}
+          testStats={testStats}
+          testType={currentTestType}
           onStart={handleTestStart}
           onClose={handleTestConfigClose}
         />
+      )}
+      {isLoadingStats && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl p-6">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
+            <p className="mt-2 text-center">Loading test statistics...</p>
+          </div>
+        </div>
       )}
     </>
   );

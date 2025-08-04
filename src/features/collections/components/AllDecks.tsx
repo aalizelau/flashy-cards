@@ -92,6 +92,7 @@ const AllDecks: React.FC = () => {
 					</div>
 				)}
 			</div>
+			
 		</main>
 	);
 };

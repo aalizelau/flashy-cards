@@ -6,7 +6,8 @@ import {
   StudySessionResponse, 
   TestAnalytics,
   DeckWithCardsCreate,
-  DeckWithCardsResponse
+  DeckWithCardsResponse,
+  TestStats
 } from '@/shared/types/api';
 
 const BASE_URL = 'http://localhost:8000';
@@ -79,6 +80,18 @@ class ApiClient {
       method: 'POST',
       body: JSON.stringify(deckData),
     });
+  }
+
+  // Get test statistics
+  async getTestStats(testType: string, deckIds?: number[]): Promise<TestStats> {
+    let endpoint = `/study/test/${testType}/stats`;
+    
+    if (testType === 'test_by_decks' && deckIds && deckIds.length > 0) {
+      const deckIdsParam = deckIds.join(',');
+      endpoint += `?deck_ids=${deckIdsParam}`;
+    }
+    
+    return this.request<TestStats>(endpoint);
   }
 }
 

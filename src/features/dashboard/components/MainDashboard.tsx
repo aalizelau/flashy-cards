@@ -18,7 +18,7 @@ import { StatisticsPanel } from './StatisticsPanel';
 import Arts from '@/assets/arts.png';
 
 interface MainDashboardProps {
-  onStartTest: () => void;
+  onStartTest: (testType: string) => void;
   analytics?: TestAnalytics;
 }
 
@@ -82,7 +82,7 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
             {/* Daily Challenges - Large card */}
             <Card 
               className={`bg-home-light-gray hover:scale-105 transform transition-all cursor-pointer col-span-1 row-span-2`}
-              onClick={onStartTest}
+              onClick={() => onStartTest('daily_challenge')}
             >
               <CardContent className="p-6 h-full flex flex-col justify-between">
                 <div>
@@ -109,7 +109,7 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
             {/* Test Newly Added */}
             <Card 
               className="bg-home-gray-neutral hover:scale-105 transform transition-all cursor-pointer"
-              onClick={onStartTest}
+              onClick={() => onStartTest('test_newly_added')}
             >
               <CardContent className="p-6 flex items-center justify-between">
                 <div className="flex items-center gap-8">
@@ -129,7 +129,7 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
             {/* Test By Chapters */}
             <Card 
               className="bg-home-gray-beige hover:scale-105 transform transition-all cursor-pointer"
-              onClick={onStartTest}
+              onClick={() => onStartTest('test_by_decks')}
             >
               <CardContent className="p-6 flex items-center justify-between">
                 <div className="flex items-center gap-8">
@@ -149,7 +149,7 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
             {/* Test All Words */}
             <Card 
               className="bg-home-gray-green hover:scale-105 transform transition-all cursor-pointer"
-              onClick={onStartTest}
+              onClick={() => onStartTest('test_all')}
             >
               <CardContent className="p-6 flex items-center justify-between">
                 <div className="flex items-center gap-8">
@@ -169,7 +169,7 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
             {/* Test Unfamiliar */}
             <Card 
               className="bg-main-secondary hover:scale-105 transform transition-all cursor-pointer"
-              onClick={onStartTest}
+              onClick={() => onStartTest('test_unfamiliar')}
             >
               <CardContent className="p-6 flex items-center justify-between">
                 <div className="flex items-center gap-8">

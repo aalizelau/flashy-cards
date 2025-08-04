@@ -78,3 +78,8 @@ export interface DeckWithCardsResponse {
   card_count: number;
   cards: Card[];
 }
+
+export interface TestStats {
+  available_cards: number;
+  total_decks: number | null;
+}

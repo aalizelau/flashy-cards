@@ -1,20 +1,27 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { X, Play } from "lucide-react"
-import type { Deck } from "@/shared/types/api"
+import type { Deck, TestStats } from "@/shared/types/api"
 import '@/styles/Slider.css'
 
 interface TestConfigModalProps {
   deck: Deck
+  testStats?: TestStats | null
+  testType?: string
   onStart: (wordCount: number) => void
   onClose: () => void
 }
 
-export const TestConfigModal: React.FC<TestConfigModalProps> = ({ deck, onStart, onClose }) => {
-  const [wordCount, setWordCount] = useState(Math.min(10, deck.card_count))
-  const maxWords = deck.card_count
+export const TestConfigModal: React.FC<TestConfigModalProps> = ({ deck, testStats, testType, onStart, onClose }) => {
+  const availableCards = testStats?.available_cards ?? deck.card_count
+  const [wordCount, setWordCount] = useState(Math.min(10, availableCards))
+  const maxWords = availableCards
+  
+  useEffect(() => {
+    setWordCount(Math.min(10, availableCards))
+  }, [availableCards])
 
   const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setWordCount(Number.parseInt(e.target.value))
@@ -38,7 +45,18 @@ export const TestConfigModal: React.FC<TestConfigModalProps> = ({ deck, onStart,
         {/* Collection Info */}
         <div className="mb-6 p-4 bg-gray-50 rounded-lg">
           <h3 className="font-medium text-gray-900 mb-1">{deck.name}</h3>
-          <p className="text-sm text-gray-500">{deck.card_count} words available</p>
+          <p className="text-sm text-gray-500">
+            {availableCards} words available
+            {testStats && testStats.total_decks && ` across ${testStats.total_decks} decks`}
+          </p>
+          
+          {availableCards === 0 && (
+            <div className="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <p className="text-sm text-yellow-800 font-medium">
+                {getZeroCardsMessage(testType)}
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Word Count Selector */}
@@ -74,13 +92,33 @@ export const TestConfigModal: React.FC<TestConfigModalProps> = ({ deck, onStart,
           </button>
           <button
             onClick={handleStart}
-            className="flex-1 flex items-center justify-center gap-2 bg-main-foreground text-white px-4 py-3 rounded-lg transition-colors "
+            disabled={availableCards === 0}
+            className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg transition-colors ${
+              availableCards === 0 
+                ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
+                : 'bg-main-foreground text-white hover:bg-main-foreground/90'
+            }`}
           >
             {/* <Play className="w-4 h-4" /> */}
-            Start Test
+            {availableCards === 0 ? 'No Cards Available' : 'Start Test'}
           </button>
         </div>
       </div>
     </div>
   )
+}
+
+function getZeroCardsMessage(testType?: string): string {
+  switch (testType) {
+    case 'test_newly_added':
+      return 'You have already seen all new cards'
+    case 'test_unfamiliar':
+      return 'You have mastered all words'
+    case 'test_all':
+      return 'No cards available for testing'
+    case 'test_by_decks':
+      return 'No cards available in selected decks'
+    default:
+      return 'No cards available for testing'
+  }
 }
