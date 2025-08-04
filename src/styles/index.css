@@ -45,6 +45,11 @@ All colors MUST be HSL.
     --home-gray-neutral: #DCE0E4;
     --home-gray-beige: #D6D8DC;
 
+    --de-yellow: 35 21% 59%;
+    --de-green: 189 30% 63%;
+    --de-red: 337 21% 67%;
+    --de-purple: 248 19% 67%;
+
     --shadow-color: #777777;
     
     --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));

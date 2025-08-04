@@ -64,6 +64,10 @@ export default {
 				'home-gray-green': 'var(--home-gray-green)',
 				'home-gray-neutral': 'var(--home-gray-neutral)',
 				'home-gray-beige': 'var(--home-gray-beige)',
+				'de-yellow': 'hsl(var(--de-yellow))',
+				'de-green': 'hsl(var(--de-green))',
+				'de-red': 'hsl(var(--de-red))',
+				'de-purple': 'hsl(var(--de-purple))',
 				popover: {
 					DEFAULT: 'hsl(var(--popover))',
 					foreground: 'hsl(var(--popover-foreground))'

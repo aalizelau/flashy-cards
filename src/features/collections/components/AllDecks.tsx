@@ -66,7 +66,7 @@ const AllDecks: React.FC = () => {
 	return (
 		<main className="px-6 pb-8">
 			<div className="max-w-4xl mx-auto">
-				<h1 className="text-4xl font-semibold font-alumni-sans mb-4 mt-16 text-main-foreground">VIEW YOUR COLLECTIONS</h1>
+				<h1 className="text-4xl font-semibold font-alumni-sans mb-4 mt-16 text-main-foreground">YOUR COLLECTIONS</h1>
 				<div className="mb-6">
 					<input
 						type="text"

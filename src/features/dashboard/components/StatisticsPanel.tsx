@@ -19,11 +19,11 @@ export const StatisticsPanel: React.FC<StatisticsPanelProps> = ({
       <Card className="bg-gradient-card shadow-card">
         <CardContent className="p-6">
           <div className="flex items-center gap-3">
-            <div className="p-3 bg-studied/10 rounded-lg">
-              <BookOpen className="w-6 h-6 text-studied" />
+            <div className="p-3 bg-de-red/20 rounded-lg">
+              <BookOpen className="w-6 h-6 text-de-red" />
             </div>
             <div>
-              <div className="text-2xl font-bold text-studied">{totalWords}</div>
+              <div className="text-2xl font-bold text-de-red">{totalWords}</div>
               <div className="text-sm text-muted-foreground">Words Studied</div>
             </div>
           </div>
@@ -33,11 +33,11 @@ export const StatisticsPanel: React.FC<StatisticsPanelProps> = ({
       <Card className="bg-gradient-card shadow-card">
         <CardContent className="p-6">
           <div className="flex items-center gap-3">
-            <div className="p-3 bg-vibrant-cyan/10 rounded-lg">
-              <Trophy className="w-6 h-6 text-vibrant-cyan" />
+            <div className="p-3 bg-de-green/20 rounded-lg">
+              <Trophy className="w-6 h-6 text-de-green" />
             </div>
             <div>
-              <div className="text-2xl font-bold text-vibrant-cyan">{masteredWords}</div>
+              <div className="text-2xl font-bold text-de-green">{masteredWords}</div>
               <div className="text-sm text-muted-foreground">Words Mastered</div>
             </div>
           </div>
@@ -47,11 +47,11 @@ export const StatisticsPanel: React.FC<StatisticsPanelProps> = ({
       <Card className="bg-gradient-card shadow-card">
         <CardContent className="p-6">
           <div className="flex items-center gap-3">
-            <div className="p-3 bg-warning/10 rounded-lg">
-              <Zap className="w-6 h-6 text-warning" />
+            <div className="p-3 bg-de-yellow/20 rounded-lg">
+              <Zap className="w-6 h-6 text-de-yellow" />
             </div>
             <div>
-              <div className="text-2xl font-bold text-warning">{timesRemembered}</div>
+              <div className="text-2xl font-bold text-de-yellow">{timesRemembered}</div>
               <div className="text-sm text-muted-foreground">Times Remembered</div>
             </div>
           </div>
@@ -61,11 +61,11 @@ export const StatisticsPanel: React.FC<StatisticsPanelProps> = ({
       <Card className="bg-gradient-card shadow-card">
         <CardContent className="p-6">
           <div className="flex items-center gap-3">
-            <div className="p-3 bg-progress/10 rounded-lg">
-              <BarChart3 className="w-6 h-6 text-progress" />
+            <div className="p-3 bg-de-purple/20 rounded-lg">
+              <BarChart3 className="w-6 h-6 text-de-purple" />
             </div>
             <div>
-              <div className="text-2xl font-bold text-progress">{averageProgress}%</div>
+              <div className="text-2xl font-bold text-de-purple">{averageProgress}%</div>
               <div className="text-sm text-muted-foreground">Avg. Progress</div>
             </div>
           </div>

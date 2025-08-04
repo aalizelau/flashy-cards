@@ -32,9 +32,9 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
     <div className="min-h-screen bg-gradient-bg flex">
 
       {/* Main content */}
-      <div className="flex-1 px-8 py-12 max-w-4xl mx-auto mt-6">
+      <div className="flex-1 px-8 py-12 max-w-4xl mx-auto mt-4">
         {/* Welcome Section */}
-        <div className="mb-12 relative">
+        <div className="mb-8 relative">
           {/* Image background flourish */}
      {/* <img
       src={Arts}
@@ -69,15 +69,6 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
         Keep it up to improve your results.
       </p>
     </div>
-            
-            {/* Illustration placeholder */}
-            {/* <div className="absolute right-8 top-1/2 transform -translate-y-1/2">
-              <div className="flex space-x-3">
-                <div className="w-12 h-16 bg-test-newly rounded-lg"></div>
-                <div className="w-12 h-16 bg-test-chapters rounded-lg"></div>
-                <div className="w-12 h-16 bg-muted-foreground/20 rounded-lg"></div>
-              </div>
-            </div> */}
           </div>
         </div>
         {/* Statistics */}
