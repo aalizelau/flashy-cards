@@ -55,7 +55,9 @@ export default {
 				'vibrant-light-blue': 'var(--vibrant-light-blue)',
 				'main-foreground': 'var(--main-foreground)',
 				'main-secondary': 'var(--main-secondary)',
-				'home-light-gary': 'var(--home-light-gray)',
+				'main-primary': 'var(--main-primary)',
+				'main-dark-gray': 'var(--main-dark-gray)',
+				'home-light-gray': 'var(--home-light-gray)',
 				'home-gray-green': 'var(--home-gray-green)',
 				'home-gray-neutral': 'var(--home-gray-neutral)',
 				'home-gray-beige': 'var(--home-gray-beige)',
@@ -90,7 +92,8 @@ export default {
 			},
 			boxShadow: {
 				'card': 'var(--shadow-card)',
-				'elevated': 'var(--shadow-elevated)'
+				'elevated': 'var(--shadow-elevated)',
+				'custom-dark': '0 4px 6px -1px var(--shadow-color)',
 			},
 			transitionTimingFunction: {
 				'smooth': 'var(--transition-smooth)',

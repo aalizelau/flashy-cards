@@ -7,7 +7,11 @@ import {
   BookOpen, 
   Target, 
   Brain,
-  ArrowRight
+  ArrowRight,
+  MousePointerClick, 
+  Sparkles,
+  WalletCards,
+  Swords
 } from 'lucide-react';
 import { TestAnalytics } from '@/shared/types/api';
 import { StatisticsPanel } from './StatisticsPanel';
@@ -85,148 +89,108 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
           
           <div className="grid grid-cols-2 gap-4">
             {/* Daily Challenges - Large card */}
-            {/* <Card 
-              className={`bg-daily-challenges hover:scale-105 transform transition-all cursor-pointer col-span-1 row-span-2`}
+            <Card 
+              className={`bg-home-light-gray hover:scale-105 transform transition-all cursor-pointer col-span-1 row-span-2`}
               onClick={onStartTest}
             >
               <CardContent className="p-6 h-full flex flex-col justify-between">
                 <div>
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="p-3 bg-daily-challenges-foreground/10 rounded-full">
-                      <Rocket className="w-6 h-6 text-daily-challenges-foreground" />
+                    <div className="p-3 bg-main-secondary rounded-full">
+                      <Rocket className="w-6 h-6 text-main-foreground" />
                     </div>
-                    <h3 className="text-xl font-semibold text-daily-challenges-foreground">
+                    <h3 className="text-xl font-semibold text-main-foreground">
                       Daily Challenges
                     </h3>
                   </div>
-                  <p className="text-daily-challenges-foreground/70 mb-6">
+                  <p className="text-muted-foreground mb-6">
                     Random set each day. Maybe 5-10 words, mixed difficulty.
                   </p>
                 </div>
                 <div className="flex justify-end">
-                  <div className="p-2 bg-daily-challenges-foreground/20 rounded-full">
-                    <ArrowRight className="w-5 h-5 text-daily-challenges-foreground" />
+                  <div className="p-2 bg-main-secondary rounded-full shadow-custom-dark">
+                    <ArrowRight className="w-5 h-5 text-main-foreground" />
                   </div>
-                </div>
-              </CardContent>
-            </Card> */}
-
-             {/* Test Newly Added */}
-            <Card 
-              className="bg-test-newly hover:scale-105 transform transition-all cursor-pointer"
-              onClick={onStartTest}
-            >
-              <CardContent className="p-6 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="p-3 bg-test-newly-foreground/10 rounded-full">
-                    <Plus className="w-6 h-6 text-test-newly-foreground" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-test-newly-foreground">
-                    Test Newly Added
-                  </h3>
-                </div>
-                <div className="p-2 bg-test-newly-foreground/20 rounded-full">
-                  <ArrowRight className="w-5 h-5 text-test-newly-foreground" />
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Test By Chapters */}
-            <Card 
-              className="bg-test-chapters hover:scale-105 transform transition-all cursor-pointer"
-              onClick={onStartTest}
-            >
-              <CardContent className="p-6 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="p-3 bg-test-chapters-foreground/10 rounded-full">
-                    <BookOpen className="w-6 h-6 text-test-chapters-foreground" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-test-chapters-foreground">
-                    Test By Chapters
-                  </h3>
-                </div>
-               <div className="p-2 bg-test-chapters-foreground/20 rounded-full">
-                  <ArrowRight className="w-5 h-5 text-test-chapters-foreground" />
                 </div>
               </CardContent>
             </Card>
 
             {/* Test Newly Added */}
             <Card 
-              className="bg-test-newly hover:scale-105 transform transition-all cursor-pointer"
+              className="bg-home-gray-neutral hover:scale-105 transform transition-all cursor-pointer"
               onClick={onStartTest}
             >
               <CardContent className="p-6 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="p-3 bg-test-newly-foreground/10 rounded-full">
-                    <Plus className="w-6 h-6 text-test-newly-foreground" />
+                  <div className="p-3 bg-main-dark-gray rounded-full">
+                    <Sparkles className="w-6 h-6 text-main-foreground" />
                   </div>
-                  <h3 className="text-xl font-semibold text-test-newly-foreground">
+                  <h3 className="text-xl font-semibold text-main-foreground">
                     Test Newly Added
                   </h3>
                 </div>
-                <div className="p-2 bg-test-newly-foreground/20 rounded-full">
-                  <ArrowRight className="w-5 h-5 text-test-newly-foreground" />
+                <div className="p-2 bg-main-dark-gray rounded-full shadow-custom-dark">
+                  <ArrowRight className="w-5 h-5 text-main-foreground" />
                 </div>
               </CardContent>
             </Card>
 
             {/* Test By Chapters */}
             <Card 
-              className="bg-test-chapters hover:scale-105 transform transition-all cursor-pointer"
+              className="bg-home-gray-beige hover:scale-105 transform transition-all cursor-pointer"
               onClick={onStartTest}
             >
               <CardContent className="p-6 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="p-3 bg-test-chapters-foreground/10 rounded-full">
-                    <BookOpen className="w-6 h-6 text-test-chapters-foreground" />
+                  <div className="p-3 bg-main-primary rounded-full">
+                    <WalletCards className="w-6 h-6 text-main-foreground" />
                   </div>
-                  <h3 className="text-lg font-semibold text-test-chapters-foreground">
-                    Test By Chapters
+                  <h3 className="text-lg font-semibold text-main-foreground">
+                    Test By Decks
                   </h3>
                 </div>
-               <div className="p-2 bg-test-chapters-foreground/20 rounded-full">
-                  <ArrowRight className="w-5 h-5 text-test-chapters-foreground" />
+               <div className="p-2 bg-main-dark-gray rounded-full shadow-custom-dark">
+                  <ArrowRight className="w-5 h-5 text-main-foreground" />
                 </div>
               </CardContent>
             </Card>
 
             {/* Test All Words */}
             <Card 
-              className="bg-test-all hover:scale-105 transform transition-all cursor-pointer"
+              className="bg-home-gray-green hover:scale-105 transform transition-all cursor-pointer"
               onClick={onStartTest}
             >
               <CardContent className="p-6 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="p-3 bg-test-all-foreground/10 rounded-full">
-                    <Target className="w-6 h-6 text-test-all-foreground" />
+                  <div className="p-3 bg-main-secondary rounded-full">
+                    <Swords className="w-6 h-6 text-main-foreground" />
                   </div>
-                  <h3 className="text-lg font-semibold text-test-all-foreground">
+                  <h3 className="text-lg font-semibold text-main-foreground">
                     Test All Words
                   </h3>
                 </div>
-                 <div className="p-2 bg-test-all-foreground/20 rounded-full">
-                  <ArrowRight className="w-5 h-5 text-test-all-foreground" />
+                 <div className="p-2 bg-main-secondary rounded-full shadow-custom-dark">
+                  <ArrowRight className="w-5 h-5 text-main-foreground" />
                 </div>
               </CardContent>
             </Card>
 
             {/* Test Unfamiliar */}
             <Card 
-              className="bg-test-unfamiliar hover:scale-105 transform transition-all cursor-pointer"
+              className="bg-main-secondary hover:scale-105 transform transition-all cursor-pointer"
               onClick={onStartTest}
             >
               <CardContent className="p-6 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="p-3 bg-test-unfamiliar-foreground/10 rounded-full">
-                    <Brain className="w-6 h-6 text-test-unfamiliar-foreground" />
+                  <div className="p-3 bg-main-dark-gray rounded-full">
+                    <MousePointerClick className="w-6 h-6 text-main-foreground" />
                   </div>
-                  <h3 className="text-lg font-semibold text-test-unfamiliar-foreground">
+                  <h3 className="text-lg font-semibold text-main-foreground">
                     Test Unfamiliar
                   </h3>
                 </div>
-                <div className="p-2 bg-test-unfamiliar-foreground/20 rounded-full">
-                  <ArrowRight className="w-5 h-5 text-test-unfamiliar-foreground" />
+                <div className="p-2 bg-main-dark-gray rounded-full shadow-custom-dark">
+                  <ArrowRight className="w-5 h-5 text-main-foreground" />
                 </div>
               </CardContent>
             </Card>
