@@ -92,3 +92,7 @@ class SessionComplete(BaseModel):
     missed_words: List[int]  # List of card IDs that were incorrect
     summary: SessionSummary
     completed_at: datetime
+
+class TestStats(BaseModel):
+    available_cards: int
+    total_decks: Optional[int] = None

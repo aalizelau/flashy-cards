@@ -11,3 +11,7 @@ class TestStrategyInterface(ABC):
     @abstractmethod
     def get_cards(self, deck_ids: List[int] = None, limit: int = 20) -> List[Card]:
         pass
+    
+    @abstractmethod
+    def get_stats(self, deck_ids: List[int] = None) -> dict:
+        pass

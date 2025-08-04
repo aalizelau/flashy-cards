@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import func
 
 from app.models import Card as CardORM, TestAnalytics as TestAnalyticsORM
-from app.schemas import StudySession, Card as CardSchema, TestResult, SessionComplete
+from app.schemas import StudySession, Card as CardSchema, TestResult, SessionComplete, TestStats
 from app.strategies.test_strategy_interface import TestStrategyInterface
 from app.strategies.test_all_strategy import TestAllStrategy
 from app.strategies.test_by_decks_strategy import TestByDecksStrategy
@@ -48,6 +48,14 @@ class SessionService:
             deck_id=deck_id,
             started_at=datetime.now(),
             cards=card_models  
+        )
+    
+    def get_test_stats(self, test_type: str, deck_ids: List[int] = None) -> TestStats:
+        strategy = self._get_strategy(test_type)
+        stats = strategy.get_stats(deck_ids)
+        return TestStats(
+            available_cards=stats["available_cards"],
+            total_decks=stats.get("total_decks")
         )
 
     def complete_session(self, results: List[TestResult]) :
