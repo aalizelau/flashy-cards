@@ -3,14 +3,17 @@ import { useNavigate } from 'react-router-dom';
 import { MainDashboard } from './MainDashboard';
 import { useDecks, useAnalytics } from '@/shared/hooks/useApi';
 import { TestConfigModal } from '@/features/test/components/Popup';
+import { DeckSelectionModal } from '@/features/test/components/DeckSelectionModal';
 import { apiClient } from '@/shared/services/api';
 import { TestStats } from '@/shared/types/api';
 
 const DashboardContainer: React.FC = () => {
   const navigate = useNavigate();
   const [showTestConfig, setShowTestConfig] = useState(false);
+  const [showDeckSelection, setShowDeckSelection] = useState(false);
   const [testStats, setTestStats] = useState<TestStats | null>(null);
   const [currentTestType, setCurrentTestType] = useState<string>('');
+  const [selectedDeckIds, setSelectedDeckIds] = useState<number[]>([]);
   const [isLoadingStats, setIsLoadingStats] = useState(false);
   
   const { data: decks, isLoading: decksLoading, error: decksError } = useDecks();
@@ -26,10 +29,22 @@ const DashboardContainer: React.FC = () => {
     }
     
     setCurrentTestType(testType);
+    
+    // For test_by_decks, show deck selection modal first
+    if (testType === 'test_by_decks') {
+      setShowDeckSelection(true);
+      return;
+    }
+    
+    // For other test types, proceed directly to stats fetching
+    await fetchStatsAndShowConfig(testType);
+  };
+  
+  const fetchStatsAndShowConfig = async (testType: string, deckIds?: number[]) => {
     setIsLoadingStats(true);
     
     try {
-      const stats = await apiClient.getTestStats(testType);
+      const stats = await apiClient.getTestStats(testType, deckIds);
       setTestStats(stats);
       setShowTestConfig(true);
     } catch (error) {
@@ -41,6 +56,12 @@ const DashboardContainer: React.FC = () => {
       setIsLoadingStats(false);
     }
   };
+  
+  const handleDeckSelectionContinue = async (deckIds: number[]) => {
+    setSelectedDeckIds(deckIds);
+    setShowDeckSelection(false);
+    await fetchStatsAndShowConfig('test_by_decks', deckIds);
+  };
 
   const handleTestStart = (wordCount: number) => {
     setShowTestConfig(false);
@@ -50,6 +71,12 @@ const DashboardContainer: React.FC = () => {
   const handleTestConfigClose = () => {
     setShowTestConfig(false);
     setTestStats(null);
+    setCurrentTestType('');
+    setSelectedDeckIds([]);
+  };
+  
+  const handleDeckSelectionClose = () => {
+    setShowDeckSelection(false);
     setCurrentTestType('');
   };
 
@@ -92,6 +119,13 @@ const DashboardContainer: React.FC = () => {
         onStartTest={handleStartTest}
         analytics={analytics}
       />
+      {showDeckSelection && decks && (
+        <DeckSelectionModal
+          decks={decks}
+          onContinue={handleDeckSelectionContinue}
+          onClose={handleDeckSelectionClose}
+        />
+      )}
       {showTestConfig && selectedDeck && (
         <TestConfigModal
           deck={selectedDeck}
