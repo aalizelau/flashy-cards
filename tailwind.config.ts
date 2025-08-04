@@ -54,7 +54,7 @@ export default {
 				},
 				'vibrant-dark-blue': 'var(--sharp-blue)',
 				'vibrant-yellow': 'var(--vibrant-yellow)',
-				'vibrant-green': 'var(--vibrant-green)',
+				'vibrant-green': 'hsl(var(--vibrant-green))',
 				'vibrant-light-blue': 'var(--vibrant-light-blue)',
 				'main-foreground': 'var(--main-foreground)',
 				'main-secondary': 'var(--main-secondary)',

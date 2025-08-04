@@ -32,7 +32,7 @@ All colors MUST be HSL.
    
     --vibrant-dark-blue: #0D4DA5;
     --vibrant-yellow: #F5C73D;
-    --vibrant-green: #33CC8F;
+    --vibrant-green: 156 60% 50%;
     --vibrant-light-blue: #51D0FB;
 
     --main-foreground: #4D667F;

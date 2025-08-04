@@ -20,8 +20,8 @@ export const ReviewMode: React.FC<ReviewModeProps> = ({ results, onRestart, onBa
   const accuracy = Math.round((correctAnswers / totalCards) * 100);
 
   const getAccuracyColor = (acc: number) => {
-    if (acc >= 80) return 'text-success';
-    if (acc >= 60) return 'text-warning';
+    if (acc >= 80) return 'text-vibrant-green';
+    if (acc >= 60) return 'text-vibrant-yellow';
     return 'text-destructive';
   };
 
@@ -69,7 +69,7 @@ export const ReviewMode: React.FC<ReviewModeProps> = ({ results, onRestart, onBa
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="text-center">
-              <div className="text-3xl font-bold text-success mb-1">{correctAnswers}</div>
+              <div className="text-3xl font-bold text-vibrant-green mb-1">{correctAnswers}</div>
               <div className="text-sm text-muted-foreground">Correct Answers</div>
             </div>
             <div className="text-center">
@@ -91,7 +91,7 @@ export const ReviewMode: React.FC<ReviewModeProps> = ({ results, onRestart, onBa
         {/* Passed Cards */}
         <Card className="bg-gradient-card shadow-card">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-success">
+            <CardTitle className="flex items-center gap-2 text-vibrant-green">
               <CheckCircle className="w-5 h-5" />
               Passed ({passed.length})
             </CardTitle>
@@ -102,9 +102,9 @@ export const ReviewMode: React.FC<ReviewModeProps> = ({ results, onRestart, onBa
                 {passed.map((result) => (
                   <div
                     key={result.card_id}
-                    className="flex items-center gap-2 p-3 bg-success/10 rounded-lg border border-success/20"
+                    className="flex items-center gap-2 p-3 bg-vibrant-green/10 rounded-lg border border-vibrant-green/20"
                   >
-                    <CheckCircle className="w-4 h-4 text-success flex-shrink-0" />
+                    <CheckCircle className="w-4 h-4 text-vibrant-green flex-shrink-0" />
                     <div className="min-w-0">
                       <div className="font-medium text-sm truncate">{result.front}</div>
                       <div className="text-xs text-muted-foreground truncate">{result.back}</div>

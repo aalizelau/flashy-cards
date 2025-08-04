@@ -180,14 +180,6 @@ export const TestingMode: React.FC<TestingModeProps> = ({ deckId, onComplete, on
           I Remembered
         </Button>
       </div>
-
-      {!isFlipped && (
-        <div className="text-center">
-          <p className="text-muted-foreground mb-4">
-            Tap the card to reveal the answer
-          </p>
-        </div>
-      )}
     </div>
   );
 };

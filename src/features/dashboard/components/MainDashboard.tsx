@@ -43,7 +43,7 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
     /> */}
   
   
-  <div className="bg-muted rounded-3xl z-4 p-8 relative overflow-hidden border border-border">
+  <div className="bg-muted rounded-3xl z-4 p-8 relative overflow-hidden border border-border shadow-card">
     <img
       src={Arts}
       alt="Decorative leaves"
@@ -61,8 +61,8 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
     />
     {/* Text content */}
     <div className="relative z-8">
-      <h1 className="text-4xl font-regular font-bonbon text-main-foreground mb-4">
-        Welcome Back Alize!
+      <h1 className="text-4xl font-normal font-gloock text-main-foreground mb-4">
+        Welcome Back     Alize!
       </h1>
       <p className="text-lg text-muted-foreground max-w-lg">
         You've learned 80% of words this week. 

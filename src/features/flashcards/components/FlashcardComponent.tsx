@@ -32,10 +32,10 @@ export const FlashcardComponent: React.FC<FlashcardComponentProps> = ({
             <div className="text-2xl font-semibold text-card-foreground mb-4">
               {flashcard.front}
             </div>
-            <div className="flex items-center text-muted-foreground text-sm">
+            {/* <div className="flex items-center text-muted-foreground text-sm">
               <RotateCcw className="w-4 h-4 mr-2" />
               Tap to flip
-            </div>
+            </div> */}
           </Button>
         </div>
 
