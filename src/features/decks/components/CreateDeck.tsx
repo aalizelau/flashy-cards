@@ -196,7 +196,7 @@ function CreateDeck() {
         <div className=" mb-8">
           <div className="flex items-center justify-start gap-3 mb-4 mt-10">
             {/* <BookOpen className="w-8 h-8 text-test-chapters-foreground" /> */}
-            <h1 className="text-3xl font-bold text-test-chapters-foreground">Create a New Deck</h1>
+            <h1 className="text-4xl font-semibold font-alumni-sans text-main-foreground">CREATE A NEW DECK</h1>
           </div>
         </div>
 
@@ -235,7 +235,7 @@ function CreateDeck() {
                     onClick={() => setImportMode('individual')}
                     className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 transition-all duration-200 ${
                         importMode === 'individual'
-                        ? 'border-sharp-blue bg-sharp-blue/10 '
+                        ? 'border-accent bg-sharp-blue/10 '
                         : 'border-gray-200 hover:border-gray-300'
                     }`}
                     >
@@ -308,7 +308,7 @@ function CreateDeck() {
                         <input
                           value={card.front}
                           onChange={(e) => updateFlashcard(card.id, 'front', e.target.value)}
-                          className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-sharp-blue transition-all duration-200 resize-none h-14"
+                          className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-accent transition-all duration-200 resize-none h-14"
                         //   rows={2}
                           ref={index === flashcards.length - 1 ? lastCardRef : undefined}
                         />
@@ -515,7 +515,7 @@ function CreateDeck() {
             <button
               type="submit"
               disabled={isLoading}
-              className="flex items-center gap-3 px-6 py-4 bg-muted-foreground/90 text-white font-semibold rounded-xl hover:shadow-xl hover:from-blue-700 hover:to-indigo-700 transform hover:scale-105 transition-all duration-200 text-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+              className="flex items-center gap-3 px-6 py-4 bg-main-foreground text-white font-semibold font-alumni-sans rounded-xl hover:shadow-xl hover:from-blue-700 hover:to-indigo-700 transform hover:scale-105 transition-all duration-200 text-2xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
             >
               {isLoading ? (
                 <>
@@ -523,7 +523,7 @@ function CreateDeck() {
                   Creating...
                 </>
               ) : (
-                'Create'
+                'Create Deck'
               )}
             </button>
           </div>

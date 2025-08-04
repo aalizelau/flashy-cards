@@ -21,6 +21,9 @@ export default {
 		extend: {
 			fontFamily: {
 				'inter': ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+				'alumni-sans': ['Alumni Sans', 'system-ui', '-apple-system', 'sans-serif'],
+				'gloock': ['Gloock', 'serif'],
+				'bonbon': ['Bonbon', 'cursive'],
 			},
 			colors: {
 				border: 'hsl(var(--border))',
@@ -46,7 +49,7 @@ export default {
 					foreground: 'hsl(var(--muted-foreground))'
 				},
 				accent: {
-					DEFAULT: 'hsl(var(--accent))',
+					DEFAULT: 'var(--accent)',
 					foreground: 'hsl(var(--accent-foreground))'
 				},
 				'vibrant-dark-blue': 'var(--sharp-blue)',

@@ -61,7 +61,7 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
     />
     {/* Text content */}
     <div className="relative z-8">
-      <h1 className="text-3xl font-bold text-darkest-blue mb-4">
+      <h1 className="text-4xl font-regular font-bonbon text-main-foreground mb-4">
         Welcome Back Alize!
       </h1>
       <p className="text-lg text-muted-foreground max-w-lg">
@@ -95,11 +95,11 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
             >
               <CardContent className="p-6 h-full flex flex-col justify-between">
                 <div>
-                  <div className="flex items-center gap-3 mb-4">
+                  <div className="flex items-center gap-8 mb-4">
                     <div className="p-3 bg-main-secondary rounded-full">
                       <Rocket className="w-6 h-6 text-main-foreground" />
                     </div>
-                    <h3 className="text-xl font-semibold text-main-foreground">
+                    <h3 className="text-4xl font-md text-main-foreground font-alumni-sans">
                       Daily Challenges
                     </h3>
                   </div>
@@ -121,11 +121,11 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
               onClick={onStartTest}
             >
               <CardContent className="p-6 flex items-center justify-between">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-8">
                   <div className="p-3 bg-main-dark-gray rounded-full">
                     <Sparkles className="w-6 h-6 text-main-foreground" />
                   </div>
-                  <h3 className="text-xl font-semibold text-main-foreground">
+                  <h3 className="text-3xl font-md text-main-foreground font-alumni-sans">
                     Test Newly Added
                   </h3>
                 </div>
@@ -141,11 +141,11 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
               onClick={onStartTest}
             >
               <CardContent className="p-6 flex items-center justify-between">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-8">
                   <div className="p-3 bg-main-primary rounded-full">
                     <WalletCards className="w-6 h-6 text-main-foreground" />
                   </div>
-                  <h3 className="text-lg font-semibold text-main-foreground">
+                  <h3 className="text-3xl font-md text-main-foreground font-alumni-sans">
                     Test By Decks
                   </h3>
                 </div>
@@ -161,11 +161,11 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
               onClick={onStartTest}
             >
               <CardContent className="p-6 flex items-center justify-between">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-8">
                   <div className="p-3 bg-main-secondary rounded-full">
                     <Swords className="w-6 h-6 text-main-foreground" />
                   </div>
-                  <h3 className="text-lg font-semibold text-main-foreground">
+                  <h3 className="text-3xl font-md text-main-foreground font-alumni-sans">
                     Test All Words
                   </h3>
                 </div>
@@ -181,11 +181,11 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
               onClick={onStartTest}
             >
               <CardContent className="p-6 flex items-center justify-between">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-8">
                   <div className="p-3 bg-main-dark-gray rounded-full">
                     <MousePointerClick className="w-6 h-6 text-main-foreground" />
                   </div>
-                  <h3 className="text-lg font-semibold text-main-foreground">
+                  <h3 className="text-3xl font-md text-main-foreground font-alumni-sans">
                     Test Unfamiliar
                   </h3>
                 </div>
