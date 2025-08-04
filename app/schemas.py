@@ -61,7 +61,9 @@ class StudySession(BaseModel):
     cards: List[Card]
 
 class CreateSessionRequest(BaseModel):
-    deck_id: int
+    test_type: str
+    deck_ids: Optional[List[int]] = None
+    limit: int
 
 class TestResult(BaseModel):
     card_id: int

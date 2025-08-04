@@ -19,9 +19,13 @@ def get_db():
 def create_study_session(request: CreateSessionRequest, db: Session = Depends(get_db)):
     try:
         session_service = SessionService(db)
-        return session_service.create_study_session(request.deck_id)
+        return session_service.create_study_session(
+            test_type=request.test_type,
+            deck_ids=request.deck_ids,
+            limit=request.limit
+        )
     except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e))
 
 @router.post("/sessions/complete")
 def complete_study_session(

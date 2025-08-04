@@ -6,6 +6,11 @@ from sqlalchemy import func
 
 from app.models import Card as CardORM, TestAnalytics as TestAnalyticsORM
 from app.schemas import StudySession, Card as CardSchema, TestResult, SessionComplete
+from app.strategies.test_strategy_interface import TestStrategyInterface
+from app.strategies.test_all_strategy import TestAllStrategy
+from app.strategies.test_by_decks_strategy import TestByDecksStrategy
+from app.strategies.test_unfamiliar_strategy import TestUnfamiliarStrategy
+from app.strategies.test_newly_added_strategy import TestNewlyAddedStrategy
 from fastapi import HTTPException
 import random
 
@@ -13,17 +18,32 @@ class SessionService:
     def __init__(self, db: Session):
         self.db = db
 
-    def create_study_session(self, deck_id: int) -> StudySession:
-        cards = self.db.query(CardORM).filter(CardORM.deck_id == deck_id).all()
-        if not cards:
-            raise HTTPException(status_code=404, detail="Deck not found or has no cards")
+    def _get_strategy(self, test_type: str) -> TestStrategyInterface:
+        strategies = {
+            "test_all": TestAllStrategy,
+            "test_by_decks": TestByDecksStrategy,
+            "test_unfamiliar": TestUnfamiliarStrategy,
+            "test_newly_added": TestNewlyAddedStrategy
+        }
         
-        # Shuffle cards for randomness
-        random.shuffle(cards)
+        if test_type not in strategies:
+            raise ValueError(f"Invalid test type: {test_type}")
+        
+        return strategies[test_type](self.db)
+    
+    def create_study_session(self, test_type: str, deck_ids: List[int] = None, limit: int = 20) -> StudySession:
+        strategy = self._get_strategy(test_type)
+        cards = strategy.get_cards(deck_ids, limit)
+        
+        if not cards:
+            raise HTTPException(status_code=404, detail="No cards found for the specified criteria")
         
         # Convert ORM models to Pydantic models
         card_models = [CardSchema.model_validate(card) for card in cards]
 
+        # Use the first deck_id if available, otherwise use 0 as placeholder
+        deck_id = deck_ids[0] if deck_ids and len(deck_ids) > 0 else 0
+        
         return StudySession(
             deck_id=deck_id,
             started_at=datetime.now(),
