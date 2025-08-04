@@ -7,7 +7,8 @@ import {
   TestAnalytics,
   DeckWithCardsCreate,
   DeckWithCardsResponse,
-  TestStats
+  TestStats,
+  StudySessionRequest
 } from '@/shared/types/api';
 
 const BASE_URL = 'http://localhost:8000';
@@ -51,11 +52,19 @@ class ApiClient {
     return this.request<Card[]>(`/decks/${deckId}/cards`);
   }
 
-  // Start a study session
+  // Start a study session (legacy - single deck)
   async startStudySession(deckId: number): Promise<StudySession> {
     return this.request<StudySession>('/study/sessions', {
       method: 'POST',
       body: JSON.stringify({ deck_id: deckId }),
+    });
+  }
+
+  // Start a study session with new test types
+  async startTestSession(sessionRequest: StudySessionRequest): Promise<StudySession> {
+    return this.request<StudySession>('/study/sessions', {
+      method: 'POST',
+      body: JSON.stringify(sessionRequest),
     });
   }
 

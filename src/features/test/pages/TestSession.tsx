@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { TestingMode } from '../components/TestingMode';
 import { ReviewMode } from '../components/ReviewMode';
 import { TestResult, StudySessionResponse } from '@/shared/types/api';
 
 const TestSession: React.FC = () => {
-  const { deckId } = useParams<{ deckId: string }>();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   
@@ -13,8 +12,11 @@ const TestSession: React.FC = () => {
   const [results, setResults] = useState<TestResult[]>([]);
   const [studySessionResponse, setStudySessionResponse] = useState<StudySessionResponse | null>(null);
   
-  const deckIdNum = parseInt(deckId || '1');
-  const wordCount = parseInt(searchParams.get('words') || '10');
+  // Extract test parameters from URL query params
+  const testType = searchParams.get('type') as 'test_all' | 'test_by_decks' | 'test_unfamiliar' | 'test_newly_added' || 'test_all';
+  const limit = parseInt(searchParams.get('limit') || '10');
+  const deckIdsString = searchParams.get('deck_ids');
+  const deckIds = deckIdsString ? deckIdsString.split(',').map(id => parseInt(id)) : undefined;
 
   // Check if we should start in review mode (from URL params)
   useEffect(() => {
@@ -43,8 +45,9 @@ const TestSession: React.FC = () => {
     <div className="min-h-screen bg-gradient-bg">
       {mode === 'testing' && (
         <TestingMode 
-          deckId={deckIdNum}
-          wordCount={wordCount}
+          testType={testType}
+          deckIds={deckIds}
+          limit={limit}
           onComplete={handleTestComplete}
           onBackToBrowser={handleBackToDashboard}
         />

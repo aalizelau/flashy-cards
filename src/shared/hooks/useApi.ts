@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/shared/services/api';
-import { StudySessionComplete } from '@/shared/types/api';
+import { StudySessionComplete, StudySessionRequest } from '@/shared/types/api';
 
 // Query keys for caching
 export const queryKeys = {
@@ -34,10 +34,17 @@ export const useAnalytics = () => {
   });
 };
 
-// Start study session mutation
+// Start study session mutation (legacy)
 export const useStartStudySession = () => {
   return useMutation({
     mutationFn: (deckId: number) => apiClient.startStudySession(deckId),
+  });
+};
+
+// Start test session mutation (new)
+export const useStartTestSession = () => {
+  return useMutation({
+    mutationFn: (sessionRequest: StudySessionRequest) => apiClient.startTestSession(sessionRequest),
   });
 };
 

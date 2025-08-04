@@ -14,6 +14,7 @@ export const AppRouter = () => (
     <Route path="/dashboard" element={<Dashboard />} />
     <Route path="/create-deck" element={<CreateDeck />} />
     <Route path="/test/:deckId" element={<TestSession />} />
+    <Route path="/test" element={<TestSession />} />
     <Route path="/all-decks" element={<AllDecks />} />
     <Route path="/decks/:collectionName" element={<DeckDetail />} />
     <Route path="/analytics" element={<AnalyticsPage />} />

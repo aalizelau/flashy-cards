@@ -2,42 +2,46 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/shared/components/ui/button';
 import { Progress } from '@/shared/components/ui/progress';
 import { FlashcardComponent } from '@/features/flashcards/components/FlashcardComponent';
-import { Card, TestResult } from '@/shared/types/api';
-import { useStartStudySession, useCompleteStudySession } from '@/shared/hooks/useApi';
+import { Card, TestResult, StudySessionRequest } from '@/shared/types/api';
+import { useStartTestSession, useCompleteStudySession } from '@/shared/hooks/useApi';
 import { BookOpen, CheckCircle, XCircle, ArrowLeft } from 'lucide-react';
 
 interface TestingModeProps {
-  deckId: number;
-  wordCount?: number;
+  testType: 'test_all' | 'test_by_decks' | 'test_unfamiliar' | 'test_newly_added';
+  deckIds?: number[];
+  limit: number;
   onComplete: (results: TestResult[]) => void;
   onBackToBrowser?: () => void;
 }
 
-export const TestingMode: React.FC<TestingModeProps> = ({ deckId, wordCount, onComplete, onBackToBrowser }) => {
+export const TestingMode: React.FC<TestingModeProps> = ({ testType, deckIds, limit, onComplete, onBackToBrowser }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [results, setResults] = useState<TestResult[]>([]);
   const [flashcards, setFlashcards] = useState<Card[]>([]);
   
-  const startStudySessionMutation = useStartStudySession();
+  const startTestSessionMutation = useStartTestSession();
   const completeSessionMutation = useCompleteStudySession();
 
-  // Start study session when component mounts
+  // Start test session when component mounts
   useEffect(() => {
-    const initializeStudySession = async () => {
+    const initializeTestSession = async () => {
       try {
-        const studySession = await startStudySessionMutation.mutateAsync(deckId);
-        const cards = studySession.cards;
-        // Limit cards based on wordCount if provided
-        const limitedCards = wordCount ? cards.slice(0, wordCount) : cards;
-        setFlashcards(limitedCards);
+        const sessionRequest: StudySessionRequest = {
+          test_type: testType,
+          limit,
+          ...(deckIds && { deck_ids: deckIds })
+        };
+        
+        const studySession = await startTestSessionMutation.mutateAsync(sessionRequest);
+        setFlashcards(studySession.cards);
       } catch (error) {
-        console.error('Failed to start study session:', error);
+        console.error('Failed to start test session:', error);
       }
     };
 
-    initializeStudySession();
-  }, [deckId, wordCount]);
+    initializeTestSession();
+  }, [testType, deckIds, limit]);
 
   const currentCard = flashcards[currentIndex];
   const progress = flashcards.length > 0 ? ((currentIndex) / flashcards.length) * 100 : 0;
@@ -79,7 +83,7 @@ export const TestingMode: React.FC<TestingModeProps> = ({ deckId, wordCount, onC
   };
 
   // Show loading state while initializing study session
-  if (startStudySessionMutation.isPending || flashcards.length === 0) {
+  if (startTestSessionMutation.isPending || flashcards.length === 0) {
     return (
       <div className="container mx-auto px-4 py-8 max-w-2xl">
         <div className="text-center">
@@ -91,12 +95,12 @@ export const TestingMode: React.FC<TestingModeProps> = ({ deckId, wordCount, onC
   }
 
   // Show error state
-  if (startStudySessionMutation.isError) {
+  if (startTestSessionMutation.isError) {
     return (
       <div className="container mx-auto px-4 py-8 max-w-2xl">
         <div className="text-center text-red-600">
           <h2 className="text-2xl font-bold mb-4">Error Starting Study Session</h2>
-          <p className="mb-4">{startStudySessionMutation.error?.message || 'Failed to start study session'}</p>
+          <p className="mb-4">{startTestSessionMutation.error?.message || 'Failed to start test session'}</p>
           <div className="space-x-4">
             <Button 
               onClick={() => window.location.reload()}

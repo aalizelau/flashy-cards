@@ -65,7 +65,19 @@ const DashboardContainer: React.FC = () => {
 
   const handleTestStart = (wordCount: number) => {
     setShowTestConfig(false);
-    navigate(`/test/${selectedDeckId}?words=${wordCount}`);
+    
+    // Build URL with test parameters
+    const params = new URLSearchParams({
+      type: currentTestType,
+      limit: wordCount.toString()
+    });
+    
+    // Add deck_ids for test_by_decks
+    if (currentTestType === 'test_by_decks' && selectedDeckIds.length > 0) {
+      params.set('deck_ids', selectedDeckIds.join(','));
+    }
+    
+    navigate(`/test?${params.toString()}`);
   };
 
   const handleTestConfigClose = () => {
