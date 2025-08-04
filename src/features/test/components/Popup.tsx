@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { useState, useEffect } from "react"
-import { X, Play } from "lucide-react"
+import { X, Play, Lightbulb } from "lucide-react"
 import type { Deck, TestStats } from "@/shared/types/api"
 import '@/styles/Slider.css'
 
@@ -33,54 +33,50 @@ export const TestConfigModal: React.FC<TestConfigModalProps> = ({ deck, testStat
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl p-6 w-full max-w-md border border-gray-200 shadow-xl">
+      <div className="bg-white rounded-2xl p-6 w-full max-w-sm border border-gray-200 shadow-xl">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-3xl font-semibold text-main-foreground font-alumni-sans">Configure Test</h2>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-3xl font-semibold text-main-foreground font-alumni-sans w-56">How Many Words?</h2>
           <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
             <X className="w-5 h-5 text-gray-500" />
           </button>
         </div>
 
-        {/* Collection Info */}
-        <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-          <h3 className="font-medium text-gray-900 mb-1">{deck.name}</h3>
-          <p className="text-sm text-gray-500">
-            {availableCards} words available
-            {testStats && testStats.total_decks && ` across ${testStats.total_decks} decks`}
-          </p>
-          
-          {availableCards === 0 && (
-            <div className="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-              <p className="text-sm text-yellow-800 font-medium">
-                {getZeroCardsMessage(testType)}
-              </p>
-            </div>
-          )}
+        {/* Available Words Info */}
+        <div className="mb-4 p-3 bg-gray-100 rounded-lg flex items-center gap-2 justify-center">
+          <Lightbulb className="w-5 h-5 text-gray-600" />
+          <span className="text-md text-gray-600">
+            {availableCards} words available in total
+          </span>
         </div>
-
-        {/* Word Count Selector */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <label className="text-sm font-medium text-gray-900">Number of words to test</label>
-            <span className="text-lg font-semibold text-muted-foreground">{wordCount}</span>
+        
+        {availableCards === 0 && (
+          <div className="mb-6 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+            <p className="text-sm text-yellow-800 font-medium text-center">
+              {getZeroCardsMessage(testType)}
+            </p>
           </div>
+        )}
 
-          <div className="relative">
-            <input
-              type="range"
-              min="1"
-              max={maxWords}
-              value={wordCount}
-              onChange={handleSliderChange}
-              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
-            />
-            <div className="flex justify-between text-xs text-gray-500 mt-2">
-              <span>1</span>
-              <span>{maxWords}</span>
+        {/* Word Count Display */}
+            <div className="mb-2 text-center">
+            <div className="text-4xl font-bold font-Inria-serif text-muted-foreground mb-6 ">
+                <span className="text-5xl">{wordCount}</span>
+                <span className="ml-2 text-2xl text-gray-500">words in test</span>
             </div>
-          </div>
-        </div>
+
+            <div className="relative">
+                <input
+                type="range"
+                min="1"
+                max={maxWords}
+                value={wordCount}
+                onChange={handleSliderChange}
+                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider mb-8"
+                />
+            </div>
+            </div>
+
 
         {/* Action Buttons */}
         <div className="flex gap-3">

@@ -24,6 +24,7 @@ export default {
 				'alumni-sans': ['Alumni Sans', 'system-ui', '-apple-system', 'sans-serif'],
 				'gloock': ['Gloock', 'serif'],
 				'bonbon': ['Bonbon', 'cursive'],
+				'Inria-serif': ['Inria Serif', 'serif'],
 			},
 			colors: {
 				border: 'hsl(var(--border))',
