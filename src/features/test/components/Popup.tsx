@@ -43,12 +43,14 @@ export const TestConfigModal: React.FC<TestConfigModalProps> = ({ deck, testStat
         </div>
 
         {/* Available Words Info */}
-        <div className="mb-4 p-3 bg-gray-100 rounded-lg flex items-center gap-2 justify-center">
-          <Lightbulb className="w-5 h-5 text-gray-600" />
-          <span className="text-md text-gray-600">
-            {availableCards} words available in total
-          </span>
-        </div>
+        {availableCards > 0 && (
+            <div className="mb-8 p-3 bg-gray-100 rounded-lg flex items-center gap-2 justify-center">
+                <Lightbulb className="w-5 h-5 text-gray-600" />
+                <span className="text-md text-gray-600">
+                {availableCards} words available in total
+                </span>
+            </div>
+)}
         
         {availableCards === 0 && (
           <div className="mb-6 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
