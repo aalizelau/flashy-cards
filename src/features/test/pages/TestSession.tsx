@@ -14,6 +14,7 @@ const TestSession: React.FC = () => {
   const [studySessionResponse, setStudySessionResponse] = useState<StudySessionResponse | null>(null);
   
   const deckIdNum = parseInt(deckId || '1');
+  const wordCount = parseInt(searchParams.get('words') || '10');
 
   // Check if we should start in review mode (from URL params)
   useEffect(() => {
@@ -43,6 +44,7 @@ const TestSession: React.FC = () => {
       {mode === 'testing' && (
         <TestingMode 
           deckId={deckIdNum}
+          wordCount={wordCount}
           onComplete={handleTestComplete}
           onBackToBrowser={handleBackToDashboard}
         />

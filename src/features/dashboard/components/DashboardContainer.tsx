@@ -1,18 +1,30 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MainDashboard } from './MainDashboard';
 import { useDecks, useAnalytics } from '@/shared/hooks/useApi';
+import { TestConfigModal } from '@/features/test/components/Popup';
 
 const DashboardContainer: React.FC = () => {
   const navigate = useNavigate();
+  const [showTestConfig, setShowTestConfig] = useState(false);
   
   const { data: decks, isLoading: decksLoading, error: decksError } = useDecks();
   const { data: analytics, isLoading: analyticsLoading, error: analyticsError } = useAnalytics();
   
-  const selectedDeckId = decks?.[2]?.id || 1;
+  const selectedDeckId = decks?.[0]?.id || 1;
+  const selectedDeck = decks?.find(deck => deck.id === selectedDeckId);
 
   const handleStartTest = () => {
-    navigate(`/test/${selectedDeckId}`);
+    setShowTestConfig(true);
+  };
+
+  const handleTestStart = (wordCount: number) => {
+    setShowTestConfig(false);
+    navigate(`/test/${selectedDeckId}?words=${wordCount}`);
+  };
+
+  const handleTestConfigClose = () => {
+    setShowTestConfig(false);
   };
 
   const isLoading = decksLoading || analyticsLoading;
@@ -49,10 +61,19 @@ const DashboardContainer: React.FC = () => {
   }
 
   return (
-    <MainDashboard
-      onStartTest={handleStartTest}
-      analytics={analytics}
-    />
+    <>
+      <MainDashboard
+        onStartTest={handleStartTest}
+        analytics={analytics}
+      />
+      {showTestConfig && selectedDeck && (
+        <TestConfigModal
+          deck={selectedDeck}
+          onStart={handleTestStart}
+          onClose={handleTestConfigClose}
+        />
+      )}
+    </>
   );
 };
 

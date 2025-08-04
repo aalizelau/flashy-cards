@@ -8,11 +8,12 @@ import { BookOpen, CheckCircle, XCircle, ArrowLeft } from 'lucide-react';
 
 interface TestingModeProps {
   deckId: number;
+  wordCount?: number;
   onComplete: (results: TestResult[]) => void;
   onBackToBrowser?: () => void;
 }
 
-export const TestingMode: React.FC<TestingModeProps> = ({ deckId, onComplete, onBackToBrowser }) => {
+export const TestingMode: React.FC<TestingModeProps> = ({ deckId, wordCount, onComplete, onBackToBrowser }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [results, setResults] = useState<TestResult[]>([]);
@@ -26,14 +27,17 @@ export const TestingMode: React.FC<TestingModeProps> = ({ deckId, onComplete, on
     const initializeStudySession = async () => {
       try {
         const studySession = await startStudySessionMutation.mutateAsync(deckId);
-        setFlashcards(studySession.cards);
+        const cards = studySession.cards;
+        // Limit cards based on wordCount if provided
+        const limitedCards = wordCount ? cards.slice(0, wordCount) : cards;
+        setFlashcards(limitedCards);
       } catch (error) {
         console.error('Failed to start study session:', error);
       }
     };
 
     initializeStudySession();
-  }, [deckId]); // Remove startStudySessionMutation from dependencies
+  }, [deckId, wordCount]);
 
   const currentCard = flashcards[currentIndex];
   const progress = flashcards.length > 0 ? ((currentIndex) / flashcards.length) * 100 : 0;
