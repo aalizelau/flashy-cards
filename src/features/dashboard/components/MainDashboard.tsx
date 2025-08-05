@@ -17,7 +17,6 @@ import {
 import { TestAnalytics } from '@/shared/types/api';
 import { StatisticsPanel } from './StatisticsPanel';
 import Arts from '@/assets/arts.png';
-import { useNavigate } from 'react-router-dom';
 
 interface MainDashboardProps {
   onStartTest: (testType: string) => void;
@@ -29,7 +28,6 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
   onStartTest, 
   analytics
 }) => {
-  const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-gradient-bg flex">
@@ -80,17 +78,6 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
         {/* Start Practice Section */}
         <div className="mb-8">
           {/* <h2 className="text-2xl font-bold text-darkest-blue mb-6">Start Practice</h2> */}
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-foreground">Start Practice</h2>
-            <Button 
-              onClick={() => navigate('/create-deck')}
-              variant="secondary"
-              className="gap-2"
-            >
-              <Plus className="w-4 h-4" />
-              Create New Deck
-            </Button>
-          </div>
           
           <div className="grid grid-cols-2 gap-4">
             {/* Daily Challenges - Large card */}
