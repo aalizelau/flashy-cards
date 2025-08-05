@@ -20,6 +20,7 @@ export const AppRouter = () => (
     <Route path="/all-decks" element={<AllDecks />} />
     <Route path="/decks/:collectionName" element={<DeckDetail />} />
     <Route path="/analytics" element={<AnalyticsPage />} />
+    <Route path="/create-deck" element={<CreateDeck />} />
     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
     <Route path="*" element={<NotFound />} />
   </Routes>
