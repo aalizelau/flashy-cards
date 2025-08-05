@@ -7,10 +7,12 @@ import AllDecks from "../features/collections/components/AllDecks";
 import DeckDetail from "../features/collections/components/DeckDetail";
 import AnalyticsPage from "../features/analytics/components/Analytics";
 import CreateDeck from "../features/decks/components/CreateDeck";
+import Login from "../features/auth/components/login";
 
 export const AppRouter = () => (
   <Routes>
     <Route path="/" element={<Index />} />
+    <Route path="/login" element={<Login />} />
     <Route path="/dashboard" element={<Dashboard />} />
     <Route path="/create-deck" element={<CreateDeck />} />
     <Route path="/test/:deckId" element={<TestSession />} />
