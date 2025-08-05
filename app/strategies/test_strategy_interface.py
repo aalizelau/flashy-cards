@@ -1,0 +1,17 @@
+from abc import ABC, abstractmethod
+from typing import List
+from sqlalchemy.orm import Session
+from app.models import Card
+
+
+class TestStrategyInterface(ABC):
+    def __init__(self, db: Session):
+        self.db = db
+    
+    @abstractmethod
+    def get_cards(self, deck_ids: List[int] = None, limit: int = 20) -> List[Card]:
+        pass
+    
+    @abstractmethod
+    def get_stats(self, deck_ids: List[int] = None) -> dict:
+        pass
