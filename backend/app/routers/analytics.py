@@ -1,5 +1,6 @@
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
+from datetime import datetime
 
 from app.database import SessionLocal
 from app.schemas import TestAnalytics
@@ -33,5 +34,13 @@ def get_analytics(
     ).order_by(TestAnalyticsORM.updated_at.desc()).first()
     
     if not analytics:
-        raise HTTPException(status_code=404, detail="No analytics data found for user")
+        # Return default analytics for new users
+        return TestAnalytics(
+            total_cards_studied=0,
+            total_correct_answers=0,
+            cards_mastered=0,
+            overall_average_progress=0.0,
+            updated_at=datetime.utcnow()
+        )
+    
     return analytics
