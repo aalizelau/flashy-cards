@@ -1,13 +1,16 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.routers import decks, sessions, analytics
+import app.firebase_config  # Initialize Firebase
+from app.auth_middleware import get_current_user
 
 app = FastAPI(title="Flashcard API", version="1.0.0")
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
+        "http://localhost:5173",  # Vite frontend dev server
         "http://localhost:8080",
         "http://192.168.1.141:8080"  
     ],
