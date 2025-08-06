@@ -30,7 +30,7 @@ class DeckService:
         """Create a deck with cards atomically"""
         try:
             # Start transaction
-            self.db.begin()
+            # self.db.begin()
             
             # Create deck
             db_deck = DeckORM(
