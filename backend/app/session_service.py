@@ -31,9 +31,9 @@ class SessionService:
         
         return strategies[test_type](self.db)
     
-    def create_study_session(self, test_type: str, deck_ids: List[int] = None, limit: int = 20) -> StudySession:
+    def create_study_session(self, test_type: str, user_id: str, deck_ids: List[int] = None, limit: int = 20) -> StudySession:
         strategy = self._get_strategy(test_type)
-        cards = strategy.get_cards(deck_ids, limit)
+        cards = strategy.get_cards(user_id, deck_ids, limit)
         
         if not cards:
             raise HTTPException(status_code=404, detail="No cards found for the specified criteria")
@@ -50,9 +50,9 @@ class SessionService:
             cards=card_models  
         )
     
-    def get_test_stats(self, test_type: str, deck_ids: List[int] = None) -> TestStats:
+    def get_test_stats(self, test_type: str, user_id: str, deck_ids: List[int] = None) -> TestStats:
         strategy = self._get_strategy(test_type)
-        stats = strategy.get_stats(deck_ids)
+        stats = strategy.get_stats(user_id, deck_ids)
         return TestStats(
             available_cards=stats["available_cards"],
             total_decks=stats.get("total_decks")
@@ -112,17 +112,23 @@ class SessionService:
         )
         self.db.add(new_session)
     
-    def update_analytics(self):
-        total_cards_studied = self.db.query(CardORM).filter(CardORM.total_attempts > 0).count()
-        total_correct_answers = self.db.query(CardORM).with_entities(
+    def update_analytics(self, user_id: str):
+        from app.models import Deck as DeckORM
+        
+        # Filter cards by user through deck relationship
+        user_cards_query = self.db.query(CardORM).join(DeckORM).filter(DeckORM.user_id == user_id)
+        
+        total_cards_studied = user_cards_query.filter(CardORM.total_attempts > 0).count()
+        total_correct_answers = user_cards_query.with_entities(
             func.sum(CardORM.accuracy * CardORM.total_attempts)
         ).scalar() or 0
-        cards_mastered = self.db.query(CardORM).filter(CardORM.accuracy >= 0.9).count()
+        cards_mastered = user_cards_query.filter(CardORM.accuracy >= 0.9).count()
         overall_average_progress = (
-            self.db.query(func.avg(CardORM.accuracy)).scalar() or 0.0
+            user_cards_query.with_entities(func.avg(CardORM.accuracy)).scalar() or 0.0
         )
 
         analytics_entry = TestAnalyticsORM(
+            user_id=user_id,
             total_cards_studied=total_cards_studied,
             total_correct_answers=int(total_correct_answers),
             cards_mastered=cards_mastered,

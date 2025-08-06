@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.routers import decks, sessions, analytics
+from app.routers import decks, sessions, analytics, users
 import app.firebase_config  # Initialize Firebase
 from app.auth_middleware import get_current_user
 
@@ -27,4 +27,5 @@ def read_root():
 app.include_router(decks.router)
 app.include_router(sessions.router) 
 app.include_router(analytics.router)
+app.include_router(users.router)
 

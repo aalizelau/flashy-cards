@@ -12,10 +12,11 @@ class DeckService:
     def __init__(self, db: Session):
         self.db = db
 
-    def create_deck(self, deck_data: DeckCreate) -> DeckORM:
+    def create_deck(self, deck_data: DeckCreate, user_id: str) -> DeckORM:
         """Create a single deck without cards"""
         db_deck = DeckORM(
             name=deck_data.name,
+            user_id=user_id,
             created_at=datetime.now(),
             progress=0.0,
             card_count=0
@@ -25,7 +26,7 @@ class DeckService:
         self.db.refresh(db_deck)
         return db_deck
 
-    def create_deck_with_cards(self, deck_data: DeckWithCardsCreate) -> DeckWithCardsResponse:
+    def create_deck_with_cards(self, deck_data: DeckWithCardsCreate, user_id: str) -> DeckWithCardsResponse:
         """Create a deck with cards atomically"""
         try:
             # Start transaction
@@ -34,6 +35,7 @@ class DeckService:
             # Create deck
             db_deck = DeckORM(
                 name=deck_data.name,
+                user_id=user_id,
                 created_at=datetime.now(),
                 progress=0.0,
                 card_count=len(deck_data.cards)
@@ -79,3 +81,20 @@ class DeckService:
         except SQLAlchemyError as e:
             self.db.rollback()
             raise Exception(f"Failed to create deck with cards: {str(e)}")
+
+    def get_user_decks(self, user_id: str) -> List[DeckORM]:
+        """Get all decks for a specific user"""
+        return self.db.query(DeckORM).filter(DeckORM.user_id == user_id).all()
+
+    def get_user_deck_cards(self, deck_id: int, user_id: str) -> List[CardORM]:
+        """Get all cards for a specific deck belonging to a user"""
+        # Verify deck belongs to user
+        deck = self.db.query(DeckORM).filter(
+            DeckORM.id == deck_id, 
+            DeckORM.user_id == user_id
+        ).first()
+        
+        if not deck:
+            raise Exception("Deck not found or access denied")
+        
+        return self.db.query(CardORM).filter(CardORM.deck_id == deck_id).all()

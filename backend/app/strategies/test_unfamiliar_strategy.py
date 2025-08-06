@@ -5,8 +5,12 @@ import random
 
 
 class TestUnfamiliarStrategy(TestStrategyInterface):
-    def get_cards(self, deck_ids: List[int] = None, limit: int = 20) -> List[Card]:
-        query = self.db.query(Card).filter(Card.accuracy < 0.5)
+    def get_cards(self, user_id: str, deck_ids: List[int] = None, limit: int = 20) -> List[Card]:
+        from app.models import Deck
+        query = self.db.query(Card).join(Deck).filter(
+            Deck.user_id == user_id,
+            Card.accuracy < 0.5
+        )
         
         if deck_ids:
             query = query.filter(Card.deck_id.in_(deck_ids))
@@ -15,8 +19,12 @@ class TestUnfamiliarStrategy(TestStrategyInterface):
         random.shuffle(cards)
         return cards[:limit]
     
-    def get_stats(self, deck_ids: List[int] = None) -> dict:
-        query = self.db.query(Card).filter(Card.accuracy < 0.5)
+    def get_stats(self, user_id: str, deck_ids: List[int] = None) -> dict:
+        from app.models import Deck
+        query = self.db.query(Card).join(Deck).filter(
+            Deck.user_id == user_id,
+            Card.accuracy < 0.5
+        )
         
         if deck_ids:
             query = query.filter(Card.deck_id.in_(deck_ids))
