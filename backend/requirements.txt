@@ -7,16 +7,27 @@ anyio==4.10.0
     #   httpx
     #   starlette
     #   watchfiles
+cachecontrol==0.14.3
+    # via firebase-admin
+cachetools==5.5.2
+    # via google-auth
 certifi==2025.8.3
     # via
     #   httpcore
     #   httpx
+    #   requests
     #   sentry-sdk
+cffi==1.17.1
+    # via cryptography
+charset-normalizer==3.4.2
+    # via requests
 click==8.2.1
     # via
     #   rich-toolkit
     #   typer
     #   uvicorn
+cryptography==45.0.6
+    # via pyjwt
 dnspython==2.7.0
     # via email-validator
 email-validator==2.2.0
@@ -29,12 +40,54 @@ fastapi-cli==0.0.8
     # via fastapi
 fastapi-cloud-cli==0.1.5
     # via fastapi-cli
+firebase-admin==7.1.0
+    # via -r requirements.in
+google-api-core==2.25.1
+    # via
+    #   firebase-admin
+    #   google-cloud-core
+    #   google-cloud-firestore
+    #   google-cloud-storage
+google-auth==2.40.3
+    # via
+    #   google-api-core
+    #   google-cloud-core
+    #   google-cloud-firestore
+    #   google-cloud-storage
+google-cloud-core==2.4.3
+    # via
+    #   google-cloud-firestore
+    #   google-cloud-storage
+google-cloud-firestore==2.21.0
+    # via firebase-admin
+google-cloud-storage==3.2.0
+    # via firebase-admin
+google-crc32c==1.7.1
+    # via
+    #   google-cloud-storage
+    #   google-resumable-media
+google-resumable-media==2.7.2
+    # via google-cloud-storage
+googleapis-common-protos==1.70.0
+    # via
+    #   google-api-core
+    #   grpcio-status
 greenlet==3.2.3
     # via sqlalchemy
+grpcio==1.74.0
+    # via
+    #   google-api-core
+    #   grpcio-status
+grpcio-status==1.74.0
+    # via google-api-core
 h11==0.16.0
     # via
     #   httpcore
     #   uvicorn
+h2==4.2.0
+    # via httpx
+hpack==4.1.0
+    # via h2
 httpcore==1.0.9
     # via httpx
 httptools==0.6.4
@@ -43,11 +96,15 @@ httpx==0.28.1
     # via
     #   fastapi
     #   fastapi-cloud-cli
+    #   firebase-admin
+hyperframe==6.1.0
+    # via h2
 idna==3.10
     # via
     #   anyio
     #   email-validator
     #   httpx
+    #   requests
 jinja2==3.1.6
     # via fastapi
 markdown-it-py==3.0.0
@@ -56,8 +113,29 @@ markupsafe==3.0.2
     # via jinja2
 mdurl==0.1.2
     # via markdown-it-py
+msgpack==1.1.1
+    # via cachecontrol
+proto-plus==1.26.1
+    # via
+    #   google-api-core
+    #   google-cloud-firestore
+protobuf==6.31.1
+    # via
+    #   google-api-core
+    #   google-cloud-firestore
+    #   googleapis-common-protos
+    #   grpcio-status
+    #   proto-plus
 psycopg2-binary==2.9.10
     # via -r requirements.in
+pyasn1==0.6.1
+    # via
+    #   pyasn1-modules
+    #   rsa
+pyasn1-modules==0.4.2
+    # via google-auth
+pycparser==2.22
+    # via cffi
 pydantic==2.11.7
     # via
     #   fastapi
@@ -66,12 +144,19 @@ pydantic-core==2.33.2
     # via pydantic
 pygments==2.19.2
     # via rich
+pyjwt==2.10.1
+    # via firebase-admin
 python-dotenv==1.1.1
     # via uvicorn
 python-multipart==0.0.20
     # via fastapi
 pyyaml==6.0.2
     # via uvicorn
+requests==2.32.4
+    # via
+    #   cachecontrol
+    #   google-api-core
+    #   google-cloud-storage
 rich==14.1.0
     # via
     #   rich-toolkit
@@ -82,6 +167,8 @@ rich-toolkit==0.14.9
     #   fastapi-cloud-cli
 rignore==0.6.4
     # via fastapi-cloud-cli
+rsa==4.9.1
+    # via google-auth
 sentry-sdk==2.34.1
     # via fastapi-cloud-cli
 shellingham==1.5.4
@@ -108,7 +195,9 @@ typing-extensions==4.14.1
 typing-inspection==0.4.1
     # via pydantic
 urllib3==2.5.0
-    # via sentry-sdk
+    # via
+    #   requests
+    #   sentry-sdk
 uvicorn==0.35.0
     # via
     #   fastapi
