@@ -2,23 +2,44 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import GoogleIcon from '@/assets/google-icon.png';
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
+import { useAuth } from '../contexts/AuthContext';
 
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
   const navigate = useNavigate();
+  const { signInWithGoogle, user } = useAuth();
 
-  // Dummy sign-in functions for visual testing
+  // Handle email/password sign-in (placeholder for future implementation)
   const handleSignIn = async () => {
     console.log('Email sign-in attempted:', { email, password });
-    alert('Sign-in functionality not implemented yet');
+    alert('Email sign-in functionality not implemented yet');
   };
 
-  const handleGoogleSignIn = () => {
-    console.log('Google sign-in attempted');
-    alert('Google sign-in functionality not implemented yet');
+  // Handle Google sign-in with Firebase
+  const handleGoogleSignIn = async () => {
+    setIsLoading(true);
+    setError('');
+    
+    try {
+      const { user, error } = await signInWithGoogle();
+      
+      if (error) {
+        setError(error);
+      } else if (user) {
+        console.log('Google sign-in successful:', user);
+        navigate('/dashboard');
+      }
+    } catch (error) {
+      setError('An unexpected error occurred. Please try again.');
+      console.error('Google sign-in error:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -29,12 +50,19 @@ export default function Login() {
         </div> */}
         <h1 className="text-4xl font-bold mb-6 text-center font-alumni-sans text-muted-foreground">Ready to Join?</h1>
 
+        {error && (
+          <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+            {error}
+          </div>
+        )}
+
         <button
           onClick={handleGoogleSignIn}
-          className="border border-gray-300 bg-gray-50 px-4 py-3 rounded w-full flex items-center justify-center hover:bg-gray-100 font-normal mb-4"
+          disabled={isLoading}
+          className="border border-gray-300 bg-gray-50 px-4 py-3 rounded w-full flex items-center justify-center hover:bg-gray-100 font-normal mb-4 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <img src={GoogleIcon} alt="Google" className="h-5 mr-2" />
-          Continue with Google
+          {isLoading ? 'Signing in...' : 'Continue with Google'}
         </button>
 
         <div className="relative text-center my-4 mb-4">
