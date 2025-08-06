@@ -3,6 +3,23 @@ from datetime import datetime
 from typing import Optional
 from typing import List
 
+class User(BaseModel):
+    uid: str
+    email: str
+    name: Optional[str] = None
+    created_at: datetime
+    updated_at: datetime
+    model_config = {"from_attributes": True}
+
+class UserCreate(BaseModel):
+    uid: str
+    email: str
+    name: Optional[str] = None
+
+class UserUpdate(BaseModel):
+    email: Optional[str] = None
+    name: Optional[str] = None
+
 class Card(BaseModel):
     id: int
     deck_id: int
