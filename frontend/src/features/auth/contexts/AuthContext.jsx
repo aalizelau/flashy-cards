@@ -3,6 +3,9 @@ import { signInWithPopup, signOut } from 'firebase/auth';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth, googleProvider } from '../../../shared/services/firebase';
 
+// Export auth instance for use by API client
+export { auth };
+
 const AuthContext = createContext();
 
 export const useAuth = () => {
@@ -36,12 +39,27 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const getAuthToken = async () => {
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+    
+    try {
+      const token = await user.getIdToken();
+      return token;
+    } catch (error) {
+      console.error('Failed to get auth token:', error);
+      throw error;
+    }
+  };
+
   const value = {
     user,
     loading,
     error,
     signInWithGoogle,
     logout,
+    getAuthToken,
     isAuthenticated: !!user,
   };
 

@@ -1,5 +1,17 @@
 // API-based TypeScript interfaces matching the backend API
 
+// User and Authentication Types
+export interface User {
+  uid: string;
+  email: string | null;
+  firstName: string | null;
+}
+
+export interface AuthenticatedUser extends User {
+  accessToken: string;
+  isEmailVerified: boolean;
+}
+
 export interface Deck {
   id: number;
   name: string;

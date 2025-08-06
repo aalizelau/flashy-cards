@@ -10,6 +10,7 @@ import {
   TestStats,
   StudySessionRequest
 } from '@/shared/types/api';
+import { auth } from '@/features/auth/contexts/AuthContext';
 
 const BASE_URL = 'http://localhost:8000';
 
@@ -20,9 +21,27 @@ class ApiClient {
   ): Promise<T> {
     const url = `${BASE_URL}${endpoint}`;
     
+    // Get authentication token
+    let authHeaders = {};
+    try {
+      const user = auth.currentUser;
+      if (user) {
+        const token = await user.getIdToken();
+        authHeaders = {
+          'Authorization': `Bearer ${token}`,
+        };
+      } else {
+        throw new Error('User not authenticated');
+      }
+    } catch (error) {
+      console.error('Failed to get auth token for API request:', error);
+      throw new Error('Authentication required');
+    }
+    
     const config: RequestInit = {
       headers: {
         'Content-Type': 'application/json',
+        ...authHeaders,
         ...options.headers,
       },
       ...options,
@@ -32,6 +51,9 @@ class ApiClient {
       const response = await fetch(url, config);
       
       if (!response.ok) {
+        if (response.status === 401 || response.status === 403) {
+          throw new Error('Authentication failed. Please login again.');
+        }
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       
