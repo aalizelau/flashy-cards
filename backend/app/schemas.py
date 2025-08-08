@@ -30,6 +30,7 @@ class Card(BaseModel):
     correct_answers: int = 0
     last_reviewed_at: Optional[datetime] = None
     created_at: datetime
+    audio_url: Optional[str] = None  # Will be populated by API
     model_config = {"from_attributes": True}
 
 class DeckBase(BaseModel):

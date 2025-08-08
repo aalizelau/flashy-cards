@@ -44,6 +44,7 @@ class Card(Base):
     correct_answers = Column(Integer, default=0)
     last_reviewed_at = Column(DateTime, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
+    audio_path = Column(String, nullable=True)  # Path to TTS audio file
 
     deck = relationship("Deck", back_populates="cards")
 

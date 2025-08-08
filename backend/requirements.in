@@ -1,3 +1,6 @@
 fastapi[standard]
 sqlalchemy
 psycopg2-binary
+firebase-admin
+redis
+requests

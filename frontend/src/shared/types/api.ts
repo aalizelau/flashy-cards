@@ -30,6 +30,7 @@ export interface Card {
   correct_answers: number;
   last_reviewed_at: string;
   created_at: string;
+  audio_url?: string;
 }
 
 export interface TestResult {
