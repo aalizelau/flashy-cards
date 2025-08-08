@@ -9,14 +9,43 @@ import {
   XMarkIcon
 } from '@heroicons/react/24/outline';
 import { useNavigate, useLocation } from 'react-router-dom';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/shared/components/ui/dropdown-menu";
+import {
+  Settings,
+  User,
+  LogOut,
+  ChevronDown,
+  HelpCircle
+} from "lucide-react";
+import { Button } from "@/shared/components/ui/button";
+import { cn } from "@/shared/lib/utils";
 
 const navItems = [
   { icon: HomeIcon, label: 'Home', path: '/dashboard' },
   { icon: PlusIcon, label: 'Create', path: '/create-deck' },
   { icon: BookOpenIcon, label: 'Browse', path: '/all-decks' },
   { icon: ChartBarIcon, label: 'Analytics', path: '/analytics' },
-  { icon: UserGroupIcon, label: 'Users', path: null },
+  { icon: UserGroupIcon, label: 'Community', path: null },
 ];
+
+const BREAKPOINTS = {
+  MOBILE: 640 // Tailwind `sm` breakpoint
+} as const;
+
+const SIDEBAR_WIDTHS = {
+  hidden: "w-0",
+  compact: "w-16", 
+  full: "w-48",
+  menu: "w-40"
+} as const;
+
+const name = 'Fun Lau';
 
 const SidebarNav: React.FC = () => {
   const [sidebarState, setSidebarState] = useState<'full' | 'compact' | 'hidden'>('full');
@@ -26,9 +55,10 @@ const SidebarNav: React.FC = () => {
   const location = useLocation();
 
   const isActive = (path: string | null) => path && location.pathname === path;
+  const showLabels = sidebarState === 'full';
 
   const handleResize = () => {
-    const mobile = window.innerWidth < 640; // Tailwind `sm` breakpoint
+    const mobile = window.innerWidth < BREAKPOINTS.MOBILE;
     setIsMobile(mobile);
     if (mobile && sidebarState !== 'hidden') {
       setSidebarState('hidden');
@@ -54,7 +84,7 @@ const SidebarNav: React.FC = () => {
   const ToggleButton = (
     <button
       onClick={toggleSidebar}
-      className="fixed top-2 left-2 p-1 z-50 rounded hover:bg-gray-100 "
+      className="fixed top-2 left-2 p-1 z-50 rounded hover:bg-gray-100  "
       aria-label="Toggle Sidebar"
     >
       {sidebarState === 'full' ? (
@@ -72,7 +102,7 @@ const SidebarNav: React.FC = () => {
       return (
         <button
           key={idx}
-          className={`mb-4 flex items-center gap-3 w-full px-2 py-2 rounded transition-colors ${
+          className={`mb-4 flex items-center  w-full px-2 py-1.5 rounded transition-colors ${
             active
               ? 'bg-gray-200 text-gray-700'
               : 'text-gray-600 hover:bg-gray-200'
@@ -107,20 +137,79 @@ const SidebarNav: React.FC = () => {
       {/* Sidebar */}
       {sidebarState !== 'hidden' && (
         <div
-          className={`fixed top-0 left-0 h-full bg-white border-r border-gray-200 z-30 py-4 px-2 flex flex-col items-center transition-all duration-300 ease-in-out
+          className={`fixed top-0 left-0 h-full bg-white border-r border-gray-200 z-30 py-3 px-2 flex flex-col items-center transition-all duration-300 ease-in-out
           ${
             sidebarState === 'full'
-              ? 'w-48'
+              ? SIDEBAR_WIDTHS.full
               : sidebarState === 'compact'
-              ? 'w-16'
-              : 'w-0'
+              ? SIDEBAR_WIDTHS.compact
+              : SIDEBAR_WIDTHS.hidden
           }`}
         >
-          <div className="mt-10 flex flex-col w-full items-start">
+          {/* Navigation Items */}
+          <div className="mt-10 flex flex-col w-full items-start flex-1">
             {renderNavItems()}
+          </div>
+          
+          {/* User Profile Section - Fixed at bottom */}
+          <div className=" border-t border-gray-200 w-full mt-auto">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              className={cn(
+                "w-full flex items-center gap-3 px-3 h-auto hover:bg-gray-100 transition-all",
+                showLabels ? "justify-start" : "justify-center"
+              )}
+            >
+              <div className="h-8 w-8 rounded-full bg-gray-300 flex items-center justify-center flex-shrink-0">
+                {name?.charAt(0)}
+              </div>
+              {showLabels && (
+                <>
+                  <div className="flex-1 text-left">
+                    <div className="text-sm font-medium text-gray-900">
+                      {name}
+                    </div>
+                    <div className="text-xs text-gray-500">
+                      Free
+                    </div>
+                  </div>
+                  <ChevronDown className="h-4 w-4 text-gray-400" />
+                </>
+              )}
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            align="center"
+            className="w-40 bg-white border border-gray-200 "
+            side={showLabels ? "top" : "right"}
+            sideOffset={8}
+          >
+            <DropdownMenuItem className="hover:bg-gray-100">
+              <Settings className="mr-2 h-4 w-4" />
+              Settings
+            </DropdownMenuItem>
+            <DropdownMenuItem className="hover:bg-gray-100">
+              <User className="mr-2 h-4 w-4" />
+              Preferences
+            </DropdownMenuItem>
+            <DropdownMenuItem className="hover:bg-gray-100">
+              <HelpCircle className="mr-2 h-4 w-4" />
+              Learn more
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem className="hover:bg-red-100 text-red-600">
+              <LogOut className="mr-2 h-4 w-4" />
+              Log out
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
           </div>
         </div>
       )}
+
+      
 
       {/* Content push (optional – if you want content to slide) */}
       <div
@@ -135,7 +224,9 @@ const SidebarNav: React.FC = () => {
         }`}
       >
         {/* Your main content here */}
+        
       </div>
+      
     </>
   );
 };
