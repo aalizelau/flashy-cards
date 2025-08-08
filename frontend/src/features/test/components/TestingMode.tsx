@@ -133,7 +133,7 @@ export const TestingMode: React.FC<TestingModeProps> = ({ testType, deckIds, lim
             className="gap-2"
           >
             <ArrowLeft className="w-4 h-4" />
-            Back to Browser
+            Back to Dashboard
           </Button>
         </div>
       )}
@@ -141,8 +141,8 @@ export const TestingMode: React.FC<TestingModeProps> = ({ testType, deckIds, lim
       {/* Header */}
       <div className="text-center mb-8">
         <div className="flex items-center justify-center gap-2 mb-4">
-          <BookOpen className="h-8 w-8 text-primary" />
-          <h1 className="text-3xl font-bold text-foreground">Flashcard Test</h1>
+          {/* <BookOpen className="h-8 w-8 text-primary" /> */}
+          <h1 className="text-3xl font-bold text-foreground">Test All Words</h1>
         </div>
         <p className="text-muted-foreground">
           Card {currentIndex + 1} of {flashcards.length}
