@@ -6,7 +6,7 @@ import {
   BookOpenIcon,
   ChartBarIcon,
   UserGroupIcon,
-  XMarkIcon
+  XMarkIcon,
 } from '@heroicons/react/24/outline';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
@@ -21,7 +21,11 @@ import {
   User,
   LogOut,
   ChevronDown,
-  HelpCircle
+  HelpCircle,
+  PanelLeftClose,
+  PanelLeftOpen,
+  ChartColumnIncreasing,
+  Shapes
 } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { cn } from "@/shared/lib/utils";
@@ -30,8 +34,8 @@ const navItems = [
   { icon: HomeIcon, label: 'Home', path: '/dashboard' },
   { icon: PlusIcon, label: 'Create', path: '/create-deck' },
   { icon: BookOpenIcon, label: 'Browse', path: '/all-decks' },
-  { icon: ChartBarIcon, label: 'Analytics', path: '/analytics' },
-  { icon: UserGroupIcon, label: 'Community', path: null },
+  { icon: ChartColumnIncreasing, label: 'Analytics', path: '/analytics' },
+  { icon: Shapes, label: 'Community', path: null },
 ];
 
 const BREAKPOINTS = {
@@ -84,13 +88,13 @@ const SidebarNav: React.FC = () => {
   const ToggleButton = (
     <button
       onClick={toggleSidebar}
-      className="fixed top-2 left-2 p-1 z-50 rounded hover:bg-gray-100  "
+      className="fixed top-2 left-3 p-2 z-50 rounded hover:bg-gray-100  "
       aria-label="Toggle Sidebar"
     >
       {sidebarState === 'full' ? (
-        <XMarkIcon className="h-6 w-6 text-gray-700" />
+        <PanelLeftClose className="h-6 w-6 text-gray-500" strokeWidth={1.5} />
       ) : (
-        <Bars3Icon className="h-6 w-6 text-gray-700" />
+        <PanelLeftOpen className="h-6 w-6 text-gray-500" strokeWidth={1.5} />
       )}
     </button>
   );
@@ -102,7 +106,7 @@ const SidebarNav: React.FC = () => {
       return (
         <button
           key={idx}
-          className={`mb-4 flex items-center  w-full px-2 py-1.5 rounded transition-colors ${
+          className={` flex items-center  w-full px-2 py-2 rounded transition-colors ${
             active
               ? 'bg-gray-200 text-gray-700'
               : 'text-gray-600 hover:bg-gray-200'
@@ -115,7 +119,7 @@ const SidebarNav: React.FC = () => {
             }
           }}
         >
-          <Icon className="h-6 w-6 min-w-[2rem] " />
+          <Icon className="h-6 w-6 min-w-[2rem] " strokeWidth={1.5} />
           <span className={`text-sm font-medium transition-all duration-200 whitespace-nowrap
               ${sidebarState === 'full'
                 ? 'opacity-100 ml-2 w-auto'
@@ -147,7 +151,7 @@ const SidebarNav: React.FC = () => {
           }`}
         >
           {/* Navigation Items */}
-          <div className="mt-10 flex flex-col w-full items-start flex-1">
+          <div className="mt-16 flex flex-col w-full items-start flex-1 space-y-2">
             {renderNavItems()}
           </div>
           
