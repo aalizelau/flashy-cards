@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Request
 from sqlalchemy.orm import Session
 from typing import List
 
@@ -18,6 +18,20 @@ def get_db():
         yield db
     finally:
         db.close()
+
+def populate_audio_urls(cards: List[CardORM], request: Request) -> List[Card]:
+    """Convert CardORM to Card schema with audio URLs"""
+    result = []
+    base_url = str(request.base_url).rstrip('/')
+    
+    for card in cards:
+        # Convert to Card schema using from_attributes
+        card_schema = Card.model_validate(card)
+        # Add the audio_url field
+        card_schema.audio_url = f"{base_url}/audio/{card.audio_path.replace('voices/', '')}" if card.audio_path else None
+        result.append(card_schema)
+    
+    return result
 
 @router.get("/", response_model=list[schemas.DeckOut]) 
 def read_decks(
@@ -73,6 +87,7 @@ def create_deck_with_cards(
 @router.get("/{deck_id}/cards", response_model=List[Card])
 def get_deck_cards(
     deck_id: int,
+    request: Request,
     db: Session = Depends(get_db),
     current_user = Depends(get_current_user)
 ):
@@ -89,7 +104,7 @@ def get_deck_cards(
         if not cards:
             raise HTTPException(status_code=404, detail="Deck not found or has no cards")
         
-        return cards
+        return populate_audio_urls(cards, request)
     except Exception as e:
         if "not found or access denied" in str(e):
             raise HTTPException(status_code=404, detail="Deck not found or access denied")

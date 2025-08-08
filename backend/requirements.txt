@@ -72,8 +72,6 @@ googleapis-common-protos==1.70.0
     # via
     #   google-api-core
     #   grpcio-status
-greenlet==3.2.3
-    # via sqlalchemy
 grpcio==1.74.0
     # via
     #   google-api-core
@@ -152,8 +150,11 @@ python-multipart==0.0.20
     # via fastapi
 pyyaml==6.0.2
     # via uvicorn
+redis==6.4.0
+    # via -r requirements.in
 requests==2.32.4
     # via
+    #   -r requirements.in
     #   cachecontrol
     #   google-api-core
     #   google-cloud-storage
