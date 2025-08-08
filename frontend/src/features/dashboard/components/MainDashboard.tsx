@@ -1,13 +1,8 @@
 
 import React from 'react';
 import { Card, CardContent } from '@/shared/components/ui/card';
-import { Button } from '@/shared/components/ui/button';
 import { 
   Rocket, 
-  Plus, 
-  BookOpen, 
-  Target, 
-  Brain,
   ArrowRight,
   MousePointerClick, 
   Sparkles,
@@ -17,6 +12,7 @@ import {
 import { TestAnalytics } from '@/shared/types/api';
 import { StatisticsPanel } from './StatisticsPanel';
 import Arts from '@/assets/arts.png';
+import { useAuth } from '@/features/auth/contexts/AuthContext';
 
 interface MainDashboardProps {
   onStartTest: (testType: string) => void;
@@ -28,6 +24,10 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
   onStartTest, 
   analytics
 }) => {
+  const { user } = useAuth();
+  
+  // Get user display name, fallback to email or "User"
+  const displayName = user?.displayName?.split(' ')[0]
 
   return (
     <div className="min-h-screen bg-gradient-bg flex">
@@ -37,12 +37,6 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
         {/* Welcome Section */}
         <div className="mb-8 relative">
           {/* Image background flourish */}
-     {/* <img
-      src={Arts}
-      alt="Decorative leaves"
-      className="absolute -bottom-10 right-10 z-10 scale-90 opacity-70 sm:w-56  pointer-events-none"
-    /> */}
-  
   
   <div className="bg-muted rounded-3xl z-4 p-8 relative overflow-hidden border border-border shadow-card">
     <img
@@ -63,7 +57,7 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
     {/* Text content */}
     <div className="relative z-8">
       <h1 className="text-4xl font-normal font-gloock text-main-foreground mb-4">
-        Welcome Back     Alize!
+        Welcome Back, {displayName}!
       </h1>
       <p className="text-lg text-muted-foreground max-w-lg">
         You've learned 80% of words this week. 
