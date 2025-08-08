@@ -5,7 +5,7 @@ import { ScrollArea } from '@/shared/components/ui/scroll-area';
 import ProgressDots from './ProgressDots';
 import { Button } from '@/shared/components/ui/button';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/shared/components/ui/dropdown-menu';
-import { MoreVertical } from 'lucide-react';
+import { MoreVertical, Volume2, VolumeX } from 'lucide-react';
 import { useDecks, useDeckCards } from '@/shared/hooks/useApi';
 import { Card as FlashCard } from '@/shared/types/api';
 
@@ -20,11 +20,32 @@ const DeckDetail: React.FC = () => {
 
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState<'progress' | 'recent' | 'alphabet' | 'attempts'>('progress');
+  const [playingAudio, setPlayingAudio] = useState<number | null>(null);
 
   const totalWords = cards?.length || 0;
 
   const getProgressPercentage = (card: FlashCard): number =>
     Math.round(card.accuracy * 100);
+
+  const playAudio = async (card: FlashCard) => {
+    if (!card.audio_url) return;
+    
+    try {
+      setPlayingAudio(card.id);
+      const audio = new Audio(card.audio_url);
+      
+      audio.onended = () => setPlayingAudio(null);
+      audio.onerror = () => {
+        setPlayingAudio(null);
+        console.error('Failed to play audio for:', card.front);
+      };
+      
+      await audio.play();
+    } catch (error) {
+      setPlayingAudio(null);
+      console.error('Audio playback failed:', error);
+    }
+  };
 
   const filteredAndSortedCards = useMemo(() => {
     if (!cards) return [];
@@ -126,7 +147,27 @@ const DeckDetail: React.FC = () => {
                         <React.Fragment key={card.id}>
                           <tr>
                             <td className="py-3 px-3 align-middle max-w-[200px]">
-                              <span className="font-medium text-sm truncate block">{card.front}</span>
+                              <div className="flex items-center gap-2">
+                                <span className="font-medium text-sm truncate block">{card.front}</span>
+                                {card.audio_url ? (
+                                  <Button
+                                    size="icon"
+                                    variant="ghost"
+                                    onClick={() => playAudio(card)}
+                                    disabled={playingAudio === card.id}
+                                    aria-label={`Play audio for ${card.front}`}
+                                    className="h-6 w-6 flex-shrink-0"
+                                  >
+                                    {playingAudio === card.id ? (
+                                      <Volume2 className="w-3 h-3 text-blue-500 animate-pulse" />
+                                    ) : (
+                                      <Volume2 className="w-3 h-3 text-muted-foreground hover:text-blue-500" />
+                                    )}
+                                  </Button>
+                                ) : (
+                                  <VolumeX className="w-3 h-3 text-gray-300 flex-shrink-0" />
+                                )}
+                              </div>
                             </td>
                             <td className="py-3 px-3 align-middle max-w-[300px]">
                               <span className="text-xs text-muted-foreground truncate block">{card.back}</span>
@@ -158,7 +199,7 @@ const DeckDetail: React.FC = () => {
                           </tr>
                           {idx < arr.length - 1 && (
                             <tr>
-                              <td colSpan={7}>
+                              <td colSpan={6}>
                                 <div className="border-b border-border" />
                               </td>
                             </tr>

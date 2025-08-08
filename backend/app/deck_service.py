@@ -1,11 +1,15 @@
 from datetime import datetime
 from typing import List
+import logging
 
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
 
 from app.models import Deck as DeckORM, Card as CardORM
 from app.schemas import DeckCreate, DeckWithCardsCreate, DeckWithCardsResponse, Card as CardSchema
+from app.voice_service import voice_generator
+
+logger = logging.getLogger(__name__)
 
 
 class DeckService:
@@ -46,6 +50,17 @@ class DeckService:
             # Create cards
             db_cards = []
             for card_data in deck_data.cards:
+                # Generate audio with fault tolerance
+                audio_path = None
+                try:
+                    audio_path = voice_generator.get_voice("en", card_data.front)
+                    if audio_path:
+                        logger.info(f"Generated audio for '{card_data.front}': {audio_path}")
+                    else:
+                        logger.warning(f"Failed to generate audio for '{card_data.front}'")
+                except Exception as e:
+                    logger.error(f"Audio generation failed for '{card_data.front}': {e}")
+                
                 db_card = CardORM(
                     deck_id=db_deck.id,
                     front=card_data.front,
@@ -53,7 +68,8 @@ class DeckService:
                     accuracy=0.0,
                     total_attempts=0,
                     correct_answers=0,
-                    created_at=datetime.now()
+                    created_at=datetime.now(),
+                    audio_path=audio_path
                 )
                 self.db.add(db_card)
                 db_cards.append(db_card)

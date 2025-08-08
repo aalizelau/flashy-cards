@@ -16,14 +16,19 @@ services:
     build: ./backend
     depends_on:
       - db
+      - redis
     environment:
       - FIREBASE_SERVICE_ACCOUNT_JSON
       - POSTGRES_USER
       - POSTGRES_PASSWORD
       - POSTGRES_DB
       - DB_HOST=db
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
     ports:
       - "8000:80"
+    volumes:
+      - voices_data:/app/voices
 
   db:
     image: postgres:14-alpine
@@ -44,6 +49,18 @@ services:
     depends_on:
       - db
 
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+
 volumes:
   db_data:
+    driver: local
+  redis_data:
+    driver: local
+  voices_data:
     driver: local

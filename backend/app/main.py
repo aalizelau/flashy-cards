@@ -1,10 +1,14 @@
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from pathlib import Path
 from app.database import create_tables
 
 from app.routers import decks, sessions, analytics, users
 import app.firebase_config  # Initialize Firebase
 from app.auth_middleware import get_current_user
+
+VOICES_DIR = "voices"
 
 app = FastAPI(title="Flashcard API", version="1.0.0")
 
@@ -12,6 +16,9 @@ app = FastAPI(title="Flashcard API", version="1.0.0")
 @app.on_event("startup")
 def on_startup():
     create_tables()
+    # Create voices directory if it doesn't exist
+    voices_dir = Path(VOICES_DIR)
+    voices_dir.mkdir(exist_ok=True)
 
 
 app.add_middleware(
@@ -32,6 +39,14 @@ app.add_middleware(
 def read_root():
     return {"message": "Flashcard API"}
 
+
+# Mount static files for audio
+# Check if voices directory exists, create if not
+voices_path = Path(VOICES_DIR)
+if not voices_path.exists():
+    voices_path.mkdir(parents=True, exist_ok=True)
+
+app.mount("/audio", StaticFiles(directory=VOICES_DIR), name="audio")
 
 # Include routers
 app.include_router(decks.router)
