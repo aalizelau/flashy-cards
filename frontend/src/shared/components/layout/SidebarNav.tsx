@@ -1,12 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Bars3Icon,
   HomeIcon,
   PlusIcon,
   BookOpenIcon,
-  ChartBarIcon,
-  UserGroupIcon,
-  XMarkIcon,
 } from '@heroicons/react/24/outline';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
@@ -29,6 +25,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { cn } from "@/shared/lib/utils";
+import { useAuth } from "@/features/auth/contexts/AuthContext";
 
 const navItems = [
   { icon: HomeIcon, label: 'Home', path: '/dashboard' },
@@ -49,17 +46,34 @@ const SIDEBAR_WIDTHS = {
   menu: "w-40"
 } as const;
 
-const name = 'Fun Lau';
-
 const SidebarNav: React.FC = () => {
   const [sidebarState, setSidebarState] = useState<'full' | 'compact' | 'hidden'>('full');
   const [isMobile, setIsMobile] = useState(false);
 
   const navigate = useNavigate();
   const location = useLocation();
+  const { user, logout } = useAuth();
 
   const isActive = (path: string | null) => path && location.pathname === path;
   const showLabels = sidebarState === 'full';
+
+  // Get user display name, fallback to email or "User"
+  const displayName = user?.displayName || user?.email?.split('@')[0] || 'User';
+  
+  // Get user initials for avatar
+  const getInitials = (name: string) => {
+    return name.split(' ').map(word => word[0]).join('').toUpperCase().slice(0, 2);
+  };
+
+  // Handle logout
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/login', { replace: true });
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
 
   const handleResize = () => {
     const mobile = window.innerWidth < BREAKPOINTS.MOBILE;
@@ -167,13 +181,13 @@ const SidebarNav: React.FC = () => {
               )}
             >
               <div className="h-8 w-8 rounded-full bg-gray-300 flex items-center justify-center flex-shrink-0">
-                {name?.charAt(0)}
+                {displayName?.charAt(0)}
               </div>
               {showLabels && (
                 <>
                   <div className="flex-1 text-left">
                     <div className="text-sm font-medium text-gray-900">
-                      {name}
+                      {displayName}
                     </div>
                     <div className="text-xs text-gray-500">
                       Free
@@ -203,7 +217,10 @@ const SidebarNav: React.FC = () => {
               Learn more
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="hover:bg-red-100 text-red-600">
+            <DropdownMenuItem 
+              className="hover:bg-red-100 text-red-600 cursor-pointer"
+              onClick={handleLogout}
+            >
               <LogOut className="mr-2 h-4 w-4" />
               Log out
             </DropdownMenuItem>

@@ -8,20 +8,20 @@ import DeckDetail from "../features/collections/components/DeckDetail";
 import AnalyticsPage from "../features/analytics/components/Analytics";
 import CreateDeck from "../features/decks/components/CreateDeck";
 import Login from "../features/auth/components/login";
+import ProtectedRoute from "../shared/components/auth/ProtectedRoute";
 
 export const AppRouter = () => (
   <Routes>
-    <Route path="/" element={<Index />} />
+    <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
     <Route path="/login" element={<Login />} />
-    <Route path="/dashboard" element={<Dashboard />} />
-    <Route path="/create-deck" element={<CreateDeck />} />
-    <Route path="/test/:deckId" element={<TestSession />} />
-    <Route path="/test" element={<TestSession />} />
-    <Route path="/all-decks" element={<AllDecks />} />
-    <Route path="/decks/:collectionName" element={<DeckDetail />} />
-    <Route path="/analytics" element={<AnalyticsPage />} />
-    <Route path="/create-deck" element={<CreateDeck />} />
+    <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+    <Route path="/create-deck" element={<ProtectedRoute><CreateDeck /></ProtectedRoute>} />
+    <Route path="/test/:deckId" element={<ProtectedRoute><TestSession /></ProtectedRoute>} />
+    <Route path="/test" element={<ProtectedRoute><TestSession /></ProtectedRoute>} />
+    <Route path="/all-decks" element={<ProtectedRoute><AllDecks /></ProtectedRoute>} />
+    <Route path="/decks/:collectionName" element={<ProtectedRoute><DeckDetail /></ProtectedRoute>} />
+    <Route path="/analytics" element={<ProtectedRoute><AnalyticsPage /></ProtectedRoute>} />
     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-    <Route path="*" element={<NotFound />} />
+    <Route path="*" element={<ProtectedRoute><NotFound /></ProtectedRoute>} />
   </Routes>
 );

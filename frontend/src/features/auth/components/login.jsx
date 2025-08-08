@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import GoogleIcon from '@/assets/google-icon.png';
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { useAuth } from '../contexts/AuthContext';
@@ -12,7 +12,11 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const location = useLocation();
   const { signInWithGoogle, user } = useAuth();
+
+  // Get the intended destination from location state, default to dashboard
+  const from = location.state?.from?.pathname || '/dashboard';
 
   // Handle email/password sign-in (placeholder for future implementation)
   const handleSignIn = async () => {
@@ -32,7 +36,7 @@ export default function Login() {
         setError(error);
       } else if (user) {
         console.log('Google sign-in successful:', user);
-        navigate('/dashboard');
+        navigate(from, { replace: true });
       }
     } catch (error) {
       setError('An unexpected error occurred. Please try again.');
