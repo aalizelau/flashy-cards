@@ -3,6 +3,7 @@ from typing import List
 
 from sqlalchemy.orm import Session
 from sqlalchemy import func
+from fastapi import Request, HTTPException
 
 from app.models import Card as CardORM, TestAnalytics as TestAnalyticsORM
 from app.schemas import StudySession, Card as CardSchema, TestResult, SessionComplete, TestStats
@@ -11,7 +12,6 @@ from app.strategies.test_all_strategy import TestAllStrategy
 from app.strategies.test_by_decks_strategy import TestByDecksStrategy
 from app.strategies.test_unfamiliar_strategy import TestUnfamiliarStrategy
 from app.strategies.test_newly_added_strategy import TestNewlyAddedStrategy
-from fastapi import HTTPException
 import random
 
 class SessionService:
@@ -31,15 +31,29 @@ class SessionService:
         
         return strategies[test_type](self.db)
     
-    def create_study_session(self, test_type: str, user_id: str, deck_ids: List[int] = None, limit: int = 20) -> StudySession:
+    def _populate_audio_urls(self, cards: List[CardORM], request: Request) -> List[CardSchema]:
+        """Convert CardORM to Card schema with audio URLs"""
+        result = []
+        base_url = str(request.base_url).rstrip('/')
+        
+        for card in cards:
+            # Convert to Card schema using from_attributes
+            card_schema = CardSchema.model_validate(card)
+            # Add the audio_url field
+            card_schema.audio_url = f"{base_url}/audio/{card.audio_path.replace('voices/', '')}" if card.audio_path else None
+            result.append(card_schema)
+        
+        return result
+    
+    def create_study_session(self, test_type: str, user_id: str, request: Request, deck_ids: List[int] = None, limit: int = 20) -> StudySession:
         strategy = self._get_strategy(test_type)
         cards = strategy.get_cards(user_id, deck_ids, limit)
         
         if not cards:
             raise HTTPException(status_code=404, detail="No cards found for the specified criteria")
         
-        # Convert ORM models to Pydantic models
-        card_models = [CardSchema.model_validate(card) for card in cards]
+        # Convert ORM models to Pydantic models with audio URLs
+        card_models = self._populate_audio_urls(cards, request)
 
         # Use the first deck_id if available, otherwise use 0 as placeholder
         deck_id = deck_ids[0] if deck_ids and len(deck_ids) > 0 else 0

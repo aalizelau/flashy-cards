@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends, BackgroundTasks
+from fastapi import APIRouter, HTTPException, Depends, BackgroundTasks, Request
 from sqlalchemy.orm import Session
 from typing import List
 
@@ -20,6 +20,7 @@ def get_db():
 @router.post("/sessions", response_model=StudySession)
 def create_study_session(
     request: CreateSessionRequest,
+    http_request: Request,
     db: Session = Depends(get_db),
     current_user = Depends(get_current_user)
 ):
@@ -34,6 +35,7 @@ def create_study_session(
         return session_service.create_study_session(
             test_type=request.test_type,
             user_id=user_id,
+            request=http_request,
             deck_ids=request.deck_ids,
             limit=request.limit
         )
