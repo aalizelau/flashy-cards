@@ -17,6 +17,7 @@ const TestSession: React.FC = () => {
   const limit = parseInt(searchParams.get('limit') || '10');
   const deckIdsString = searchParams.get('deck_ids');
   const deckIds = deckIdsString ? deckIdsString.split(',').map(id => parseInt(id)) : undefined;
+  const isSwapped = searchParams.get('swap') === 'true';
 
   // Check if we should start in review mode (from URL params)
   useEffect(() => {
@@ -48,6 +49,7 @@ const TestSession: React.FC = () => {
           testType={testType}
           deckIds={deckIds}
           limit={limit}
+          isSwapped={isSwapped}
           onComplete={handleTestComplete}
           onBackToBrowser={handleBackToDashboard}
         />

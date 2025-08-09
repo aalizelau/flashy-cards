@@ -63,7 +63,7 @@ const DashboardContainer: React.FC = () => {
     await fetchStatsAndShowConfig('test_by_decks', deckIds);
   };
 
-  const handleTestStart = (wordCount: number) => {
+  const handleTestStart = (wordCount: number, swapSides: boolean) => {
     setShowTestConfig(false);
     
     // Build URL with test parameters
@@ -75,6 +75,11 @@ const DashboardContainer: React.FC = () => {
     // Add deck_ids for test_by_decks
     if (currentTestType === 'test_by_decks' && selectedDeckIds.length > 0) {
       params.set('deck_ids', selectedDeckIds.join(','));
+    }
+    
+    // Add swap parameter
+    if (swapSides) {
+      params.set('swap', 'true');
     }
     
     navigate(`/test?${params.toString()}`);

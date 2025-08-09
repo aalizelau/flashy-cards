@@ -10,11 +10,12 @@ interface TestingModeProps {
   testType: 'test_all' | 'test_by_decks' | 'test_unfamiliar' | 'test_newly_added';
   deckIds?: number[];
   limit: number;
+  isSwapped?: boolean;
   onComplete: (results: TestResult[]) => void;
   onBackToBrowser?: () => void;
 }
 
-export const TestingMode: React.FC<TestingModeProps> = ({ testType, deckIds, limit, onComplete, onBackToBrowser }) => {
+export const TestingMode: React.FC<TestingModeProps> = ({ testType, deckIds, limit, isSwapped = false, onComplete, onBackToBrowser }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [results, setResults] = useState<TestResult[]>([]);
@@ -45,6 +46,13 @@ export const TestingMode: React.FC<TestingModeProps> = ({ testType, deckIds, lim
 
   const currentCard = flashcards[currentIndex];
   const progress = flashcards.length > 0 ? ((currentIndex) / flashcards.length) * 100 : 0;
+
+  // Create display card with swapped content if needed
+  const displayCard = currentCard && isSwapped ? {
+    ...currentCard,
+    front: currentCard.back,
+    back: currentCard.front
+  } : currentCard;
 
   const handleCardFlip = () => {
     setIsFlipped(true);
@@ -161,7 +169,7 @@ export const TestingMode: React.FC<TestingModeProps> = ({ testType, deckIds, lim
       {/* Flashcard */}
       <div className="mb-8">
         <FlashcardComponent
-          flashcard={currentCard}
+          flashcard={displayCard}
           isFlipped={isFlipped}
           onFlip={handleCardFlip}
         />

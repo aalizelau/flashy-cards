@@ -12,13 +12,14 @@ interface TestConfigModalProps {
   deck: Deck
   testStats?: TestStats | null
   testType?: string
-  onStart: (wordCount: number) => void
+  onStart: (wordCount: number, swapSides: boolean) => void
   onClose: () => void
 }
 
 export const TestConfigModal: React.FC<TestConfigModalProps> = ({ deck, testStats, testType, onStart, onClose }) => {
   const availableCards = testStats?.available_cards ?? deck.card_count
   const [wordCount, setWordCount] = useState(Math.min(10, availableCards))
+  const [swapSides, setSwapSides] = useState(false)
   const maxWords = availableCards
   
   useEffect(() => {
@@ -30,7 +31,7 @@ export const TestConfigModal: React.FC<TestConfigModalProps> = ({ deck, testStat
   }
 
   const handleStart = () => {
-    onStart(wordCount)
+    onStart(wordCount, swapSides)
   }
 
   return (
@@ -85,8 +86,8 @@ export const TestConfigModal: React.FC<TestConfigModalProps> = ({ deck, testStat
         <div className="flex items-center space-x-2 justify-center mb-6">
           <Switch
             id="swap-sides"
-            // checked={swapSides}
-            // onCheckedChange={setSwapSides}
+            checked={swapSides}
+            onCheckedChange={setSwapSides}
           />
           <Label htmlFor="swap-sides" className="text-sm text-gray-600">
             Swap front and back
