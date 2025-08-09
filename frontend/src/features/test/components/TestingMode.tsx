@@ -131,39 +131,42 @@ export const TestingMode: React.FC<TestingModeProps> = ({ testType, deckIds, lim
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 w-[500px]">
+    <div className="container mx-auto px-0 py-8 w-[500px]">
       {/* Back to Browser Button */}
       {onBackToBrowser && (
-        <div className="mb-6">
+        <div className="mb-12 mt-8 ">
           <Button
-            variant="ghost"
+            variant="outline"
             onClick={onBackToBrowser}
-            className="gap-2"
+            className="gap-2 px-3"
           >
             <ArrowLeft className="w-4 h-4" />
-            Back to Dashboard
+            Back
           </Button>
         </div>
       )}
       
       {/* Header */}
-      <div className="text-center mb-8">
-        <div className="flex items-center justify-center gap-2 mb-4">
-          {/* <BookOpen className="h-8 w-8 text-primary" /> */}
-          {/* <h1 className="text-3xl font-bold text-foreground">Test All Words</h1> */}
+      <div className="text-center mb-2">
+        <div className="flex items-center justify-start gap-2">
+          <h1 className="text-3xl font-semibold font-alumni-sans text-main-foreground">Your Progress </h1>
         </div>
-        <p className="text-muted-foreground">
+        {/* <p className="text-muted-foreground">
           Card {currentIndex + 1} of {flashcards.length}
-        </p>
+        </p> */}
       </div>
 
       {/* Progress Bar */}
-      <div className="mb-8">
-        <div className="flex justify-between text-sm text-muted-foreground mb-2">
-          <span>Progress</span>
+      <div className="mb-6">
+        <Progress value={progress} className="h-3 mb-1" />
+          <div className="flex justify-between text-sm text-muted-foreground mb-2">
+          {/* <span>Progress</span>
+           */}
+                   <p className="text-muted-foreground">
+          Card {currentIndex + 1} of {flashcards.length}
+        </p>
           <span>{Math.round(progress)}%</span>
         </div>
-        <Progress value={progress} className="h-3" />
       </div>
 
       {/* Flashcard */}
