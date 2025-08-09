@@ -5,6 +5,8 @@ import { useState, useEffect } from "react"
 import { X, Play, Lightbulb } from "lucide-react"
 import type { Deck, TestStats } from "@/shared/types/api"
 import '@/styles/Slider.css'
+import { Switch } from "@/shared/components/ui/switch";
+import { Label } from "@/shared/components/ui/label";
 
 interface TestConfigModalProps {
   deck: Deck
@@ -36,7 +38,7 @@ export const TestConfigModal: React.FC<TestConfigModalProps> = ({ deck, testStat
       <div className="bg-white rounded-2xl p-6 w-full max-w-sm border border-gray-200 shadow-xl">
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-3xl font-semibold text-main-foreground font-alumni-sans w-56">How Many Words?</h2>
+          <h2 className="text-3xl font-semibold text-main-foreground font-alumni-sans w-56">Configure Test</h2>
           <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
             <X className="w-5 h-5 text-gray-500" />
           </button>
@@ -44,7 +46,7 @@ export const TestConfigModal: React.FC<TestConfigModalProps> = ({ deck, testStat
 
         {/* Available Words Info */}
         {availableCards > 0 && (
-            <div className="mb-8 p-3 bg-gray-100 rounded-lg flex items-center gap-2 justify-center">
+            <div className="mb-4 p-3 bg-gray-100 rounded-lg flex items-center gap-2 justify-center">
                 <Lightbulb className="w-5 h-5 text-gray-600" />
                 <span className="text-md text-gray-600">
                 {availableCards} words available in total
@@ -61,24 +63,35 @@ export const TestConfigModal: React.FC<TestConfigModalProps> = ({ deck, testStat
         )}
 
         {/* Word Count Display */}
-            <div className="mb-2 text-center">
-            <div className="text-4xl font-bold font-Inria-serif text-muted-foreground mb-6 ">
-                <span className="text-5xl">{wordCount}</span>
-                <span className="ml-2 text-2xl text-gray-500">words in test</span>
-            </div>
+        <div className=" text-center">
+          <div className="text-4xl font-bold font-Inria-serif text-muted-foreground mb-6 ">
+              <span className="text-5xl">{wordCount}</span>
+              <span className="ml-2 text-2xl text-gray-500">words in test</span>
+          </div>
 
-            <div className="relative">
-                <input
-                type="range"
-                min="1"
-                max={maxWords}
-                value={wordCount}
-                onChange={handleSliderChange}
-                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider mb-8"
-                />
-            </div>
-            </div>
+          <div className="relative">
+              <input
+              type="range"
+              min="1"
+              max={maxWords}
+              value={wordCount}
+              onChange={handleSliderChange}
+              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider mb-8"
+              />
+          </div>
+        </div>
 
+        {/* Swap Sides Toggle */}
+        <div className="flex items-center space-x-2 justify-center mb-6">
+          <Switch
+            id="swap-sides"
+            // checked={swapSides}
+            // onCheckedChange={setSwapSides}
+          />
+          <Label htmlFor="swap-sides" className="text-sm text-gray-600">
+            Swap front and back
+          </Label>
+        </div>
 
         {/* Action Buttons */}
         <div className="flex gap-3">
