@@ -171,7 +171,7 @@ function CreateDeck() {
       const response = await apiClient.createDeckWithCards(deckData);
       
       // Navigate to the newly created deck detail page
-      navigate(`/chapter/${encodeURIComponent(response.name)}`);
+      navigate(`/decks/${encodeURIComponent(response.name)}`);
       
     } catch (error) {
       console.error('Failed to create deck:', error);
