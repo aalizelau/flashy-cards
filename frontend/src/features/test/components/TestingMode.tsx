@@ -4,7 +4,7 @@ import { Progress } from '@/shared/components/ui/progress';
 import { FlashcardComponent } from '@/features/flashcards/components/FlashcardComponent';
 import { Card, TestResult, StudySessionRequest } from '@/shared/types/api';
 import { useStartTestSession, useCompleteStudySession } from '@/shared/hooks/useApi';
-import { BookOpen, CheckCircle, XCircle, ArrowLeft } from 'lucide-react';
+import { BookOpen, CheckCircle, XCircle, ArrowLeft, Check, X } from 'lucide-react';
 
 interface TestingModeProps {
   testType: 'test_all' | 'test_by_decks' | 'test_unfamiliar' | 'test_newly_added';
@@ -150,7 +150,7 @@ export const TestingMode: React.FC<TestingModeProps> = ({ testType, deckIds, lim
       <div className="text-center mb-8">
         <div className="flex items-center justify-center gap-2 mb-4">
           {/* <BookOpen className="h-8 w-8 text-primary" /> */}
-          <h1 className="text-3xl font-bold text-foreground">Test All Words</h1>
+          {/* <h1 className="text-3xl font-bold text-foreground">Test All Words</h1> */}
         </div>
         <p className="text-muted-foreground">
           Card {currentIndex + 1} of {flashcards.length}
@@ -167,7 +167,7 @@ export const TestingMode: React.FC<TestingModeProps> = ({ testType, deckIds, lim
       </div>
 
       {/* Flashcard */}
-      <div className="mb-8">
+      <div className="mb-8 justify-center w-96">
         <FlashcardComponent
           flashcard={displayCard}
           isFlipped={isFlipped}
@@ -177,26 +177,26 @@ export const TestingMode: React.FC<TestingModeProps> = ({ testType, deckIds, lim
       </div>
 
       {/* Action Buttons */}
-      <div className="flex gap-4 justify-center animate-scale-in">
-        <Button
-          variant="forgot"
-          size="xl"
-          onClick={() => handleResponse(false)}
-          className="flex-1 max-w-48"
-        >
-          <XCircle className="mr-2" />
-          I Forgot
-        </Button>
-        <Button
-          variant="remembered"
-          size="xl"
-          onClick={() => handleResponse(true)}
-          className="flex-1 max-w-48"
-        >
-          <CheckCircle className="mr-2" />
-          I Remembered
-        </Button>
-      </div>
+      <div className="flex gap-12 justify-center animate-scale-in">
+  <Button
+    variant="forgot"
+    size="icon-lg" // important: makes it a square button
+    onClick={() => handleResponse(false)}
+    className="rounded-full flex items-center justify-center "
+  >
+    <X className="h-8 w-8" /> {/* Bigger icon */}
+  </Button>
+
+  <Button
+    variant="remembered"
+    size="icon-lg"
+    onClick={() => handleResponse(true)}
+    className=" rounded-full flex items-center justify-center"
+  >
+    <Check className="h-8 w-8" />
+  </Button>
+</div>
+
     </div>
   );
 };

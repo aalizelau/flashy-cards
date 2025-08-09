@@ -18,8 +18,8 @@ const buttonVariants = cva(
           "bg-secondary text-secondary-foreground hover:bg-secondary/80 shadow-card hover:shadow-elevated",
         ghost: "bg-transparent",
         link: "text-primary underline-offset-4 hover:underline",
-        remembered: "bg-vibrant-green text-white hover:bg-success/90 shadow-card hover:shadow-elevated hover:scale-105 transform transition-all",
-        forgot: "bg-vibrant-yellow text-foreground hover:bg-warning/90 shadow-card hover:shadow-elevated hover:scale-105 transform transition-all",
+        remembered: "bg-white text-main-foreground hover:bg-success/90 shadow-card hover:shadow-elevated hover:scale-105 transform transition-all",
+        forgot: "bg-white text-main-foreground hover:bg-warning/90 shadow-card hover:shadow-elevated hover:scale-105 transform transition-all",
         flashcard: "bg-gradient-card border border-border hover:shadow-elevated transform hover:scale-[1.02] transition-all duration-300",
       },
       size: {
@@ -28,6 +28,7 @@ const buttonVariants = cva(
         lg: "h-11 rounded-md px-8",
         xl: "h-14 rounded-lg px-10 text-base",
         icon: "h-10 w-10",
+        "icon-lg": "h-14 w-14 [&_svg]:size-6",
       },
     },
     defaultVariants: {

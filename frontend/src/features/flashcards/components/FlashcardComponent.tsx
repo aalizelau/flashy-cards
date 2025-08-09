@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button } from '@/shared/components/ui/button';
 import { Card as FlashCard } from '@/shared/types/api';
-import { RotateCcw, Volume2 } from 'lucide-react';
+import { RotateCcw, Volume2} from 'lucide-react';
 
 interface FlashcardComponentProps {
   flashcard: FlashCard;
@@ -38,7 +38,7 @@ export const FlashcardComponent: React.FC<FlashcardComponentProps> = ({
     }
   };
   return (
-    <div className="perspective-1000 w-full h-80">
+    <div className="perspective-1000 w-full h-80 ">
       <div 
         className={`relative w-full h-full transition-transform duration-700 transform-style-preserve-3d ${
           isFlipped ? 'rotate-y-180' : ''
@@ -52,7 +52,7 @@ export const FlashcardComponent: React.FC<FlashcardComponentProps> = ({
             onClick={onFlip}
           >
             <div className="flex items-center justify-center gap-3 mb-4">
-              <div className="text-2xl font-semibold text-card-foreground">
+              <div className="text-3xl font-bold text-main-foreground">
                 {flashcard.front}
               </div>
               {/* Show audio on front when not swapped (original front = learning word) */}
@@ -72,10 +72,6 @@ export const FlashcardComponent: React.FC<FlashcardComponentProps> = ({
                 </Button>
               )}
             </div>
-            {/* <div className="flex items-center text-muted-foreground text-sm">
-              <RotateCcw className="w-4 h-4 mr-2" />
-              Tap to flip
-            </div> */}
           </Button>
         </div>
 
