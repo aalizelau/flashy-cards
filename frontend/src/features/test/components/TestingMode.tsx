@@ -4,7 +4,7 @@ import { Progress } from '@/shared/components/ui/progress';
 import { FlashcardComponent } from '@/features/flashcards/components/FlashcardComponent';
 import { Card, TestResult, StudySessionRequest } from '@/shared/types/api';
 import { useStartTestSession, useCompleteStudySession } from '@/shared/hooks/useApi';
-import { BookOpen, CheckCircle, XCircle, ArrowLeft, Check, X } from 'lucide-react';
+import { BookOpen, ArrowLeft, Check, X } from 'lucide-react';
 
 interface TestingModeProps {
   testType: 'test_all' | 'test_by_decks' | 'test_unfamiliar' | 'test_newly_added';
@@ -131,7 +131,7 @@ export const TestingMode: React.FC<TestingModeProps> = ({ testType, deckIds, lim
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-2xl">
+    <div className="container mx-auto px-4 py-8 w-[500px]">
       {/* Back to Browser Button */}
       {onBackToBrowser && (
         <div className="mb-6">
@@ -167,13 +167,15 @@ export const TestingMode: React.FC<TestingModeProps> = ({ testType, deckIds, lim
       </div>
 
       {/* Flashcard */}
-      <div className="mb-8 justify-center w-96">
-        <FlashcardComponent
-          flashcard={displayCard}
-          isFlipped={isFlipped}
-          isSwapped={isSwapped}
-          onFlip={handleCardFlip}
-        />
+      <div className="mb-8 flex justify-center">
+        <div className="w-[500px]">
+          <FlashcardComponent
+            flashcard={displayCard}
+            isFlipped={isFlipped}
+            isSwapped={isSwapped}
+            onFlip={handleCardFlip}
+          />
+        </div>
       </div>
 
       {/* Action Buttons */}

@@ -48,57 +48,53 @@ export const FlashcardComponent: React.FC<FlashcardComponentProps> = ({
         <div className="absolute inset-0 w-full h-full backface-hidden">
           <Button
             variant="flashcard"
-            className="w-full h-full flex flex-col items-center justify-center text-center p-8 cursor-pointer"
+            className="w-full h-full flex flex-col items-center justify-center text-center p-8 cursor-pointer relative"
             onClick={onFlip}
           >
-            <div className="flex items-center justify-center gap-3 mb-4">
-              <div className="text-3xl font-bold text-main-foreground">
-                {flashcard.front}
-              </div>
-              {/* Show audio on front when not swapped (original front = learning word) */}
-              {!isSwapped && flashcard.audio_url && (
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    playAudio();
-                  }}
-                  disabled={playingAudio}
-                  aria-label={`Play audio for ${flashcard.front}`}
-                  className="h-8 w-8 p-0 flex-shrink-0"
-                >
-                  <Volume2 className={`w-4 h-4 ${playingAudio ? 'text-blue-500 animate-pulse' : 'text-muted-foreground hover:text-blue-500'}`} />
-                </Button>
-              )}
+            {/* Audio button in top right corner */}
+            {!isSwapped && flashcard.audio_url && (
+              <Button
+                size="icon"
+                variant="ghost"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  playAudio();
+                }}
+                disabled={playingAudio}
+                aria-label={`Play audio for ${flashcard.front}`}
+                className="absolute top-6 right-6 h-8 w-8 p-0 flex-shrink-0"
+              >
+                <Volume2 className={`!w-5 !h-5 ${playingAudio ? 'text-accent animate-pulse' : 'text-muted-foreground hover:text-blue-500'}`} />
+              </Button>
+            )}
+            <div className="text-3xl font-bold text-main-foreground">
+              {flashcard.front}
             </div>
           </Button>
         </div>
 
         {/* Back of card */}
         <div className="absolute inset-0 w-full h-full backface-hidden rotate-y-180">
-          <div className="w-full h-full bg-gradient-card border border-border rounded-lg shadow-elevated flex flex-col items-center justify-center text-center p-8 cursor-pointer" onClick={onFlip}>
+          <div className="w-full h-full bg-gradient-card border border-border rounded-lg shadow-elevated flex flex-col items-center justify-center text-center p-8 cursor-pointer relative" onClick={onFlip}>
+            {/* Audio button in top right corner */}
+            {isSwapped && flashcard.audio_url && (
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  playAudio();
+                }}
+                disabled={playingAudio}
+                aria-label={`Play audio for ${flashcard.front}`}
+                className="absolute top-6 right-6 h-8 w-8 p-0 flex-shrink-0"
+              >
+                <Volume2 className={`!w-5 !h-5 ${playingAudio ? 'text-blue-500 animate-pulse' : 'text-muted-foreground hover:text-blue-500'}`} />
+              </Button>
+            )}
             <div className="text-xl text-muted-foreground mb-2">Answer:</div>
-            <div className="flex items-center justify-center gap-3 mb-4">
-              <div className="text-3xl font-bold text-primary">
-                {flashcard.back}
-              </div>
-              {/* Show audio on back when swapped (original front is now on back = learning word) */}
-              {isSwapped && flashcard.audio_url && (
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    playAudio();
-                  }}
-                  disabled={playingAudio}
-                  aria-label={`Play audio for ${flashcard.front}`}
-                  className="h-8 w-8 p-0 flex-shrink-0"
-                >
-                  <Volume2 className={`w-4 h-4 ${playingAudio ? 'text-blue-500 animate-pulse' : 'text-muted-foreground hover:text-blue-500'}`} />
-                </Button>
-              )}
+            <div className="text-3xl font-bold text-primary mb-4">
+              {flashcard.back}
             </div>
             <div className="text-sm text-muted-foreground">
               Did you remember this correctly?
