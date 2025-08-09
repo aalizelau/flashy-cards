@@ -55,7 +55,7 @@ export const TestingMode: React.FC<TestingModeProps> = ({ testType, deckIds, lim
   } : currentCard;
 
   const handleCardFlip = () => {
-    setIsFlipped(true);
+    setIsFlipped(!isFlipped);
   };
 
   const handleResponse = async (remembered: boolean) => {

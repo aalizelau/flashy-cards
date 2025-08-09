@@ -50,7 +50,6 @@ export const FlashcardComponent: React.FC<FlashcardComponentProps> = ({
             variant="flashcard"
             className="w-full h-full flex flex-col items-center justify-center text-center p-8 cursor-pointer"
             onClick={onFlip}
-            disabled={isFlipped}
           >
             <div className="flex items-center justify-center gap-3 mb-4">
               <div className="text-2xl font-semibold text-card-foreground">
@@ -82,7 +81,7 @@ export const FlashcardComponent: React.FC<FlashcardComponentProps> = ({
 
         {/* Back of card */}
         <div className="absolute inset-0 w-full h-full backface-hidden rotate-y-180">
-          <div className="w-full h-full bg-gradient-card border border-border rounded-lg shadow-elevated flex flex-col items-center justify-center text-center p-8">
+          <div className="w-full h-full bg-gradient-card border border-border rounded-lg shadow-elevated flex flex-col items-center justify-center text-center p-8 cursor-pointer" onClick={onFlip}>
             <div className="text-xl text-muted-foreground mb-2">Answer:</div>
             <div className="flex items-center justify-center gap-3 mb-4">
               <div className="text-3xl font-bold text-primary">
