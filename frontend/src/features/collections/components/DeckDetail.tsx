@@ -125,7 +125,7 @@ const DeckDetail: React.FC = () => {
                 <table className="min-w-full text-left border-separate border-spacing-y-0">
                   <thead>
                     <tr className="border-b border-border">
-                      <th className="py-2 px-3 text-xs font-semibold text-muted-foreground">Word</th>
+                      <th className="py-2 px-3 text-xs font-semibold text-muted-foreground">Learning Word</th>
                       <th className="py-2 px-3 text-xs font-semibold text-muted-foreground">Translation</th>
                       <th className="py-2 px-3 text-xs font-semibold text-muted-foreground">Progress</th>
                       <th className="py-2 px-3 text-xs font-semibold text-muted-foreground">Attempts</th>

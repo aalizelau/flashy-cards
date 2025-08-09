@@ -171,6 +171,7 @@ export const TestingMode: React.FC<TestingModeProps> = ({ testType, deckIds, lim
         <FlashcardComponent
           flashcard={displayCard}
           isFlipped={isFlipped}
+          isSwapped={isSwapped}
           onFlip={handleCardFlip}
         />
       </div>
