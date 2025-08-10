@@ -1,4 +1,4 @@
-import { createContext, useContext } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { signInWithPopup, signOut } from 'firebase/auth';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth, googleProvider } from '../../../shared/services/firebase';
@@ -18,6 +18,20 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }) => {
   const [user, loading, error] = useAuthState(auth);
+  const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
+  const [onboardingLoading, setOnboardingLoading] = useState(true);
+
+  // Check onboarding status when user changes
+  useEffect(() => {
+    if (user) {
+      const onboardingKey = `onboarding_completed_${user.uid}`;
+      const completed = localStorage.getItem(onboardingKey) === 'true';
+      setHasCompletedOnboarding(completed);
+    } else {
+      setHasCompletedOnboarding(false);
+    }
+    setOnboardingLoading(false);
+  }, [user]);
 
   // skip loading state and log user detail 
   if (!loading && user) {
@@ -58,14 +72,24 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const completeOnboarding = () => {
+    if (user) {
+      const onboardingKey = `onboarding_completed_${user.uid}`;
+      localStorage.setItem(onboardingKey, 'true');
+      setHasCompletedOnboarding(true);
+    }
+  };
+
   const value = {
     user,
-    loading,
+    loading: loading || onboardingLoading,
     error,
     signInWithGoogle,
     logout,
     getAuthToken,
     isAuthenticated: !!user,
+    hasCompletedOnboarding,
+    completeOnboarding,
   };
 
   return (

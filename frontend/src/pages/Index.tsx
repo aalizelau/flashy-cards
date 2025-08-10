@@ -1,19 +1,15 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/features/auth/contexts/AuthContext';
 
 const Index = () => {
   const navigate = useNavigate();
-  const { user, loading } = useAuth();
   
   useEffect(() => {
-    // Only redirect once auth state is determined and user is authenticated
-    if (!loading && user) {
-      navigate('/dashboard', { replace: true });
-    }
-  }, [navigate, user, loading]);
+    // Simply redirect to dashboard - ProtectedRoute will handle auth and onboarding checks
+    navigate('/dashboard', { replace: true });
+  }, [navigate]);
 
-  // Show loading state while checking auth or redirecting
+  // Show loading state while redirecting
   return (
     <div className="min-h-screen bg-gradient-bg flex items-center justify-center">
       <div className="text-center">

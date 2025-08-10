@@ -12,11 +12,13 @@ const queryClient = new QueryClient();
 const AppContent = () => {
   const location = useLocation();
   const isLoginPage = location.pathname === '/login';
+  const isOnboardingPage = location.pathname === '/onboarding';
+  const hideLayout = isLoginPage || isOnboardingPage;
 
   return (
     <div className="flex">
-      {!isLoginPage && <SidebarNav />}
-      <div className={`flex-1 bg-gradient-bg ${isLoginPage ? 'w-full' : ''}`}>
+      {!hideLayout && <SidebarNav />}
+      <div className={`flex-1 bg-gradient-bg ${hideLayout ? 'w-full' : ''}`}>
         <AppRouter />
       </div>
     </div>
