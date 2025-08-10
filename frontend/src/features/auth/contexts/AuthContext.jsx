@@ -19,6 +19,11 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
   const [user, loading, error] = useAuthState(auth);
 
+  // skip loading state and log user detail 
+  if (!loading && user) {
+    console.log('User successfully authenticated:', user);
+  }
+
   const signInWithGoogle = async () => {
     try {
       const result = await signInWithPopup(auth, googleProvider);
