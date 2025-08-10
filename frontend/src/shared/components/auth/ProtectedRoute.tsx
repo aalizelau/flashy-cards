@@ -1,8 +1,6 @@
 import { ReactNode } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-// import { useAuth } from '@/features/auth/contexts/AuthContext';
-import { useAuthState } from 'react-firebase-hooks/auth';
-import { auth, googleProvider } from '../../../shared/services/firebase';
+import { useAuth } from '@/features/auth/contexts/AuthContext';
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -10,8 +8,7 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute = ({ children, requireOnboarding = true }: ProtectedRouteProps) => {
-  // const { user, loading, hasCompletedOnboarding } = useAuthState(auth);
-  const [user, loading, error] = useAuthState(auth);
+  const { user, loading, hasCompletedOnboarding } = useAuth();
   const location = useLocation();
 
   // Show loading spinner while checking authentication status
@@ -31,16 +28,8 @@ const ProtectedRoute = ({ children, requireOnboarding = true }: ProtectedRoutePr
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  const hasCompletedOnboarding = (uid: string) => {
-  const onboardingKey = `onboarding_completed_${uid}`;
-  const stored = localStorage.getItem(onboardingKey);
-  console.log("status!!!", stored)
-  return stored === 'true';
-};
-
   // If onboarding is required and user hasn't completed it, redirect to onboarding
-  // But don't redirect if already on onboarding page to prevent infinite loops
-  if (!loading && user && requireOnboarding && !hasCompletedOnboarding(user.uid) && location.pathname !== '/onboarding') {
+  if (!loading && user && requireOnboarding && !hasCompletedOnboarding) {
     return <Navigate to="/onboarding" state={{ from: location }} replace />;
   }
 
