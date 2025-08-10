@@ -8,7 +8,8 @@ import {
   DeckWithCardsCreate,
   DeckWithCardsResponse,
   TestStats,
-  StudySessionRequest
+  StudySessionRequest,
+  UserProfile
 } from '@/shared/types/api';
 import { auth } from '@/features/auth/contexts/AuthContext';
 
@@ -123,6 +124,11 @@ class ApiClient {
     }
     
     return this.request<TestStats>(endpoint);
+  }
+
+  // Get user profile
+  async getUserProfile(): Promise<UserProfile> {
+    return this.request<UserProfile>('/users/me');
   }
 }
 

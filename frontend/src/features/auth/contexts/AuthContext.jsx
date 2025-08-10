@@ -2,11 +2,13 @@ import { useEffect, useState, createContext, useContext } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth, googleProvider } from '../../../shared/services/firebase';
 import { signInWithPopup, signOut } from 'firebase/auth';
+import { apiClient } from '../../../shared/services/api';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [userProfile, setUserProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
@@ -15,18 +17,30 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(
       auth, 
-      (user) => {
+      async (user) => {
         setUser(user);
-        setLoading(false);
         
         // 處理 onboarding 狀態
         if (user) {
           const onboardingKey = `onboarding_completed_${user.uid}`;
           const completed = localStorage.getItem(onboardingKey) === 'true';
           setHasCompletedOnboarding(completed);
+          
+          // Fetch user profile from backend
+          try {
+            const profile = await apiClient.getUserProfile();
+            setUserProfile(profile);
+          } catch (error) {
+            console.error('Failed to fetch user profile:', error);
+            // Don't set error state for profile fetch failure
+            setUserProfile(null);
+          }
         } else {
           setHasCompletedOnboarding(false);
+          setUserProfile(null);
         }
+        
+        setLoading(false);
         setOnboardingLoading(false);
       },
       (error) => {
@@ -84,6 +98,7 @@ export const AuthProvider = ({ children }) => {
 
   const value = {
     user,
+    userProfile,
     loading: loading || onboardingLoading,
     error,
     signInWithGoogle,

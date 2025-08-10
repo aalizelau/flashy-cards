@@ -10,6 +10,7 @@ class User(Base):
     uid = Column(String, primary_key=True, index=True)  # Firebase UID
     email = Column(String, unique=True, index=True, nullable=False)
     name = Column(String, nullable=True)
+    selected_language = Column(String, nullable=True, default='en')
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 

@@ -7,6 +7,16 @@ export interface User {
   firstName: string | null;
 }
 
+// Backend User Profile (separate from Firebase User)
+export interface UserProfile {
+  uid: string;
+  email: string;
+  name: string | null;
+  selected_language: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface AuthenticatedUser extends User {
   accessToken: string;
   isEmailVerified: boolean;

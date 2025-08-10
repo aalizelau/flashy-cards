@@ -7,6 +7,7 @@ class User(BaseModel):
     uid: str
     email: str
     name: Optional[str] = None
+    selected_language: Optional[str] = 'en'
     created_at: datetime
     updated_at: datetime
     model_config = {"from_attributes": True}
@@ -15,10 +16,12 @@ class UserCreate(BaseModel):
     uid: str
     email: str
     name: Optional[str] = None
+    selected_language: Optional[str] = 'en'
 
 class UserUpdate(BaseModel):
     email: Optional[str] = None
     name: Optional[str] = None
+    selected_language: Optional[str] = None
 
 class Card(BaseModel):
     id: int

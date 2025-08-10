@@ -26,6 +26,7 @@ class UserService:
                 uid=user_data.uid,
                 email=user_data.email,
                 name=user_data.name,
+                selected_language=user_data.selected_language,
                 created_at=datetime.utcnow(),
                 updated_at=datetime.utcnow()
             )
@@ -48,6 +49,8 @@ class UserService:
                 db_user.email = user_data.email
             if user_data.name is not None:
                 db_user.name = user_data.name
+            if user_data.selected_language is not None:
+                db_user.selected_language = user_data.selected_language
             
             db_user.updated_at = datetime.utcnow()
             
@@ -63,6 +66,7 @@ class UserService:
         uid = firebase_user.get("uid")
         email = firebase_user.get("email")
         name = firebase_user.get("name")
+        selected_language = firebase_user.get("selected_language", "en")
 
         # Try to get existing user
         existing_user = self.get_user_by_uid(uid)
@@ -87,7 +91,8 @@ class UserService:
         user_data = UserCreate(
             uid=uid,
             email=email or "",
-            name=name
+            name=name,
+            selected_language=selected_language
         )
         return self.create_user(user_data)
 

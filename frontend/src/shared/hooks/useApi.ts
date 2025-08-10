@@ -7,6 +7,7 @@ export const queryKeys = {
   decks: ['decks'] as const,
   deckCards: (deckId: number) => ['decks', deckId, 'cards'] as const,
   analytics: ['analytics'] as const,
+  userProfile: ['userProfile'] as const,
 };
 
 // Get all decks
@@ -60,5 +61,13 @@ export const useCompleteStudySession = () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.analytics });
       queryClient.invalidateQueries({ queryKey: queryKeys.decks });
     },
+  });
+};
+
+// Get user profile
+export const useUserProfile = () => {
+  return useQuery({
+    queryKey: queryKeys.userProfile,
+    queryFn: () => apiClient.getUserProfile(),
   });
 };
