@@ -4,3 +4,4 @@ psycopg2-binary
 firebase-admin
 redis
 requests
+alembic

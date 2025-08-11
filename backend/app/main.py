@@ -2,7 +2,7 @@ from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pathlib import Path
-from app.database import create_tables
+# Database schema is now managed by Alembic migrations
 
 from app.routers import decks, sessions, analytics, users
 import app.firebase_config  # Initialize Firebase
@@ -15,7 +15,9 @@ app = FastAPI(title="Flashcard API", version="1.0.0")
 
 @app.on_event("startup")
 def on_startup():
-    create_tables()
+    # Database tables are created via Alembic migrations
+    # Run 'alembic upgrade head' before starting the app
+    
     # Create voices directory if it doesn't exist
     voices_dir = Path(VOICES_DIR)
     voices_dir.mkdir(exist_ok=True)

@@ -52,6 +52,10 @@ npm run preview
 ```bash
 cd backend
 
+# Initialize/update database schema (required for first-time setup)
+source venv/bin/activate  # Activate virtual environment
+alembic upgrade head      # Apply migrations to create/update database tables
+
 # Start development server
 python main.py
 # or
@@ -59,6 +63,27 @@ uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 
 # Run with Docker
 docker-compose up
+```
+
+### Database Migrations (Alembic)
+```bash
+cd backend
+source venv/bin/activate
+
+# Create a new migration after model changes
+alembic revision --autogenerate -m "Description of changes"
+
+# Apply migrations to database
+alembic upgrade head
+
+# Revert to previous migration
+alembic downgrade -1
+
+# View migration history
+alembic history
+
+# View current migration version
+alembic current
 ```
 
 ## Architecture Overview
@@ -202,8 +227,8 @@ interface TestResult {
 
 1. **Start Both Servers**:
    ```bash
-   # Terminal 1 - Backend
-   cd backend && python main.py
+   # Terminal 1 - Backend (first time setup requires migration)
+   cd backend && source venv/bin/activate && alembic upgrade head && python main.py
    
    # Terminal 2 - Frontend  
    cd frontend && npm run dev
@@ -213,6 +238,7 @@ interface TestResult {
    - Frontend changes auto-reload via Vite HMR
    - Backend changes require server restart (or use `--reload`)
    - API changes require updating both frontend types and backend schemas
+   - **Database schema changes**: Update models in `app/models.py`, then run `alembic revision --autogenerate -m "Description"` and `alembic upgrade head`
 
 3. **Testing**:
    - Frontend: Use browser dev tools and React dev tools

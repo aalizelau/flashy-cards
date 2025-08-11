@@ -19,6 +19,6 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
 
-def create_tables():
-    Base.metadata.create_all(bind=engine)
+# Note: Table creation is now handled by Alembic migrations
+# Use 'alembic upgrade head' to create/update database schema
 
