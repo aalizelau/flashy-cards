@@ -127,10 +127,17 @@ class SessionService:
         self.db.add(new_session)
     
     def update_analytics(self, user_id: str):
-        from app.models import Deck as DeckORM
+        from app.models import Deck as DeckORM, User as UserORM
         
-        # Filter cards by user through deck relationship
-        user_cards_query = self.db.query(CardORM).join(DeckORM).filter(DeckORM.user_id == user_id)
+        # Get user's selected language
+        user = self.db.query(UserORM).filter(UserORM.uid == user_id).first()
+        user_language = user.selected_language if user and user.selected_language else 'en'
+        
+        # Filter cards by user and language through deck relationship
+        user_cards_query = self.db.query(CardORM).join(DeckORM).filter(
+            DeckORM.user_id == user_id,
+            DeckORM.language == user_language
+        )
         
         total_cards_studied = user_cards_query.filter(CardORM.total_attempts > 0).count()
         total_correct_answers = user_cards_query.with_entities(

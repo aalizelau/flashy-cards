@@ -25,6 +25,7 @@ class Deck(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(String, ForeignKey("users.uid"), nullable=False, index=True)
+    language = Column(String, nullable=False, default='en', index=True)
     name = Column(String, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
     progress = Column(Float, default=0.0)

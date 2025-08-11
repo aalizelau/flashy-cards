@@ -5,7 +5,7 @@ import logging
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
 
-from app.models import Deck as DeckORM, Card as CardORM
+from app.models import Deck as DeckORM, Card as CardORM, User as UserORM
 from app.schemas import DeckCreate, DeckWithCardsCreate, DeckWithCardsResponse, Card as CardSchema
 from app.voice_service import voice_generator
 
@@ -18,9 +18,14 @@ class DeckService:
 
     def create_deck(self, deck_data: DeckCreate, user_id: str) -> DeckORM:
         """Create a single deck without cards"""
+        # Get user's selected language
+        user = self.db.query(UserORM).filter(UserORM.uid == user_id).first()
+        user_language = user.selected_language if user and user.selected_language else 'en'
+        
         db_deck = DeckORM(
             name=deck_data.name,
             user_id=user_id,
+            language=user_language,
             created_at=datetime.now(),
             progress=0.0,
             card_count=0
@@ -33,6 +38,10 @@ class DeckService:
     def create_deck_with_cards(self, deck_data: DeckWithCardsCreate, user_id: str) -> DeckWithCardsResponse:
         """Create a deck with cards atomically"""
         try:
+            # Get user's selected language
+            user = self.db.query(UserORM).filter(UserORM.uid == user_id).first()
+            user_language = user.selected_language if user and user.selected_language else 'en'
+            
             # Start transaction
             # self.db.begin()
             
@@ -40,6 +49,7 @@ class DeckService:
             db_deck = DeckORM(
                 name=deck_data.name,
                 user_id=user_id,
+                language=user_language,
                 created_at=datetime.now(),
                 progress=0.0,
                 card_count=len(deck_data.cards)
@@ -99,15 +109,27 @@ class DeckService:
             raise Exception(f"Failed to create deck with cards: {str(e)}")
 
     def get_user_decks(self, user_id: str) -> List[DeckORM]:
-        """Get all decks for a specific user"""
-        return self.db.query(DeckORM).filter(DeckORM.user_id == user_id).all()
+        """Get all decks for a specific user filtered by their selected language"""
+        # Get user's selected language
+        user = self.db.query(UserORM).filter(UserORM.uid == user_id).first()
+        user_language = user.selected_language if user and user.selected_language else 'en'
+        
+        return self.db.query(DeckORM).filter(
+            DeckORM.user_id == user_id,
+            DeckORM.language == user_language
+        ).all()
 
     def get_user_deck_cards(self, deck_id: int, user_id: str) -> List[CardORM]:
-        """Get all cards for a specific deck belonging to a user"""
-        # Verify deck belongs to user
+        """Get all cards for a specific deck belonging to a user in their selected language"""
+        # Get user's selected language
+        user = self.db.query(UserORM).filter(UserORM.uid == user_id).first()
+        user_language = user.selected_language if user and user.selected_language else 'en'
+        
+        # Verify deck belongs to user and matches their language
         deck = self.db.query(DeckORM).filter(
             DeckORM.id == deck_id, 
-            DeckORM.user_id == user_id
+            DeckORM.user_id == user_id,
+            DeckORM.language == user_language
         ).first()
         
         if not deck:
