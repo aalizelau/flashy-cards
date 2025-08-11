@@ -130,6 +130,14 @@ class ApiClient {
   async getUserProfile(): Promise<UserProfile> {
     return this.request<UserProfile>('/users/me');
   }
+
+  // Update user profile
+  async updateUserProfile(userData: Partial<UserProfile>): Promise<UserProfile> {
+    return this.request<UserProfile>('/users/me', {
+      method: 'PUT',
+      body: JSON.stringify(userData),
+    });
+  }
 }
 
 export const apiClient = new ApiClient();

@@ -94,6 +94,21 @@ export const AuthProvider = ({ children }) => {
     return user.getIdToken();
   };
 
+  const setLanguage = async (language) => {
+    if (!user) throw new Error('User not authenticated');
+    
+    try {
+      const updatedProfile = await apiClient.updateUserProfile({
+        selected_language: language
+      });
+      setUserProfile(updatedProfile);
+      return { error: null };
+    } catch (e) {
+      console.error('Failed to update language:', e);
+      return { error: e?.message ?? 'Failed to update language' };
+    }
+  };
+
   const loading = firebaseLoadingUser || !profileLoaded;
 
   const value = useMemo(
@@ -106,6 +121,7 @@ export const AuthProvider = ({ children }) => {
       signInWithGoogle,
       logout,
       getAuthToken,
+      setLanguage,
     }),
     [user, userProfile, hasCompletedOnboarding, loading, error]
   );

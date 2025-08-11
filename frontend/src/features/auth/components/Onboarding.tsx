@@ -10,7 +10,7 @@ export default function Onboarding() {
   const [isLoading, setIsLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedLanguage, setSelectedLanguage] = useState('');
-  const { completeOnboarding, user } = useAuth();
+  const { setLanguage } = useAuth();
   const navigate = useNavigate();
 
   const languages = [
@@ -38,11 +38,23 @@ export default function Onboarding() {
     
     setIsLoading(true);
     
-    // Simulate a brief loading state for better UX
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
-    completeOnboarding();
-    navigate('/dashboard', { replace: true });
+    try {
+      const result = await setLanguage(selectedLanguage);
+      if (result.error) {
+        alert(`Failed to save language preference: ${result.error}`);
+        return;
+      }
+      
+      // Brief loading state for better UX
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      navigate('/dashboard', { replace: true });
+    } catch (error) {
+      alert('Failed to complete setup. Please try again.');
+      console.error('Onboarding error:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleBack = () => {
