@@ -15,9 +15,6 @@ export default function Login() {
   const location = useLocation();
   const { signInWithGoogle, user } = useAuth();
 
-  // Get the intended destination from location state, default to dashboard
-  const from = location.state?.from?.pathname || '/dashboard';
-
   // Handle email/password sign-in (placeholder for future implementation)
   const handleSignIn = async () => {
     console.log('Email sign-in attempted:', { email, password });
@@ -36,7 +33,7 @@ export default function Login() {
         setError(error);
       } else if (user) {
         console.log('Google sign-in successful:', user);
-        navigate(from, { replace: true });
+        navigate('/dashboard', { replace: true });
       }
     } catch (error) {
       setError('An unexpected error occurred. Please try again.');
