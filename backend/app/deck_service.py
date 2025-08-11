@@ -63,13 +63,16 @@ class DeckService:
                 # Generate audio with fault tolerance
                 audio_path = None
                 try:
-                    audio_path = voice_generator.get_voice("en", card_data.front)
-                    if audio_path:
-                        logger.info(f"Generated audio for '{card_data.front}': {audio_path}")
+                    if voice_generator.is_language_supported(user_language):
+                        audio_path = voice_generator.get_voice(user_language, card_data.front)
+                        if audio_path:
+                            logger.info(f"Generated audio for '{card_data.front}' in {user_language}: {audio_path}")
+                        else:
+                            logger.warning(f"Failed to generate audio for '{card_data.front}' in {user_language}")
                     else:
-                        logger.warning(f"Failed to generate audio for '{card_data.front}'")
+                        logger.info(f"Audio generation skipped for '{card_data.front}' - language '{user_language}' not supported for TTS")
                 except Exception as e:
-                    logger.error(f"Audio generation failed for '{card_data.front}': {e}")
+                    logger.error(f"Audio generation failed for '{card_data.front}' in {user_language}: {e}")
                 
                 db_card = CardORM(
                     deck_id=db_deck.id,

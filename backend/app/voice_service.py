@@ -10,6 +10,18 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+# Supported languages for Google TTS
+SUPPORTED_TTS_LANGUAGES = {
+    'en': 'en',      # English
+    'es': 'es',      # Spanish  
+    'fr': 'fr',      # French
+    'de': 'de',      # German
+    'it': 'it',      # Italian
+    'uk': 'uk',      # Ukrainian
+    'zh': 'zh-cn',   # Chinese (Simplified)
+    'ja': 'ja'       # Japanese
+}
+
 
 class VoiceGenerator:
     def __init__(self, redis_host: str = None, redis_port: int = 6379, redis_db: int = 0, use_redis: bool = True):
@@ -53,6 +65,14 @@ class VoiceGenerator:
         """Generate Redis cache key"""
         return f"voice:{lang}:{cleaned_word}"
     
+    def is_language_supported(self, lang: str) -> bool:
+        """Check if language is supported for TTS"""
+        return lang in SUPPORTED_TTS_LANGUAGES
+    
+    def _get_tts_language_code(self, lang: str) -> str:
+        """Get the correct TTS language code for Google API"""
+        return SUPPORTED_TTS_LANGUAGES.get(lang, lang)
+    
     def _generate_file_path(self, lang: str, cleaned_word: str) -> Path:
         """Generate file path using SHA1 hash"""
         sha1_hash = hashlib.sha1(cleaned_word.encode('utf-8')).hexdigest()
@@ -64,10 +84,11 @@ class VoiceGenerator:
     
     def _download_voice(self, lang: str, cleaned_word: str) -> str:
         """Download voice from Google TTS API"""
+        tts_lang_code = self._get_tts_language_code(lang)
         params = {
             'ie': 'UTF-8',
             'q': cleaned_word,
-            'tl': lang,
+            'tl': tts_lang_code,
             'client': 'tw-ob'
         }
         
@@ -92,13 +113,18 @@ class VoiceGenerator:
             word: Text to convert to speech
             
         Returns:
-            str: Path to saved audio file, or None if failed
+            str: Path to saved audio file, or None if failed or unsupported language
         """
         try:
-            # 1. Strip spaces
+            # 1. Check if language is supported
+            if not self.is_language_supported(lang):
+                logger.info(f"Language '{lang}' not supported for TTS - skipping audio generation")
+                return None
+            
+            # 2. Strip spaces
             cleaned_word = self._strip_spaces(word)
             
-            # 2. Check cache (Redis or memory)
+            # 3. Check cache (Redis or memory)
             cache_key = self._generate_cache_key(lang, cleaned_word)
             
             if self.use_redis and self.redis_client:
@@ -106,7 +132,7 @@ class VoiceGenerator:
             else:
                 cached_path = self.memory_cache.get(cache_key)
             
-            # 3. If cached and file exists, return cached path
+            # 4. If cached and file exists, return cached path
             if cached_path:
                 # Handle both absolute and relative paths
                 if os.path.exists(cached_path):
@@ -116,10 +142,10 @@ class VoiceGenerator:
                 if backend_path.exists():
                     return str(backend_path.relative_to(Path(__file__).parent.parent))
             
-            # 4. Download new voice file
+            # 5. Download new voice file
             file_path = self._download_voice(lang, cleaned_word)
             
-            # 5. Cache the file path
+            # 6. Cache the file path
             if self.use_redis and self.redis_client:
                 self.redis_client.set(cache_key, file_path)
             else:
