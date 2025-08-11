@@ -3,6 +3,8 @@ import React, { createContext, useContext, useEffect, useMemo, useState } from '
 import { onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth';
 import { auth, googleProvider } from '@/shared/services/firebase';
 import { apiClient } from '../../../shared/services/api';
+import { useQueryClient } from '@tanstack/react-query';
+import { queryKeys } from '@/shared/hooks/useApi';
 
 const AuthContext = createContext(null);
 
@@ -11,6 +13,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [userProfile, setUserProfile] = useState(null);
   const [error, setError] = useState(null);
+  const queryClient = useQueryClient();
 
   // load both user and user profile
   const [firebaseLoadingUser, setFirebaseLoadingUser] = useState(true);
@@ -102,6 +105,15 @@ export const AuthProvider = ({ children }) => {
         selected_language: language
       });
       setUserProfile(updatedProfile);
+      
+      // Invalidate all queries to refetch language-specific data
+      await queryClient.invalidateQueries({ queryKey: queryKeys.decks });
+      await queryClient.invalidateQueries({ queryKey: queryKeys.analytics });
+      await queryClient.invalidateQueries({ queryKey: queryKeys.userProfile });
+      
+      // Also clear any cached deck cards
+      queryClient.removeQueries({ queryKey: ['decks'], type: 'all' });
+      
       return { error: null };
     } catch (e) {
       console.error('Failed to update language:', e);

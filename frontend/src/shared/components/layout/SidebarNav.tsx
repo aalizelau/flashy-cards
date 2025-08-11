@@ -204,7 +204,10 @@ const SidebarNav: React.FC = () => {
             side={showLabels ? "top" : "right"}
             sideOffset={8}
           >
-            <DropdownMenuItem className="hover:bg-gray-100">
+            <DropdownMenuItem 
+              className="hover:bg-gray-100 cursor-pointer"
+              onClick={() => navigate('/settings')}
+            >
               <Settings className="mr-2 h-4 w-4" />
               Settings
             </DropdownMenuItem>

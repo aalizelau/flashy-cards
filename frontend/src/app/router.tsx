@@ -9,6 +9,7 @@ import AnalyticsPage from "../features/analytics/components/Analytics";
 import CreateDeck from "../features/decks/components/CreateDeck";
 import Login from "../features/auth/components/login";
 import Onboarding from "../features/auth/components/Onboarding";
+import Settings from "../features/settings/pages/Settings";
 import ProtectedRoute from "../shared/components/auth/ProtectedRoute";
 
 export const AppRouter = () => (
@@ -23,6 +24,7 @@ export const AppRouter = () => (
     <Route path="/all-decks" element={<ProtectedRoute><AllDecks /></ProtectedRoute>} />
     <Route path="/decks/:collectionName" element={<ProtectedRoute><DeckDetail /></ProtectedRoute>} />
     <Route path="/analytics" element={<ProtectedRoute><AnalyticsPage /></ProtectedRoute>} />
+    <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
     <Route path="*" element={<ProtectedRoute><NotFound /></ProtectedRoute>} />
   </Routes>
