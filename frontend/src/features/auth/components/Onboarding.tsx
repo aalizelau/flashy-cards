@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Card } from "@/shared/components/ui/card";
+import { RadioGroup, RadioGroupItem } from "@/shared/components/ui/radio-group";
+import { Label } from "@/shared/components/ui/label";
 import { PartyPopper, Globe, ArrowLeft } from "lucide-react";
 
 export default function Onboarding() {
@@ -12,12 +14,14 @@ export default function Onboarding() {
   const navigate = useNavigate();
 
   const languages = [
-    { code: 'en', name: 'English', flag: '🇺🇸' },
-    { code: 'es', name: 'Español', flag: '🇪🇸' },
-    { code: 'fr', name: 'Français', flag: '🇫🇷' },
-    { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
-    { code: 'zh', name: '中文', flag: '🇨🇳' },
-    { code: 'ja', name: '日本語', flag: '🇯🇵' },
+    { code: "en", name: "English", flag: "🇺🇸" },
+    { code: "es", name: "Español", flag: "🇪🇸" },
+    { code: "fr", name: "Français", flag: "🇫🇷" },
+    { code: "de", name: "Deutsch", flag: "🇩🇪" },
+    { code: "it", name: "Italiano", flag: "🇮🇹" },
+    { code: "uk", name: "Українська", flag: "🇺🇦" },
+    { code: "zh", name: "中文", flag: "🇨🇳" },
+    { code: "ja", name: "日本語", flag: "🇯🇵" },
   ];
 
   const handleGetStarted = async () => {
@@ -39,10 +43,6 @@ export default function Onboarding() {
     
     completeOnboarding();
     navigate('/dashboard', { replace: true });
-  };
-
-  const handleLanguageSelect = (languageCode: string) => {
-    setSelectedLanguage(languageCode);
   };
 
   const handleBack = () => {
@@ -123,22 +123,37 @@ export default function Onboarding() {
               </p>
             </div>
 
-            <div className="mb-8 grid grid-cols-2 gap-3">
-              {languages.map((language) => (
-                <button
-                  key={language.code}
-                  onClick={() => handleLanguageSelect(language.code)}
-                  className={`p-4 rounded-lg border-2 transition-all hover:border-blue-400 hover:bg-blue-50 ${
-                    selectedLanguage === language.code
-                      ? 'border-blue-500 bg-blue-50'
-                      : 'border-gray-200 bg-white'
-                  }`}
-                >
-                  <div className="text-2xl mb-2">{language.flag}</div>
-                  <div className="text-sm font-medium text-gray-900">{language.name}</div>
-                </button>
-              ))}
-            </div>
+            <div className="space-y-4 mb-6">
+              <RadioGroup
+                value={selectedLanguage}
+                onValueChange={setSelectedLanguage}
+                className="grid grid-cols-2 gap-3"
+              >
+                {languages.map((language) => (
+                  <div key={language.code} className="relative">
+                    <RadioGroupItem
+                      value={language.code}
+                      id={`lang-${language.code}`}
+                      className="peer sr-only"
+                    />
+                    <Label
+                      htmlFor={`lang-${language.code}`}
+                      className="
+                        flex items-center gap-3 p-3 border-2 rounded-lg cursor-pointer
+                        bg-gray-50 hover:bg-primary/5 hover:text-accent-foreground
+                        peer-data-[state=checked]:border-accent
+                        peer-data-[state=checked]:bg-primary/5
+                        transition-colors
+                      "
+                    >
+                      <span className="text-lg">{language.flag}</span>
+                      <span className="text-sm font-medium">{language.name}</span>
+                    </Label>
+                  </div>
+                ))}
+              </RadioGroup>
+
+      </div>
           </>
         )}
 
@@ -155,7 +170,7 @@ export default function Onboarding() {
           <button
             onClick={handleGetStarted}
             disabled={isLoading || (currentStep === 2 && !selectedLanguage)}
-            className="flex-1 bg-muted-foreground hover:bg-main-foreground disabled:bg-blue-400 text-white font-medium py-3 px-4 rounded-lg transition-colors disabled:cursor-not-allowed"
+            className="flex-1 bg-muted-foreground hover:bg-main-foreground disabled:bg-gray-400 text-white font-medium py-3 px-4 rounded-lg transition-colors disabled:cursor-not-allowed"
           >
             {isLoading ? 'Setting things up...' : 
              currentStep === 1 ? 'Get Started' : 'Complete Setup'}
