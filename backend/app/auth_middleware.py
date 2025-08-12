@@ -34,7 +34,7 @@ def verify_firebase_token(token: str) -> Dict:
         logger.error(f"Firebase token verification failed: {e}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Authentication failed",
+            detail=str(e), 
             headers={"WWW-Authenticate": "Bearer"},
         )
 
