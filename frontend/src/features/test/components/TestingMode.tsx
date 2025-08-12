@@ -18,6 +18,7 @@ interface TestingModeProps {
 export const TestingMode: React.FC<TestingModeProps> = ({ testType, deckIds, limit, isSwapped = false, onComplete, onBackToBrowser }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
+  const [animateFlip, setAnimateFlip] = useState(true); 
   const [results, setResults] = useState<TestResult[]>([]);
   const [flashcards, setFlashcards] = useState<Card[]>([]);
   
@@ -85,8 +86,10 @@ export const TestingMode: React.FC<TestingModeProps> = ({ testType, deckIds, lim
       
       onComplete(newResults);
     } else {
-      setCurrentIndex(currentIndex + 1);
+      setAnimateFlip(false);
       setIsFlipped(false);
+      setCurrentIndex(currentIndex + 1);
+      requestAnimationFrame(() => setAnimateFlip(true));
     }
   };
 
@@ -177,6 +180,7 @@ export const TestingMode: React.FC<TestingModeProps> = ({ testType, deckIds, lim
             isFlipped={isFlipped}
             isSwapped={isSwapped}
             onFlip={handleCardFlip}
+            animateFlip={animateFlip}
           />
         </div>
       </div>

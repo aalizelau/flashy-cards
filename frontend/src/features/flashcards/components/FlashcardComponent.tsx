@@ -8,13 +8,15 @@ interface FlashcardComponentProps {
   isFlipped: boolean;
   isSwapped?: boolean;
   onFlip: () => void;
+  animateFlip?: boolean;
 }
 
 export const FlashcardComponent: React.FC<FlashcardComponentProps> = ({ 
   flashcard, 
   isFlipped, 
   isSwapped = false,
-  onFlip 
+  onFlip, 
+  animateFlip = true,
 }) => {
   const [playingAudio, setPlayingAudio] = useState(false);
 
@@ -40,9 +42,9 @@ export const FlashcardComponent: React.FC<FlashcardComponentProps> = ({
   return (
     <div className="perspective-1000 w-full h-80 ">
       <div 
-        className={`relative w-full h-full transition-transform duration-700 transform-style-preserve-3d ${
-          isFlipped ? 'rotate-y-180' : ''
-        }`}
+        className={`relative w-full h-full transform-style-preserve-3d ${
+          animateFlip ? 'transition-transform duration-700' : '' 
+        } ${isFlipped ? 'rotate-y-180' : ''}`}
       >
         {/* Front of card */}
         <div className="absolute inset-0 w-full h-full backface-hidden">
