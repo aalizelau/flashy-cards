@@ -29,7 +29,7 @@ services:
     ports:
       - "8000:80"
     volumes:
-      - voices_data:/app/voices
+      - voices_data:/code/voices
 
   db:
     image: postgres:14-alpine
