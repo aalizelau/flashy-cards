@@ -20,18 +20,19 @@ const FlashcardTable: React.FC<FlashcardTableProps> = ({
     Math.round(card.accuracy * 100);
 
   return (
-    <div className="overflow-x-auto">
-      <table className="min-w-full text-left border-separate border-spacing-y-0">
-        <thead>
-          <tr className="border-b border-border">
-            <th className="py-2 px-3 text-xs font-semibold text-muted-foreground">Learning Word</th>
-            <th className="py-2 px-3 text-xs font-semibold text-muted-foreground">Translation</th>
-            <th className="py-2 px-3 text-xs font-semibold text-muted-foreground">Progress</th>
-            <th className="py-2 px-3 text-xs font-semibold text-muted-foreground">Attempts</th>
-            <th className="py-2 px-3 text-xs font-semibold text-muted-foreground">Last Reviewed</th>
-            <th className="py-2 px-3"></th>
-          </tr>
-        </thead>
+    <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+      <div className="overflow-x-auto">
+        <table className="min-w-full">
+          <thead className="bg-gray-50 border-b border-gray-200">
+            <tr>
+              <th className="py-3 px-3 text-xs font-semibold text-gray-600 text-left">Word</th>
+              <th className="py-3 px-3 text-xs font-semibold text-gray-600 text-left">Translation</th>
+              <th className="py-3 px-3 text-xs font-semibold text-gray-600 text-left">Progress</th>
+              <th className="py-3 px-3 text-xs font-semibold text-gray-600 text-left">Attempts</th>
+              <th className="py-3 px-3 text-xs font-semibold text-gray-600 text-left">Last Reviewed</th>
+              <th className="py-3 px-3 text-xs font-semibold text-gray-600 text-left"></th>
+            </tr>
+          </thead>
         <tbody>
           {cards.map((card, idx, arr) => {
             const percentage = getProgressPercentage(card);
@@ -99,7 +100,7 @@ const FlashcardTable: React.FC<FlashcardTableProps> = ({
                 {idx < arr.length - 1 && (
                   <tr>
                     <td colSpan={6}>
-                      <div className="border-b border-border" />
+                      <div className="border-b border-gray-200" />
                     </td>
                   </tr>
                 )}
@@ -107,7 +108,8 @@ const FlashcardTable: React.FC<FlashcardTableProps> = ({
             );
           })}
         </tbody>
-      </table>
+        </table>
+      </div>
     </div>
   );
 };
