@@ -127,7 +127,7 @@ const DeckDetail: React.FC = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
+    <div className="container mx-auto px-4 py-8 max-w-5xl">
       <Button
         variant="outline"
         onClick={() => window.history.back()}
@@ -162,18 +162,18 @@ const DeckDetail: React.FC = () => {
       <Card className="bg-gradient-card shadow-elevated">
         <CardContent className="p-0">
           {/* Controls Section */}
-          <div className="flex items-center justify-between p-6 ">
+          <div className="flex items-center justify-between py-6 px-4 ">
             <div className="flex items-center gap-4">
               <Input
                 type="text"
                 placeholder="Search words..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-64"
+                className="w-44"
               />
               
               <Select value={sortBy} onValueChange={(value) => setSortBy(value as typeof sortBy)}>
-                <SelectTrigger className="w-48">
+                <SelectTrigger className="w-36">
                   <SelectValue placeholder="Sort by..." />
                 </SelectTrigger>
                 <SelectContent>
@@ -192,7 +192,7 @@ const DeckDetail: React.FC = () => {
                 className="flex items-center gap-2"
               >
                 {getSortIcon()}
-                {getOrderLabel(sortBy)}
+                <span className="font-normal">{getOrderLabel(sortBy)}</span>
               </Button>
             </div>
 
@@ -203,7 +203,7 @@ const DeckDetail: React.FC = () => {
           </div>
           
           <ScrollArea className="h-[600px]">
-            <div className="px-6 py-0">
+            <div className="px-4 py-0">
               <FlashcardTable
                 cards={filteredAndSortedCards}
                 playingAudio={playingAudio}
