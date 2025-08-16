@@ -6,7 +6,7 @@ import { Input } from '@/shared/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/components/ui/select';
 import FlashcardTable from './FlashcardTable';
 import { Button } from '@/shared/components/ui/button';
-import { ArrowUp, ArrowDown, ArrowUpDown, Plus, GraduationCap, MoreHorizontal } from 'lucide-react';
+import { ArrowUp, ArrowDown, ArrowUpDown, Plus, GraduationCap, MoreHorizontal, Search } from 'lucide-react';
 import { useDecks, useDeckCards } from '@/shared/hooks/useApi';
 import { Card as FlashCard } from '@/shared/types/api';
 
@@ -135,9 +135,10 @@ const DeckDetail: React.FC = () => {
       >
         ← Back
       </Button>
-      <div className="flex items-center justify-between mb-8">
-        <h2 className="text-3xl font-semibold text-foreground mt-12">
-          {decodedName} ({searchTerm ? `${filteredAndSortedCards.length}/${totalWords}` : totalWords} words)
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-4xl font-alumni-sans font-semibold text-main-foreground mt-12 uppercase">
+          <span className="uppercase">{decodedName}</span>{" "}
+  <span className="normal-case">({searchTerm ? `${filteredAndSortedCards.length}/${totalWords}` : totalWords} words)</span>
         </h2>
         <div className="flex items-center gap-4 mt-12">
           {/* Start Test Button */}
@@ -164,13 +165,16 @@ const DeckDetail: React.FC = () => {
           {/* Controls Section */}
           <div className="flex items-center justify-between py-6 px-4 ">
             <div className="flex items-center gap-4">
-              <Input
-                type="text"
-                placeholder="Search words..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-44"
-              />
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <Input
+                  type="text"
+                  placeholder="Search words..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-44 pl-10"
+                />
+              </div>
               
               <Select value={sortBy} onValueChange={(value) => setSortBy(value as typeof sortBy)}>
                 <SelectTrigger className="w-36">
