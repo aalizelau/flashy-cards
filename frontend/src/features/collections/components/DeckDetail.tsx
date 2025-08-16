@@ -5,8 +5,9 @@ import { ScrollArea } from '@/shared/components/ui/scroll-area';
 import { Input } from '@/shared/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/components/ui/select';
 import FlashcardTable from './FlashcardTable';
+import DeckMenuDropdown from './DeckMenuDropdown';
 import { Button } from '@/shared/components/ui/button';
-import { ArrowUp, ArrowDown, ArrowUpDown, Plus, GraduationCap, MoreHorizontal, Search } from 'lucide-react';
+import { ArrowUp, ArrowDown, ArrowUpDown, Plus, GraduationCap, Search } from 'lucide-react';
 import { useDecks, useDeckCards } from '@/shared/hooks/useApi';
 import { Card as FlashCard } from '@/shared/types/api';
 
@@ -57,9 +58,19 @@ const DeckDetail: React.FC = () => {
     console.log('Start test clicked for deck:', deckId);
   };
 
-  const handleMenuClick = () => {
-    // TODO: Show deck actions menu
-    console.log('Menu clicked');
+  const handleDuplicateDeck = () => {
+    // TODO: Implement deck duplication
+    console.log('Duplicate deck clicked for deck:', deckId);
+  };
+
+  const handleExportDeck = () => {
+    // TODO: Implement deck export
+    console.log('Export deck clicked for deck:', deckId);
+  };
+
+  const handleDeleteDeck = () => {
+    // TODO: Implement deck deletion
+    console.log('Delete deck clicked for deck:', deckId);
   };
 
 
@@ -151,13 +162,12 @@ const DeckDetail: React.FC = () => {
             Start Test
           </Button>
 
-          {/* Three Dot Menu Button */}
-          <button 
-            onClick={handleMenuClick}
-            className="flex items-center justify-center w-10 h-10 bg-white border border-gray-300 rounded-lg hover:border-gray-400 hover:bg-gray-50 transition-colors shadow-sm"
-          >
-            <MoreHorizontal size={16} className="text-gray-700" />
-          </button>
+          {/* Deck Menu Dropdown */}
+          <DeckMenuDropdown
+            onDuplicateDeck={handleDuplicateDeck}
+            onExportDeck={handleExportDeck}
+            onDeleteDeck={handleDeleteDeck}
+          />
         </div>
       </div>
 
