@@ -30,6 +30,7 @@ const FlashcardTable: React.FC<FlashcardTableProps> = ({
               <th className="py-3 px-3 text-xs font-semibold text-gray-600 text-left">Progress</th>
               <th className="py-3 px-3 text-xs font-semibold text-gray-600 text-left">Attempts</th>
               <th className="py-3 px-3 text-xs font-semibold text-gray-600 text-left">Last Reviewed</th>
+              <th className="py-3 px-3 text-xs font-semibold text-gray-600 text-left">Date Created</th>
               <th className="py-3 px-3 text-xs font-semibold text-gray-600 text-left"></th>
             </tr>
           </thead>
@@ -38,6 +39,13 @@ const FlashcardTable: React.FC<FlashcardTableProps> = ({
             const percentage = getProgressPercentage(card);
             const lastReviewed = card.last_reviewed_at
               ? new Date(card.last_reviewed_at).toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'short',
+                  day: 'numeric',
+                })
+              : '—';
+            const dateCreated = card.created_at
+              ? new Date(card.created_at).toLocaleDateString('en-US', {
                   year: 'numeric',
                   month: 'short',
                   day: 'numeric',
@@ -84,6 +92,9 @@ const FlashcardTable: React.FC<FlashcardTableProps> = ({
                     <span className="text-xs text-muted-foreground">{lastReviewed}</span>
                   </td>
                   <td className="py-3 px-3 align-middle">
+                    <span className="text-xs text-muted-foreground">{dateCreated}</span>
+                  </td>
+                  <td className="py-3 px-3 align-middle">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button size="icon" variant="ghost" aria-label="Actions">
@@ -99,7 +110,7 @@ const FlashcardTable: React.FC<FlashcardTableProps> = ({
                 </tr>
                 {idx < arr.length - 1 && (
                   <tr>
-                    <td colSpan={6}>
+                    <td colSpan={7}>
                       <div className="border-b border-gray-200" />
                     </td>
                   </tr>

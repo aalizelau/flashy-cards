@@ -2,8 +2,11 @@ import React, { useState, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { Card, CardContent } from '@/shared/components/ui/card';
 import { ScrollArea } from '@/shared/components/ui/scroll-area';
+import { Input } from '@/shared/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/components/ui/select';
 import FlashcardTable from './FlashcardTable';
 import { Button } from '@/shared/components/ui/button';
+import { ArrowUp, ArrowDown, ArrowUpDown, Plus } from 'lucide-react';
 import { useDecks, useDeckCards } from '@/shared/hooks/useApi';
 import { Card as FlashCard } from '@/shared/types/api';
 
@@ -17,10 +20,36 @@ const DeckDetail: React.FC = () => {
   const { data: cards, isLoading: cardsLoading } = useDeckCards(deckId);
 
   const [searchTerm, setSearchTerm] = useState('');
-  const [sortBy, setSortBy] = useState<'progress' | 'recent' | 'alphabet' | 'attempts'>('progress');
+  const [sortBy, setSortBy] = useState<'progress' | 'recent' | 'alphabet' | 'attempts' | 'last_reviewed'>('progress');
+  const [orderBy, setOrderBy] = useState<'asc' | 'desc'>('desc');
   const [playingAudio, setPlayingAudio] = useState<number | null>(null);
 
   const totalWords = cards?.length || 0;
+
+  const getSortIcon = () => {
+    if (orderBy === 'asc') return <ArrowUp className="w-4 h-4" />;
+    if (orderBy === 'desc') return <ArrowDown className="w-4 h-4" />;
+    return <ArrowUpDown className="w-4 h-4" />;
+  };
+
+  const getOrderLabel = (sortType: string) => {
+    switch (sortType) {
+      case 'alphabet':
+        return orderBy === 'asc' ? 'A-Z' : 'Z-A';
+      case 'recent':
+      case 'last_reviewed':
+        return orderBy === 'asc' ? 'Oldest' : 'Newest';
+      case 'attempts':
+      case 'progress':
+        return orderBy === 'asc' ? 'Least' : 'Most';
+      default:
+        return orderBy === 'asc' ? 'Ascending' : 'Descending';
+    }
+  };
+
+  const handleAddCard = () => {
+    console.log('Add card clicked');
+  };
 
 
   const playAudio = async (card: FlashCard) => {
@@ -52,20 +81,29 @@ const DeckDetail: React.FC = () => {
     );
 
     return filtered.sort((a, b) => {
+      let comparison = 0;
       switch (sortBy) {
         case 'progress':
-          return Math.round(b.accuracy * 100) - Math.round(a.accuracy * 100);
+          comparison = Math.round(b.accuracy * 100) - Math.round(a.accuracy * 100);
+          break;
         case 'recent':
-          return new Date(b.last_reviewed_at || 0).getTime() - new Date(a.last_reviewed_at || 0).getTime();
+          comparison = new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime();
+          break;
+        case 'last_reviewed':
+          comparison = new Date(b.last_reviewed_at || 0).getTime() - new Date(a.last_reviewed_at || 0).getTime();
+          break;
         case 'alphabet':
-          return a.front.localeCompare(b.front);
+          comparison = a.front.localeCompare(b.front);
+          break;
         case 'attempts':
-          return b.total_attempts - a.total_attempts;
+          comparison = b.total_attempts - a.total_attempts;
+          break;
         default:
-          return 0;
+          comparison = 0;
       }
+      return orderBy === 'asc' ? -comparison : comparison;
     });
-  }, [cards, searchTerm, sortBy]);
+  }, [cards, searchTerm, sortBy, orderBy]);
 
   if (decksLoading || cardsLoading) {
     return (
@@ -93,24 +131,45 @@ const DeckDetail: React.FC = () => {
         </Button>
       </div>
 
-      <div className="flex items-center gap-4 mb-6">
-        <input
-          type="text"
-          placeholder="Search words..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-64 p-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary"
-        />
-        <select
-          value={sortBy}
-          onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
-          className="p-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary"
-        >
-          <option value="progress">Sort by Progress</option>
-          <option value="recent">Sort by Most Recent</option>
-          <option value="alphabet">Sort by Alphabet</option>
-          <option value="attempts">Sort by Attempts</option>
-        </select>
+      {/* Controls Section */}
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-4">
+          <Input
+            type="text"
+            placeholder="Search words..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-64"
+          />
+          
+          <Select value={sortBy} onValueChange={(value) => setSortBy(value as typeof sortBy)}>
+            <SelectTrigger className="w-48">
+              <SelectValue placeholder="Sort by..." />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="progress">Progress</SelectItem>
+              <SelectItem value="recent">Date Added</SelectItem>
+              <SelectItem value="last_reviewed">Last Reviewed</SelectItem>
+              <SelectItem value="alphabet">Alphabetical</SelectItem>
+              <SelectItem value="attempts">Attempts</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setOrderBy(orderBy === 'asc' ? 'desc' : 'asc')}
+            className="flex items-center gap-2"
+          >
+            {getSortIcon()}
+            {getOrderLabel(sortBy)}
+          </Button>
+        </div>
+
+        <Button onClick={handleAddCard} className="flex items-center gap-2">
+          <Plus className="w-4 h-4" />
+          Add New Card
+        </Button>
       </div>
 
       <Card className="bg-gradient-card shadow-elevated">
