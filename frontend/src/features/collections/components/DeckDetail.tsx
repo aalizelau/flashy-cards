@@ -127,7 +127,7 @@ const DeckDetail: React.FC = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-5xl">
+    <div className="container mx-auto px-4 py-8 max-w-4xl">
       <Button
         variant="outline"
         onClick={() => window.history.back()}
@@ -135,7 +135,7 @@ const DeckDetail: React.FC = () => {
       >
         ← Back
       </Button>
-      <div className="flex items-center justify-between mb-10">
+      <div className="flex items-center justify-between mb-8">
         <h2 className="text-3xl font-semibold text-foreground mt-12">
           {decodedName} ({searchTerm ? `${filteredAndSortedCards.length}/${totalWords}` : totalWords} words)
         </h2>

@@ -25,13 +25,13 @@ const FlashcardTable: React.FC<FlashcardTableProps> = ({
         <table className="min-w-full">
           <thead className="bg-gray-100 border-b border-gray-200">
             <tr>
-              <th className="py-3 px-3 text-sm font-normal text-gray-600 text-left">Word</th>
+              <th className="py-3 px-3 text-sm font-normal text-gray-600 text-left">Learning Word</th>
               <th className="py-3 px-3 text-sm font-normal text-gray-600 text-left">Translation</th>
               <th className="py-3 px-3 text-sm font-normal text-gray-600 text-left">Progress</th>
               <th className="py-3 px-3 text-sm font-normal text-gray-600 text-left">Attempts</th>
               <th className="py-3 px-3 text-sm font-normal text-gray-600 text-left">Last Reviewed</th>
-              <th className="py-3 px-3 text-sm font-normal text-gray-600 text-left">Date Created</th>
-              <th className="py-3 px-3 text-sm font-normal text-gray-600 text-left"></th>
+              <th className="py-3 px-0 text-sm font-normal text-gray-600 text-left">Date Created</th>
+              <th className="py-3 px-0 text-sm font-normal text-gray-600 text-left"></th>
             </tr>
           </thead>
         <tbody>
@@ -91,10 +91,10 @@ const FlashcardTable: React.FC<FlashcardTableProps> = ({
                   <td className="py-3 px-3 align-middle">
                     <span className="text-xs text-muted-foreground">{lastReviewed}</span>
                   </td>
-                  <td className="py-3 px-3 align-middle">
+                  <td className="py-3 px-0 align-middle">
                     <span className="text-xs text-muted-foreground">{dateCreated}</span>
                   </td>
-                  <td className="py-3 px-3 align-middle">
+                  <td className="py-3 px-0 align-middle">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button size="icon" variant="ghost" aria-label="Actions">
