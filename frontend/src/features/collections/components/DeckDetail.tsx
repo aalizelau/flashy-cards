@@ -18,7 +18,9 @@ import {
 } from "@/shared/components/ui/dialog";
 import { ArrowUp, ArrowDown, ArrowUpDown, Plus, GraduationCap, Search, ArrowLeft } from 'lucide-react';
 import { useDecks, useDeckCards, useDeleteDeck } from '@/shared/hooks/useApi';
-import { Card as FlashCard } from '@/shared/types/api';
+import { Card as FlashCard, TestStats } from '@/shared/types/api';
+import { TestConfigModal } from '@/features/test/components/Popup';
+import { apiClient } from '@/shared/services/api';
 
 const DeckDetail: React.FC = () => {
   const { collectionName } = useParams();
@@ -37,6 +39,9 @@ const DeckDetail: React.FC = () => {
   const [playingAudio, setPlayingAudio] = useState<number | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showAddCardDialog, setShowAddCardDialog] = useState(false);
+  const [showTestConfig, setShowTestConfig] = useState(false);
+  const [testStats, setTestStats] = useState<TestStats | null>(null);
+  const [isLoadingStats, setIsLoadingStats] = useState(false);
 
   const totalWords = cards?.length || 0;
 
@@ -70,9 +75,43 @@ const DeckDetail: React.FC = () => {
     console.log('Card added successfully');
   };
 
-  const handleStartTest = () => {
-    // TODO: Navigate to test page for this deck
-    console.log('Start test clicked for deck:', deckId);
+  const handleStartTest = async () => {
+    setIsLoadingStats(true);
+    
+    try {
+      const stats = await apiClient.getTestStats('test_by_decks', [deckId]);
+      setTestStats(stats);
+      setShowTestConfig(true);
+    } catch (error) {
+      console.error('Failed to fetch test stats:', error);
+      // Show modal anyway with fallback behavior
+      setTestStats(null);
+      setShowTestConfig(true);
+    } finally {
+      setIsLoadingStats(false);
+    }
+  };
+
+  const handleTestStart = (wordCount: number, swapSides: boolean) => {
+    setShowTestConfig(false);
+    
+    // Build URL with test parameters
+    const params = new URLSearchParams({
+      type: 'test_by_decks',
+      limit: wordCount.toString(),
+      deck_ids: deckId.toString()
+    });
+    
+    // Add swap parameter if enabled
+    if (swapSides) {
+      params.set('swap', 'true');
+    }
+    
+    navigate(`/test?${params.toString()}`);
+  };
+
+  const handleTestConfigClose = () => {
+    setShowTestConfig(false);
   };
 
   const handleDuplicateDeck = () => {
@@ -184,10 +223,11 @@ const DeckDetail: React.FC = () => {
           {/* Start Test Button */}
           <Button 
             onClick={handleStartTest}
+            disabled={isLoadingStats}
             className="flex items-center gap-2 bg-muted-foreground text-white hover:bg-main-foreground shadow-none"
           >
             <GraduationCap size={16} />
-            Start Test
+            {isLoadingStats ? 'Loading...' : 'Start Test'}
           </Button>
 
           {/* Deck Menu Dropdown */}
@@ -264,6 +304,17 @@ const DeckDetail: React.FC = () => {
         onOpenChange={setShowAddCardDialog}
         onSuccess={handleAddCardSuccess}
       />
+
+      {/* Test Configuration Modal */}
+      {showTestConfig && selectedDeck && (
+        <TestConfigModal
+          deck={selectedDeck}
+          testStats={testStats}
+          testType="test_by_decks"
+          onStart={handleTestStart}
+          onClose={handleTestConfigClose}
+        />
+      )}
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
