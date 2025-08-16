@@ -27,6 +27,14 @@ export const useDeckCards = (deckId: number) => {
   });
 };
 
+// Get all cards from all user's decks
+export const useAllUserCards = () => {
+  return useQuery({
+    queryKey: ['all-user-cards'],
+    queryFn: () => apiClient.getAllUserCards(),
+  });
+};
+
 // Get analytics
 export const useAnalytics = () => {
   return useQuery({

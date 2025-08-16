@@ -140,6 +140,18 @@ class DeckService:
         
         return self.db.query(CardORM).filter(CardORM.deck_id == deck_id).all()
     
+    def get_all_user_cards(self, user_id: str) -> List[CardORM]:
+        """Get all cards from all decks belonging to a user in their selected language"""
+        # Get user's selected language
+        user = self.db.query(UserORM).filter(UserORM.uid == user_id).first()
+        user_language = user.selected_language if user and user.selected_language else 'en'
+        
+        # Query all cards from all user's decks that match their language
+        return self.db.query(CardORM).join(DeckORM).filter(
+            DeckORM.user_id == user_id,
+            DeckORM.language == user_language
+        ).all()
+    
     def delete_deck(self, deck_id: int, user_id: str) -> bool:
         """Delete a deck and all associated cards for a specific user"""
         try:

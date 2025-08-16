@@ -12,7 +12,7 @@ const AllDecks: React.FC = () => {
 	const { data: decks, isLoading, error } = useDecks();
 	
 	// Convert API decks to FlashcardCollection format
-	const collections: FlashcardCollection[] = decks?.map(deck => ({
+	const regularCollections: FlashcardCollection[] = decks?.map(deck => ({
 		id: deck.id,
 		name: deck.name,
 		wordCount: deck.card_count,
@@ -20,12 +20,27 @@ const AllDecks: React.FC = () => {
 		category: 'Vocabulary', // Default category, could be enhanced
 	})) || [];
 
+	// Create "All Words" virtual deck if user has any decks
+	const allWordsCollection: FlashcardCollection | null = decks && decks.length > 0 ? {
+		id: -1, // Special ID for virtual deck
+		name: "All Words",
+		wordCount: decks.reduce((total, deck) => total + deck.card_count, 0),
+		progress: Math.floor(decks.reduce((sum, deck) => sum + (deck.progress * deck.card_count), 0) / 
+			Math.max(1, decks.reduce((total, deck) => total + deck.card_count, 0)) * 100),
+		category: 'Browse All',
+	} : null;
+
+	// Combine collections with "All Words" at the top
+	const collections: FlashcardCollection[] = allWordsCollection 
+		? [allWordsCollection, ...regularCollections]
+		: regularCollections;
+
 	const filteredCollections = collections.filter(collection =>
 		collection.name.toLowerCase().includes(search.toLowerCase())
 	);
 
 	const handleCollectionClick = (collection: FlashcardCollection) => {
-		// Navigate to the chapter detail page with the collection name
+		// Navigate to the deck detail page with the collection name
 		window.location.href = `/decks/${encodeURIComponent(collection.name)}`;
 	};
 

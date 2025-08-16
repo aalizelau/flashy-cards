@@ -17,7 +17,7 @@ import {
   DialogTitle,
 } from "@/shared/components/ui/dialog";
 import { ArrowUp, ArrowDown, ArrowUpDown, Plus, GraduationCap, Search, ArrowLeft } from 'lucide-react';
-import { useDecks, useDeckCards, useDeleteDeck } from '@/shared/hooks/useApi';
+import { useDecks, useDeckCards, useDeleteDeck, useAllUserCards } from '@/shared/hooks/useApi';
 import { Card as FlashCard, TestStats } from '@/shared/types/api';
 import { TestConfigModal } from '@/features/test/components/Popup';
 import { apiClient } from '@/shared/services/api';
@@ -27,10 +27,21 @@ const DeckDetail: React.FC = () => {
   const navigate = useNavigate();
   const decodedName = decodeURIComponent(collectionName || '');
 
+  // Check if this is the "All Words" virtual deck
+  const isAllWordsView = decodedName === "All Words";
+  
   const { data: decks, isLoading: decksLoading } = useDecks();
   const selectedDeck = decks?.find(deck => deck.name === decodedName);
   const deckId = selectedDeck?.id || 1;
-  const { data: cards, isLoading: cardsLoading } = useDeckCards(deckId);
+  
+  // Use different API calls based on whether it's "All Words" or a regular deck
+  const { data: regularCards, isLoading: regularCardsLoading } = useDeckCards(deckId);
+  const { data: allCards, isLoading: allCardsLoading } = useAllUserCards();
+  
+  // Choose the appropriate cards and loading state
+  const cards = isAllWordsView ? allCards : regularCards;
+  const cardsLoading = isAllWordsView ? allCardsLoading : regularCardsLoading;
+  
   const deleteDeck = useDeleteDeck();
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -79,7 +90,11 @@ const DeckDetail: React.FC = () => {
     setIsLoadingStats(true);
     
     try {
-      const stats = await apiClient.getTestStats('test_by_decks', [deckId]);
+      // Use different test types based on whether this is "All Words" or a regular deck
+      const testType = isAllWordsView ? 'test_all' : 'test_by_decks';
+      const deckIds = isAllWordsView ? [] : [deckId];
+      
+      const stats = await apiClient.getTestStats(testType, deckIds);
       setTestStats(stats);
       setShowTestConfig(true);
     } catch (error) {
@@ -95,12 +110,17 @@ const DeckDetail: React.FC = () => {
   const handleTestStart = (wordCount: number, swapSides: boolean) => {
     setShowTestConfig(false);
     
-    // Build URL with test parameters
+    // Build URL with test parameters based on whether this is "All Words" or regular deck
+    const testType = isAllWordsView ? 'test_all' : 'test_by_decks';
     const params = new URLSearchParams({
-      type: 'test_by_decks',
-      limit: wordCount.toString(),
-      deck_ids: deckId.toString()
+      type: testType,
+      limit: wordCount.toString()
     });
+    
+    // Only add deck_ids for regular decks, not for "All Words"
+    if (!isAllWordsView) {
+      params.set('deck_ids', deckId.toString());
+    }
     
     // Add swap parameter if enabled
     if (swapSides) {
@@ -230,12 +250,14 @@ const DeckDetail: React.FC = () => {
             {isLoadingStats ? 'Loading...' : 'Start Test'}
           </Button>
 
-          {/* Deck Menu Dropdown */}
-          <DeckMenuDropdown
-            onDuplicateDeck={handleDuplicateDeck}
-            onExportDeck={handleExportDeck}
-            onDeleteDeck={handleDeleteDeck}
-          />
+          {/* Deck Menu Dropdown - Hidden for All Words view */}
+          {!isAllWordsView && (
+            <DeckMenuDropdown
+              onDuplicateDeck={handleDuplicateDeck}
+              onExportDeck={handleExportDeck}
+              onDeleteDeck={handleDeleteDeck}
+            />
+          )}
         </div>
       </div>
 
@@ -279,10 +301,13 @@ const DeckDetail: React.FC = () => {
               </Button>
             </div>
 
-            <Button variant="outline" onClick={handleAddCard} className="flex items-center gap-2">
-              <Plus className="w-4 h-4" />
-              Add New Card
-            </Button>
+            {/* Add New Card Button - Hidden for All Words view */}
+            {!isAllWordsView && (
+              <Button variant="outline" onClick={handleAddCard} className="flex items-center gap-2">
+                <Plus className="w-4 h-4" />
+                Add New Card
+              </Button>
+            )}
           </div>
           
           <ScrollArea className="h-[600px]">
@@ -306,11 +331,17 @@ const DeckDetail: React.FC = () => {
       />
 
       {/* Test Configuration Modal */}
-      {showTestConfig && selectedDeck && (
+      {showTestConfig && (isAllWordsView || selectedDeck) && (
         <TestConfigModal
-          deck={selectedDeck}
+          deck={isAllWordsView ? {
+            id: -1,
+            name: "All Words",
+            created_at: "",
+            progress: 0,
+            card_count: totalWords
+          } : selectedDeck!}
           testStats={testStats}
-          testType="test_by_decks"
+          testType={isAllWordsView ? "test_all" : "test_by_decks"}
           onStart={handleTestStart}
           onClose={handleTestConfigClose}
         />

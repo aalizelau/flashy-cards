@@ -76,6 +76,11 @@ class ApiClient {
     return this.request<Card[]>(`/decks/${deckId}/cards`);
   }
 
+  // Get all cards from all user's decks
+  async getAllUserCards(): Promise<Card[]> {
+    return this.request<Card[]>('/decks/all/cards');
+  }
+
   // Start a study session (legacy - single deck)
   async startStudySession(deckId: number): Promise<StudySession> {
     return this.request<StudySession>('/study/sessions', {

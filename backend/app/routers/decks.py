@@ -84,6 +84,27 @@ def create_deck_with_cards(
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
+@router.get("/all/cards", response_model=List[Card])
+def get_all_user_cards(
+    request: Request,
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
+):
+    """Get all cards from all user's decks in their selected language"""
+    try:
+        user_id = current_user["uid"]
+        
+        # Ensure user exists in database
+        user_service = UserService(db)
+        user_service.get_or_create_user(current_user["firebase_token"])
+        
+        deck_service = DeckService(db)
+        cards = deck_service.get_all_user_cards(user_id)
+        
+        return populate_audio_urls(cards, request)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
 @router.get("/{deck_id}/cards", response_model=List[Card])
 def get_deck_cards(
     deck_id: int,
