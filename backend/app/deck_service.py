@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
 
 from app.models import Deck as DeckORM, Card as CardORM, User as UserORM
-from app.schemas import DeckCreate, DeckWithCardsCreate, DeckWithCardsResponse, Card as CardSchema
+from app.schemas import DeckCreate, DeckWithCardsCreate, DeckWithCardsResponse, Card as CardSchema, CardCreate
 from app.voice_service import voice_generator
 
 logger = logging.getLogger(__name__)
@@ -139,3 +139,100 @@ class DeckService:
             raise Exception("Deck not found or access denied")
         
         return self.db.query(CardORM).filter(CardORM.deck_id == deck_id).all()
+    
+    def delete_deck(self, deck_id: int, user_id: str) -> bool:
+        """Delete a deck and all associated cards for a specific user"""
+        try:
+            # Get user's selected language
+            user = self.db.query(UserORM).filter(UserORM.uid == user_id).first()
+            user_language = user.selected_language if user and user.selected_language else 'en'
+            
+            # Verify deck belongs to user and matches their language
+            deck = self.db.query(DeckORM).filter(
+                DeckORM.id == deck_id, 
+                DeckORM.user_id == user_id,
+                DeckORM.language == user_language
+            ).first()
+            
+            if not deck:
+                raise Exception("Deck not found or access denied")
+            
+            # Delete all cards associated with the deck first
+            self.db.query(CardORM).filter(CardORM.deck_id == deck_id).delete()
+            
+            # Delete the deck
+            self.db.delete(deck)
+            self.db.commit()
+            
+            return True
+            
+        except SQLAlchemyError as e:
+            self.db.rollback()
+            logger.error(f"Failed to delete deck {deck_id}: {str(e)}")
+            raise Exception(f"Failed to delete deck: {str(e)}")
+        except Exception as e:
+            self.db.rollback()
+            logger.error(f"Error deleting deck {deck_id}: {str(e)}")
+            raise e
+    
+    def add_card_to_deck(self, deck_id: int, card_data: CardCreate, user_id: str) -> CardORM:
+        """Add a new card to an existing deck for a specific user"""
+        try:
+            # Get user's selected language
+            user = self.db.query(UserORM).filter(UserORM.uid == user_id).first()
+            user_language = user.selected_language if user and user.selected_language else 'en'
+            
+            # Verify deck belongs to user and matches their language
+            deck = self.db.query(DeckORM).filter(
+                DeckORM.id == deck_id, 
+                DeckORM.user_id == user_id,
+                DeckORM.language == user_language
+            ).first()
+            
+            if not deck:
+                raise Exception("Deck not found or access denied")
+            
+            # Generate audio with fault tolerance
+            audio_path = None
+            try:
+                if voice_generator.is_language_supported(user_language):
+                    audio_path = voice_generator.get_voice(user_language, card_data.front)
+                    if audio_path:
+                        logger.info(f"Generated audio for '{card_data.front}' in {user_language}: {audio_path}")
+                    else:
+                        logger.warning(f"Failed to generate audio for '{card_data.front}' in {user_language}")
+                else:
+                    logger.info(f"Audio generation skipped for '{card_data.front}' - language '{user_language}' not supported for TTS")
+            except Exception as e:
+                logger.error(f"Audio generation failed for '{card_data.front}' in {user_language}: {e}")
+            
+            # Create new card
+            db_card = CardORM(
+                deck_id=deck_id,
+                front=card_data.front.strip(),
+                back=card_data.back.strip(),
+                accuracy=0.0,
+                total_attempts=0,
+                correct_answers=0,
+                created_at=datetime.now(),
+                audio_path=audio_path
+            )
+            
+            self.db.add(db_card)
+            
+            # Update deck card count
+            deck.card_count = self.db.query(CardORM).filter(CardORM.deck_id == deck_id).count() + 1
+            
+            self.db.commit()
+            self.db.refresh(db_card)
+            
+            return db_card
+            
+        except SQLAlchemyError as e:
+            self.db.rollback()
+            logger.error(f"Failed to add card to deck {deck_id}: {str(e)}")
+            raise Exception(f"Failed to add card to deck: {str(e)}")
+        except Exception as e:
+            self.db.rollback()
+            logger.error(f"Error adding card to deck {deck_id}: {str(e)}")
+            raise e

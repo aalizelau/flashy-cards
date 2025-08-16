@@ -9,7 +9,8 @@ import {
   DeckWithCardsResponse,
   TestStats,
   StudySessionRequest,
-  UserProfile
+  UserProfile,
+  CardCreate
 } from '@/shared/types/api';
 import { auth } from '@/features/auth/contexts/AuthContext';
 
@@ -136,6 +137,21 @@ class ApiClient {
     return this.request<UserProfile>('/users/me', {
       method: 'PUT',
       body: JSON.stringify(userData),
+    });
+  }
+
+  // Delete deck
+  async deleteDeck(deckId: number): Promise<{ message: string }> {
+    return this.request<{ message: string }>(`/decks/${deckId}`, {
+      method: 'DELETE',
+    });
+  }
+
+  // Add card to deck
+  async addCardToDeck(deckId: number, cardData: CardCreate): Promise<Card> {
+    return this.request<Card>(`/decks/${deckId}/cards`, {
+      method: 'POST',
+      body: JSON.stringify(cardData),
     });
   }
 }

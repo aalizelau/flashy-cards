@@ -6,9 +6,18 @@ import { Input } from '@/shared/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/components/ui/select';
 import FlashcardTable from './FlashcardTable';
 import DeckMenuDropdown from './DeckMenuDropdown';
+import AddCardDialog from './AddCardDialog';
 import { Button } from '@/shared/components/ui/button';
-import { ArrowUp, ArrowDown, ArrowUpDown, Plus, GraduationCap, Search } from 'lucide-react';
-import { useDecks, useDeckCards } from '@/shared/hooks/useApi';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/shared/components/ui/dialog";
+import { ArrowUp, ArrowDown, ArrowUpDown, Plus, GraduationCap, Search, ArrowLeft } from 'lucide-react';
+import { useDecks, useDeckCards, useDeleteDeck } from '@/shared/hooks/useApi';
 import { Card as FlashCard } from '@/shared/types/api';
 
 const DeckDetail: React.FC = () => {
@@ -20,11 +29,14 @@ const DeckDetail: React.FC = () => {
   const selectedDeck = decks?.find(deck => deck.name === decodedName);
   const deckId = selectedDeck?.id || 1;
   const { data: cards, isLoading: cardsLoading } = useDeckCards(deckId);
+  const deleteDeck = useDeleteDeck();
 
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState<'progress' | 'recent' | 'alphabet' | 'attempts' | 'last_reviewed'>('progress');
   const [orderBy, setOrderBy] = useState<'asc' | 'desc'>('desc');
   const [playingAudio, setPlayingAudio] = useState<number | null>(null);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showAddCardDialog, setShowAddCardDialog] = useState(false);
 
   const totalWords = cards?.length || 0;
 
@@ -50,7 +62,12 @@ const DeckDetail: React.FC = () => {
   };
 
   const handleAddCard = () => {
-    console.log('Add card clicked');
+    setShowAddCardDialog(true);
+  };
+
+  const handleAddCardSuccess = () => {
+    // Card list will be automatically refreshed due to query invalidation
+    console.log('Card added successfully');
   };
 
   const handleStartTest = () => {
@@ -69,8 +86,19 @@ const DeckDetail: React.FC = () => {
   };
 
   const handleDeleteDeck = () => {
-    // TODO: Implement deck deletion
-    console.log('Delete deck clicked for deck:', deckId);
+    setShowDeleteDialog(true);
+  };
+
+  const confirmDeleteDeck = async () => {
+    try {
+      await deleteDeck.mutateAsync(deckId);
+      setShowDeleteDialog(false);
+      // Navigate back to all decks after successful deletion
+      navigate('/all-decks');
+    } catch (error) {
+      console.error('Failed to delete deck:', error);
+      // You could add toast notification here
+    }
   };
 
 
@@ -228,6 +256,42 @@ const DeckDetail: React.FC = () => {
           </ScrollArea>
         </CardContent>
       </Card>
+
+      {/* Add Card Dialog */}
+      <AddCardDialog
+        deckId={deckId}
+        open={showAddCardDialog}
+        onOpenChange={setShowAddCardDialog}
+        onSuccess={handleAddCardSuccess}
+      />
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Deck</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete "{decodedName}"? This action cannot be undone and will permanently delete all {totalWords} cards in this deck.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setShowDeleteDialog(false)}
+              disabled={deleteDeck.isPending}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={confirmDeleteDeck}
+              disabled={deleteDeck.isPending}
+            >
+              {deleteDeck.isPending ? 'Deleting...' : 'Delete Deck'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

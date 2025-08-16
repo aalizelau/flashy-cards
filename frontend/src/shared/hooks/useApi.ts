@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/shared/services/api';
-import { StudySessionComplete, StudySessionRequest } from '@/shared/types/api';
+import { StudySessionComplete, StudySessionRequest, CardCreate } from '@/shared/types/api';
 
 // Query keys for caching
 export const queryKeys = {
@@ -69,5 +69,35 @@ export const useUserProfile = () => {
   return useQuery({
     queryKey: queryKeys.userProfile,
     queryFn: () => apiClient.getUserProfile(),
+  });
+};
+
+// Delete deck mutation
+export const useDeleteDeck = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: (deckId: number) => apiClient.deleteDeck(deckId),
+    onSuccess: () => {
+      // Invalidate related queries to refresh data
+      queryClient.invalidateQueries({ queryKey: queryKeys.decks });
+      queryClient.invalidateQueries({ queryKey: queryKeys.analytics });
+    },
+  });
+};
+
+// Add card to deck mutation
+export const useAddCardToDeck = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: ({ deckId, cardData }: { deckId: number; cardData: CardCreate }) => 
+      apiClient.addCardToDeck(deckId, cardData),
+    onSuccess: (data, variables) => {
+      // Invalidate the specific deck's cards query to refresh the list
+      queryClient.invalidateQueries({ queryKey: queryKeys.deckCards(variables.deckId) });
+      // Also invalidate decks query to update card counts
+      queryClient.invalidateQueries({ queryKey: queryKeys.decks });
+    },
   });
 };
