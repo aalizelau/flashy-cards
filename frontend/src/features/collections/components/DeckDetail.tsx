@@ -6,7 +6,7 @@ import { Input } from '@/shared/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/components/ui/select';
 import FlashcardTable from './FlashcardTable';
 import { Button } from '@/shared/components/ui/button';
-import { ArrowUp, ArrowDown, ArrowUpDown, Plus } from 'lucide-react';
+import { ArrowUp, ArrowDown, ArrowUpDown, Plus, GraduationCap, MoreHorizontal } from 'lucide-react';
 import { useDecks, useDeckCards } from '@/shared/hooks/useApi';
 import { Card as FlashCard } from '@/shared/types/api';
 
@@ -49,6 +49,16 @@ const DeckDetail: React.FC = () => {
 
   const handleAddCard = () => {
     console.log('Add card clicked');
+  };
+
+  const handleStartTest = () => {
+    // TODO: Navigate to test page for this deck
+    console.log('Start test clicked for deck:', deckId);
+  };
+
+  const handleMenuClick = () => {
+    // TODO: Show deck actions menu
+    console.log('Menu clicked');
   };
 
 
@@ -129,13 +139,24 @@ const DeckDetail: React.FC = () => {
         <h2 className="text-3xl font-semibold text-foreground mt-12">
           {decodedName} ({searchTerm ? `${filteredAndSortedCards.length}/${totalWords}` : totalWords} words)
         </h2>
-        <Button
-          variant="outline"
-          onClick={() => window.history.back()}
-          className="hover:scale-105 transform transition-all mt-12"
-        >
-          ← Back to Collections
-        </Button>
+        <div className="flex items-center gap-4 mt-12">
+          {/* Start Test Button */}
+          <Button 
+            onClick={handleStartTest}
+            className="flex items-center gap-2 bg-muted-foreground text-white hover:bg-main-foreground shadow-none"
+          >
+            <GraduationCap size={16} />
+            Start Test
+          </Button>
+
+          {/* Three Dot Menu Button */}
+          <button 
+            onClick={handleMenuClick}
+            className="flex items-center justify-center w-10 h-10 bg-white border border-gray-300 rounded-lg hover:border-gray-400 hover:bg-gray-50 transition-colors shadow-sm"
+          >
+            <MoreHorizontal size={16} className="text-gray-700" />
+          </button>
+        </div>
       </div>
 
       {/* Controls Section */}
