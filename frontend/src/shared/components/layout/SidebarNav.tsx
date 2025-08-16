@@ -46,8 +46,14 @@ const SIDEBAR_WIDTHS = {
   menu: "w-40"
 } as const;
 
+const getInitialSidebarState = (): 'full' | 'compact' | 'hidden' => {
+  if (typeof window === 'undefined') return 'compact';
+  const saved = localStorage.getItem('sidebarState');
+  return (saved as 'full' | 'compact' | 'hidden') || 'compact';
+};
+
 const SidebarNav: React.FC = () => {
-  const [sidebarState, setSidebarState] = useState<'full' | 'compact' | 'hidden'>('full');
+  const [sidebarState, setSidebarState] = useState<'full' | 'compact' | 'hidden'>(getInitialSidebarState);
   const [isMobile, setIsMobile] = useState(false);
 
   const navigate = useNavigate();
@@ -90,6 +96,11 @@ const SidebarNav: React.FC = () => {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  // Save sidebar state to localStorage
+  useEffect(() => {
+    localStorage.setItem('sidebarState', sidebarState);
+  }, [sidebarState]);
 
   const toggleSidebar = () => {
     if (isMobile) {
