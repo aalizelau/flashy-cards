@@ -6,7 +6,7 @@ import { Input } from '@/shared/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/components/ui/select';
 import FlashcardTable from './FlashcardTable';
 import { Button } from '@/shared/components/ui/button';
-import { ArrowUp, ArrowDown, ArrowUpDown, Plus, GraduationCap, MoreHorizontal, Search, ArrowLeft } from 'lucide-react';
+import { ArrowUp, ArrowDown, ArrowUpDown, Plus, GraduationCap, MoreHorizontal, Search } from 'lucide-react';
 import { useDecks, useDeckCards } from '@/shared/hooks/useApi';
 import { Card as FlashCard } from '@/shared/types/api';
 
@@ -134,13 +134,12 @@ const DeckDetail: React.FC = () => {
         onClick={() => navigate('/all-decks')}
         className="gap-2 px-3"
       >
-        <ArrowLeft className="w-4 h-4" />
-        Back
+        ← Back
       </Button>
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-4xl font-alumni-sans font-semibold text-main-foreground mt-12 uppercase">
           <span className="uppercase">{decodedName}</span>{" "}
-  <span className="normal-case">({searchTerm ? `${filteredAndSortedCards.length}/${totalWords}` : totalWords} words)</span>
+          <span className="normal-case">({searchTerm ? `${filteredAndSortedCards.length}/${totalWords}` : totalWords} words)</span>
         </h2>
         <div className="flex items-center gap-4 mt-12">
           {/* Start Test Button */}
