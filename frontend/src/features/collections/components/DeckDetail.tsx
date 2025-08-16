@@ -135,7 +135,7 @@ const DeckDetail: React.FC = () => {
       >
         ← Back
       </Button>
-      <div className="flex items-center justify-between mb-12">
+      <div className="flex items-center justify-between mb-10">
         <h2 className="text-3xl font-semibold text-foreground mt-12">
           {decodedName} ({searchTerm ? `${filteredAndSortedCards.length}/${totalWords}` : totalWords} words)
         </h2>
@@ -159,51 +159,51 @@ const DeckDetail: React.FC = () => {
         </div>
       </div>
 
-      {/* Controls Section */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-4">
-          <Input
-            type="text"
-            placeholder="Search words..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-64"
-          />
-          
-          <Select value={sortBy} onValueChange={(value) => setSortBy(value as typeof sortBy)}>
-            <SelectTrigger className="w-48">
-              <SelectValue placeholder="Sort by..." />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="progress">Progress</SelectItem>
-              <SelectItem value="recent">Date Added</SelectItem>
-              <SelectItem value="last_reviewed">Last Reviewed</SelectItem>
-              <SelectItem value="alphabet">Alphabetical</SelectItem>
-              <SelectItem value="attempts">Attempts</SelectItem>
-            </SelectContent>
-          </Select>
-
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setOrderBy(orderBy === 'asc' ? 'desc' : 'asc')}
-            className="flex items-center gap-2"
-          >
-            {getSortIcon()}
-            {getOrderLabel(sortBy)}
-          </Button>
-        </div>
-
-        <Button variant="outline" onClick={handleAddCard} className="flex items-center gap-2">
-          <Plus className="w-4 h-4" />
-          Add New Card
-        </Button>
-      </div>
-
       <Card className="bg-gradient-card shadow-elevated">
         <CardContent className="p-0">
+          {/* Controls Section */}
+          <div className="flex items-center justify-between p-6 ">
+            <div className="flex items-center gap-4">
+              <Input
+                type="text"
+                placeholder="Search words..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-64"
+              />
+              
+              <Select value={sortBy} onValueChange={(value) => setSortBy(value as typeof sortBy)}>
+                <SelectTrigger className="w-48">
+                  <SelectValue placeholder="Sort by..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="progress">Progress</SelectItem>
+                  <SelectItem value="recent">Date Added</SelectItem>
+                  <SelectItem value="last_reviewed">Last Reviewed</SelectItem>
+                  <SelectItem value="alphabet">Alphabetical</SelectItem>
+                  <SelectItem value="attempts">Attempts</SelectItem>
+                </SelectContent>
+              </Select>
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setOrderBy(orderBy === 'asc' ? 'desc' : 'asc')}
+                className="flex items-center gap-2"
+              >
+                {getSortIcon()}
+                {getOrderLabel(sortBy)}
+              </Button>
+            </div>
+
+            <Button variant="outline" onClick={handleAddCard} className="flex items-center gap-2">
+              <Plus className="w-4 h-4" />
+              Add New Card
+            </Button>
+          </div>
+          
           <ScrollArea className="h-[600px]">
-            <div className="p-6">
+            <div className="px-6 py-0">
               <FlashcardTable
                 cards={filteredAndSortedCards}
                 playingAudio={playingAudio}

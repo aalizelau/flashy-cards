@@ -25,13 +25,13 @@ const FlashcardTable: React.FC<FlashcardTableProps> = ({
         <table className="min-w-full">
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
-              <th className="py-3 px-3 text-xs font-semibold text-gray-600 text-left">Word</th>
-              <th className="py-3 px-3 text-xs font-semibold text-gray-600 text-left">Translation</th>
-              <th className="py-3 px-3 text-xs font-semibold text-gray-600 text-left">Progress</th>
-              <th className="py-3 px-3 text-xs font-semibold text-gray-600 text-left">Attempts</th>
-              <th className="py-3 px-3 text-xs font-semibold text-gray-600 text-left">Last Reviewed</th>
-              <th className="py-3 px-3 text-xs font-semibold text-gray-600 text-left">Date Created</th>
-              <th className="py-3 px-3 text-xs font-semibold text-gray-600 text-left"></th>
+              <th className="py-3 px-3 text-sm font-semibold text-gray-600 text-left">Word</th>
+              <th className="py-3 px-3 text-sm font-semibold text-gray-600 text-left">Translation</th>
+              <th className="py-3 px-3 text-sm font-semibold text-gray-600 text-left">Progress</th>
+              <th className="py-3 px-3 text-sm font-semibold text-gray-600 text-left">Attempts</th>
+              <th className="py-3 px-3 text-sm font-semibold text-gray-600 text-left">Last Reviewed</th>
+              <th className="py-3 px-3 text-sm font-semibold text-gray-600 text-left">Date Created</th>
+              <th className="py-3 px-3 text-sm font-semibold text-gray-600 text-left"></th>
             </tr>
           </thead>
         <tbody>
