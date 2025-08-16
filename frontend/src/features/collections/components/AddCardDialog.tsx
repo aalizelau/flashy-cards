@@ -12,6 +12,8 @@ import { Input } from '@/shared/components/ui/input';
 import { Label } from '@/shared/components/ui/label';
 import { useAddCardToDeck } from '@/shared/hooks/useApi';
 import { CardCreate } from '@/shared/types/api';
+import { useAuth } from '@/features/auth/contexts/AuthContext';
+import { LANGUAGES } from '@/shared/components/LanguageSelector';
 
 interface AddCardDialogProps {
   deckId: number;
@@ -26,11 +28,21 @@ const AddCardDialog: React.FC<AddCardDialogProps> = ({
   onOpenChange,
   onSuccess,
 }) => {
+  const { userProfile } = useAuth();
   const [front, setFront] = useState('');
   const [back, setBack] = useState('');
   const [errors, setErrors] = useState<{ front?: string; back?: string; submit?: string }>({});
 
   const addCardMutation = useAddCardToDeck();
+
+  // Helper function to get language display name
+  const getLanguageDisplayName = (languageCode?: string | null): string => {
+    if (!languageCode) return '';
+    const language = LANGUAGES.find(lang => lang.code === languageCode);
+    return language ? language.name : '';
+  };
+
+  const languageDisplay = getLanguageDisplayName(userProfile?.selected_language);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -100,7 +112,7 @@ const AddCardDialog: React.FC<AddCardDialogProps> = ({
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="front">Learning Word</Label>
+            <Label htmlFor="front">Learning Word{languageDisplay ? ` (${languageDisplay})` : ''}</Label>
             <Input
               id="front"
               value={front}

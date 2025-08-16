@@ -6,6 +6,8 @@ import { Input } from '@/shared/components/ui/input';
 import { useNavigate } from 'react-router-dom';
 import { apiClient } from '@/shared/services/api';
 import { DeckWithCardsCreate, CardCreate } from '@/shared/types/api';
+import { useAuth } from '@/features/auth/contexts/AuthContext';
+import { LANGUAGES } from '@/shared/components/LanguageSelector';
 
 interface Flashcard {
   id: string;
@@ -24,6 +26,7 @@ interface DropdownOption {
 
 function CreateDeck() {
   const navigate = useNavigate();
+  const { userProfile } = useAuth();
   const [deckTitle, setDeckTitle] = useState('');
   const [importMode, setImportMode] = useState<ImportMode>('individual');
   const [flashcards, setFlashcards] = useState<Flashcard[]>([
@@ -37,6 +40,15 @@ function CreateDeck() {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isLoading, setIsLoading] = useState(false);
   const lastCardRef = useRef<HTMLInputElement>(null);
+
+  // Helper function to get language display name
+  const getLanguageDisplayName = (languageCode?: string | null): string => {
+    if (!languageCode) return '';
+    const language = LANGUAGES.find(lang => lang.code === languageCode);
+    return language ? language.name : '';
+  };
+
+  const languageDisplay = getLanguageDisplayName(userProfile?.selected_language);
 
   const termDelimiterOptions: DropdownOption[] = [
     { value: 'tab', label: 'Tab' },
@@ -303,7 +315,7 @@ function CreateDeck() {
                     <div className="p-6 grid md:grid-cols-2 gap-6">
                       <div>
                         <label className="block text-sm font-semibold text-gray-700 mb-2">
-                          Front 
+                          Learning Word{languageDisplay ? ` (${languageDisplay})` : ''}
                         </label>
                         <input
                           value={card.front}
@@ -316,7 +328,7 @@ function CreateDeck() {
                       
                       <div>
                         <label className="block text-sm font-semibold text-gray-700 mb-2">
-                          Back 
+                          Translation 
                         </label>
                         <input
                           value={card.back}
@@ -467,7 +479,7 @@ function CreateDeck() {
                             <div className="grid md:grid-cols-2 gap-4">
                                 <div>
                                 <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
-                                    Front
+                                    Learning Word{languageDisplay ? ` (${languageDisplay})` : ''}
                                 </label>
                                 <div className="w-full h-12 px-3 bg-gray-50 border border-gray-200 rounded-md text-md text-gray-800 flex items-center">
                                     {card.front}
@@ -475,7 +487,7 @@ function CreateDeck() {
                                 </div>
                                 <div>
                                 <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
-                                    Back
+                                    Translation
                                 </label>
                                 <div className="w-full h-12 px-3 bg-gray-50 border border-gray-200 rounded-md text-md text-gray-800 flex items-center">
                                     {card.back}
