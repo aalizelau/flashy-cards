@@ -1,17 +1,18 @@
 import React, { useState, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/shared/components/ui/card';
 import { ScrollArea } from '@/shared/components/ui/scroll-area';
 import { Input } from '@/shared/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/components/ui/select';
 import FlashcardTable from './FlashcardTable';
 import { Button } from '@/shared/components/ui/button';
-import { ArrowUp, ArrowDown, ArrowUpDown, Plus, GraduationCap, MoreHorizontal, Search } from 'lucide-react';
+import { ArrowUp, ArrowDown, ArrowUpDown, Plus, GraduationCap, MoreHorizontal, Search, ArrowLeft } from 'lucide-react';
 import { useDecks, useDeckCards } from '@/shared/hooks/useApi';
 import { Card as FlashCard } from '@/shared/types/api';
 
 const DeckDetail: React.FC = () => {
   const { collectionName } = useParams();
+  const navigate = useNavigate();
   const decodedName = decodeURIComponent(collectionName || '');
 
   const { data: decks, isLoading: decksLoading } = useDecks();
@@ -130,10 +131,11 @@ const DeckDetail: React.FC = () => {
     <div className="container mx-auto px-4 py-8 max-w-4xl">
       <Button
         variant="outline"
-        onClick={() => window.history.back()}
+        onClick={() => navigate('/all-decks')}
         className="gap-2 px-3"
       >
-        ← Back
+        <ArrowLeft className="w-4 h-4" />
+        Back
       </Button>
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-4xl font-alumni-sans font-semibold text-main-foreground mt-12 uppercase">
