@@ -55,9 +55,6 @@ const FlashCardBase: React.FC<FlashCardBaseProps> = ({ children, className = "",
             >
                 <Volume2 className="!w-6 !h-6" />
             </Button>
-            <span className="lowercase absolute text-xs text-gray-400 bottom-3 left-1/2 transform -translate-x-1/2">
-                Space / click to flip
-            </span>
         </div>
     )
 };

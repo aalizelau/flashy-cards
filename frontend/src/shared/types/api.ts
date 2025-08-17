@@ -41,6 +41,10 @@ export interface Card {
   last_reviewed_at: string;
   created_at: string;
   audio_url?: string;
+  example_sentences?: Array<{
+    italian: string;
+    english: string;
+  }>;
 }
 
 export interface TestResult {
