@@ -1,12 +1,14 @@
 import { useRef, useEffect } from 'react';
-import { Plus, Trash2, ListCollapse, ArrowDownFromLine, Paperclip } from 'lucide-react';
+import { Plus, Trash2, Paperclip } from 'lucide-react';
 
 interface Flashcard {
   id: string;
   front: string;
   back: string;
-  exampleSentence?: string;
-  sentenceTranslation?: string;
+  exampleSentence1?: string;
+  sentenceTranslation1?: string;
+  exampleSentence2?: string;
+  sentenceTranslation2?: string;
 }
 
 interface IndividualCardsSectionProps {
@@ -14,7 +16,7 @@ interface IndividualCardsSectionProps {
   errors: { [key: string]: string };
   languageDisplay: string;
   expandedCards: Set<string>;
-  onUpdateFlashcard: (id: string, field: 'front' | 'back' | 'exampleSentence' | 'sentenceTranslation', value: string) => void;
+  onUpdateFlashcard: (id: string, field: 'front' | 'back' | 'exampleSentence1' | 'sentenceTranslation1' | 'exampleSentence2' | 'sentenceTranslation2', value: string) => void;
   onRemoveFlashcard: (id: string) => void;
   onAddFlashcard: () => void;
   onToggleExpansion: (id: string) => void;
@@ -122,29 +124,55 @@ function IndividualCardsSection({
                 <div className="mx-6 border-t border-gray-200"></div>
                 
                 {/* Example sentence fields */}
-                <div className="p-6 pt-4 grid md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-500 mb-2 uppercase">
-                      Sentence{languageDisplay ? ` (${languageDisplay})` : ''}
-                    </label>
-                    <input
-                      value={card.exampleSentence || ''}
-                      onChange={(e) => onUpdateFlashcard(card.id, 'exampleSentence', e.target.value)}
-                      className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-accent transition-all duration-200 resize-none h-12"
-                      // placeholder="Enter example sentence..."
-                    />
+                <div className="p-6 pt-4 space-y-4">
+                  {/* Sentence 1 */}
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-500 mb-2 uppercase">
+                        Sentence 1{languageDisplay ? ` (${languageDisplay})` : ''}
+                      </label>
+                      <input
+                        value={card.exampleSentence1 || ''}
+                        onChange={(e) => onUpdateFlashcard(card.id, 'exampleSentence1', e.target.value)}
+                        className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-accent transition-all duration-200 resize-none h-12"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-500 mb-2 uppercase">
+                        Translation 1
+                      </label>
+                      <input
+                        value={card.sentenceTranslation1 || ''}
+                        onChange={(e) => onUpdateFlashcard(card.id, 'sentenceTranslation1', e.target.value)}
+                        className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 transition-all duration-200 resize-none h-12"
+                      />
+                    </div>
                   </div>
-                  
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-500 mb-2 uppercase">
-                      Sentence Translation
-                    </label>
-                    <input
-                      value={card.sentenceTranslation || ''}
-                      onChange={(e) => onUpdateFlashcard(card.id, 'sentenceTranslation', e.target.value)}
-                      className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 transition-all duration-200 resize-none h-12"
-                      // placeholder="Enter sentence translation..."
-                    />
+
+                  {/* Sentence 2 */}
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-500 mb-2 uppercase">
+                        Sentence 2{languageDisplay ? ` (${languageDisplay})` : ''}
+                      </label>
+                      <input
+                        value={card.exampleSentence2 || ''}
+                        onChange={(e) => onUpdateFlashcard(card.id, 'exampleSentence2', e.target.value)}
+                        className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-accent transition-all duration-200 resize-none h-12"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-500 mb-2 uppercase">
+                        Translation 2
+                      </label>
+                      <input
+                        value={card.sentenceTranslation2 || ''}
+                        onChange={(e) => onUpdateFlashcard(card.id, 'sentenceTranslation2', e.target.value)}
+                        className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 transition-all duration-200 resize-none h-12"
+                      />
+                    </div>
                   </div>
                 </div>
               </>

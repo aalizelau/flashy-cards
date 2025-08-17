@@ -13,8 +13,10 @@ interface Flashcard {
   id: string;
   front: string;
   back: string;
-  exampleSentence?: string;
-  sentenceTranslation?: string;
+  exampleSentence1?: string;
+  sentenceTranslation1?: string;
+  exampleSentence2?: string;
+  sentenceTranslation2?: string;
 }
 
 type ImportMode = 'individual' | 'bulk';
@@ -108,7 +110,7 @@ function CreateDeck() {
     }
   };
 
-  const updateFlashcard = (id: string, field: 'front' | 'back' | 'exampleSentence' | 'sentenceTranslation', value: string) => {
+  const updateFlashcard = (id: string, field: 'front' | 'back' | 'exampleSentence1' | 'sentenceTranslation1' | 'exampleSentence2' | 'sentenceTranslation2', value: string) => {
     setFlashcards(flashcards.map(card => 
       card.id === id ? { ...card, [field]: value } : card
     ));
