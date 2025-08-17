@@ -13,6 +13,8 @@ interface Flashcard {
   id: string;
   front: string;
   back: string;
+  exampleSentence?: string;
+  sentenceTranslation?: string;
 }
 
 type ImportMode = 'individual' | 'bulk';
@@ -35,6 +37,7 @@ function CreateDeck() {
   const [customCardDelimiter, setCustomCardDelimiter] = useState('');
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isLoading, setIsLoading] = useState(false);
+  const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
 
   // Helper function to get language display name
   const getLanguageDisplayName = (languageCode?: string | null): string => {
@@ -105,10 +108,20 @@ function CreateDeck() {
     }
   };
 
-  const updateFlashcard = (id: string, field: 'front' | 'back', value: string) => {
+  const updateFlashcard = (id: string, field: 'front' | 'back' | 'exampleSentence' | 'sentenceTranslation', value: string) => {
     setFlashcards(flashcards.map(card => 
       card.id === id ? { ...card, [field]: value } : card
     ));
+  };
+
+  const toggleCardExpansion = (id: string) => {
+    const newExpandedCards = new Set(expandedCards);
+    if (newExpandedCards.has(id)) {
+      newExpandedCards.delete(id);
+    } else {
+      newExpandedCards.add(id);
+    }
+    setExpandedCards(newExpandedCards);
   };
 
   const validateForm = () => {
@@ -226,9 +239,11 @@ function CreateDeck() {
               flashcards={flashcards}
               errors={errors}
               languageDisplay={languageDisplay}
+              expandedCards={expandedCards}
               onUpdateFlashcard={updateFlashcard}
               onRemoveFlashcard={removeFlashcard}
               onAddFlashcard={addFlashcard}
+              onToggleExpansion={toggleCardExpansion}
             />
           )}
 
