@@ -25,7 +25,7 @@ const FlashcardTable: React.FC<FlashcardTableProps> = ({
         <table className="min-w-full">
           <thead className="bg-gray-100 border-b border-gray-200">
             <tr>
-              <th className="py-3 px-3 text-sm font-normal text-gray-600 text-left">Learning Word</th>
+              <th className="py-3 pl-6 pr-3 text-sm font-normal text-gray-600 text-left">Learning Word</th>
               <th className="py-3 px-3 text-sm font-normal text-gray-600 text-left">Translation</th>
               <th className="py-3 px-3 text-sm font-normal text-gray-600 text-left">Progress</th>
               <th className="py-3 px-3 text-sm font-normal text-gray-600 text-left">Attempts</th>
@@ -54,7 +54,7 @@ const FlashcardTable: React.FC<FlashcardTableProps> = ({
             return (
               <React.Fragment key={card.id}>
                 <tr>
-                  <td className="py-3 px-3 align-middle max-w-[200px]">
+                  <td className="py-3 pl-6 pr-3 align-middle max-w-[200px]">
                     <div className="flex items-center gap-2">
                       <span className="font-medium text-sm truncate block">{card.front}</span>
                       {card.audio_url ? (
