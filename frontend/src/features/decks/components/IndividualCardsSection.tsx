@@ -1,5 +1,5 @@
 import { useRef, useEffect } from 'react';
-import { Plus, Trash2 } from 'lucide-react';
+import { Plus, Trash2, ListCollapse, ArrowDownFromLine, Paperclip } from 'lucide-react';
 
 interface Flashcard {
   id: string;
@@ -58,7 +58,16 @@ function IndividualCardsSection({
                 <h3 className="text-gray-700 font-medium text-sm">
                     {index + 1}
                 </h3>
-                {flashcards.length > 1 && (
+                {/* Right side: icons container */}
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => onRemoveFlashcard(card.id)}
+                    className="text-gray-400 hover:text-red-500 p-1 rounded transition-all duration-200"
+                    aria-label="Remove flashcard"
+                  >
+                    <Paperclip className="w-4 h-4" />
+                  </button>
                   <button
                     type="button"
                     onClick={() => onRemoveFlashcard(card.id)}
@@ -67,7 +76,7 @@ function IndividualCardsSection({
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
-                )}
+                </div>
               </div>
             </div>
             
@@ -79,7 +88,7 @@ function IndividualCardsSection({
                 <input
                   value={card.front}
                   onChange={(e) => onUpdateFlashcard(card.id, 'front', e.target.value)}
-                  className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-accent transition-all duration-200 resize-none h-14"
+                  className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-accent transition-all duration-200 resize-none h-12"
                   ref={index === flashcards.length - 1 ? lastCardRef : undefined}
                 />
               </div>
@@ -91,7 +100,7 @@ function IndividualCardsSection({
                 <input
                   value={card.back}
                   onChange={(e) => onUpdateFlashcard(card.id, 'back', e.target.value)}
-                  className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 transition-all duration-200 resize-none h-14"
+                  className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 transition-all duration-200 resize-none h-12"
                 />
               </div>
             </div>
