@@ -7,37 +7,46 @@ interface FlashCardBackProps {
     back: string;
     audioUrl?: string;
     onClick?: () => void;
-    exampleSentences?: Array<{
-        italian: string;
-        english: string;
-    }>;
+    exampleSentence1?: string;
+    sentenceTranslation1?: string;
+    exampleSentence2?: string;
+    sentenceTranslation2?: string;
 }
 
-const FlashCardBack: React.FC<FlashCardBackProps> = ({ front, back, audioUrl, onClick, exampleSentences }) => {
-    // Temporary dummy data for testing - remove this when backend supports example_sentences
-    const dummyExamples = [
-        {
-            italian: "Ho comprato una mela al mercato.",
-            english: "I bought an apple at the market."
-        },
-        // {
-        //     italian: "La mela è molto dolce e succosa.",
-        //     english: "The apple is very sweet and juicy."
-        // }
-    ];
-    
-    // Use dummy data for ALL cards if no real examples are provided (for testing)
-    const examplesData = exampleSentences || dummyExamples;
+const FlashCardBack: React.FC<FlashCardBackProps> = ({ 
+    front, 
+    back, 
+    audioUrl, 
+    onClick, 
+    exampleSentence1,
+    sentenceTranslation1,
+    exampleSentence2,
+    sentenceTranslation2
+}) => {
+    // Create examples array from the new sentence fields
+    const examplesData = [];
+    if (exampleSentence1 && sentenceTranslation1) {
+        examplesData.push({
+            italian: exampleSentence1,
+            english: sentenceTranslation1
+        });
+    }
+    if (exampleSentence2 && sentenceTranslation2) {
+        examplesData.push({
+            italian: exampleSentence2,
+            english: sentenceTranslation2
+        });
+    }
     
     return (
         <FlashCardBase word={front} audioUrl={audioUrl} className="rotate-y-180 items-center justify-center text-center !shadow-elevated" onClick={onClick}>
             {examplesData && examplesData.length > 0 ? (
                 <div className="flex flex-col items-center justify-center h-full">
                     <h2 className="text-4xl font-bold text-blue-800">
-                        Varamente
+                        {front}
                     </h2>
                     <h3 className="text-xl font-semibold text-muted-foreground mb-6">
-                        Really
+                        {back}
                     </h3>
                     
                     <div className="space-y-6 flex flex-col justify-center">
