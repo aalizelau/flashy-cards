@@ -31,30 +31,30 @@ const DeckMenuDropdown: React.FC<DeckMenuDropdownProps> = ({
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
-        className="w-48 bg-white border border-gray-200"
+        className="w-44 bg-white border border-gray-200"
         sideOffset={8}
       >
         <DropdownMenuItem 
-          className="hover:bg-gray-100 cursor-pointer flex items-center gap-2"
+          className="hover:bg-gray-100 cursor-pointer flex items-center gap-2 px-4"
           onClick={onDuplicateDeck}
         >
           <Copy className="w-4 h-4" />
-          Duplicate Deck
+          Duplicate
         </DropdownMenuItem>
         <DropdownMenuItem 
-          className="hover:bg-gray-100 cursor-pointer flex items-center gap-2"
+          className="hover:bg-gray-100 cursor-pointer flex items-center gap-2 px-4"
           onClick={onExportDeck}
         >
           <Download className="w-4 h-4" />
-          Export Deck
+          Export
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem 
-          className="hover:bg-red-100 text-red-600 cursor-pointer flex items-center gap-2"
+          className="hover:bg-red-100 text-red-600 cursor-pointer flex items-center gap-2 px-4"
           onClick={onDeleteDeck}
         >
           <Trash2 className="w-4 h-4" />
-          Delete Deck
+          Delete
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
