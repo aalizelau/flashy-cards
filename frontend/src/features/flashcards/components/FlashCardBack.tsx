@@ -7,10 +7,10 @@ interface FlashCardBackProps {
     back: string;
     audioUrl?: string;
     onClick?: () => void;
-    exampleSentence1?: string;
-    sentenceTranslation1?: string;
-    exampleSentence2?: string;
-    sentenceTranslation2?: string;
+    example_sentence_1?: string;
+    sentence_translation_1?: string;
+    example_sentence_2?: string;
+    sentence_translation_2?: string;
 }
 
 const FlashCardBack: React.FC<FlashCardBackProps> = ({ 
@@ -18,25 +18,26 @@ const FlashCardBack: React.FC<FlashCardBackProps> = ({
     back, 
     audioUrl, 
     onClick, 
-    exampleSentence1,
-    sentenceTranslation1,
-    exampleSentence2,
-    sentenceTranslation2
+    example_sentence_1,
+    sentence_translation_1,
+    example_sentence_2,
+    sentence_translation_2
 }) => {
     // Create examples array from the new sentence fields
     const examplesData = [];
-    if (exampleSentence1 && sentenceTranslation1) {
+    if (example_sentence_1 && sentence_translation_1) {
         examplesData.push({
-            italian: exampleSentence1,
-            english: sentenceTranslation1
+            italian: example_sentence_1,
+            english: sentence_translation_1
         });
     }
-    if (exampleSentence2 && sentenceTranslation2) {
+    if (example_sentence_2 && sentence_translation_2) {
         examplesData.push({
-            italian: exampleSentence2,
-            english: sentenceTranslation2
+            italian: example_sentence_2,
+            english: sentence_translation_2
         });
     }
+    console.log("📘 examplesData:", examplesData);
     
     return (
         <FlashCardBase word={front} audioUrl={audioUrl} className="rotate-y-180 items-center justify-center text-center !shadow-elevated" onClick={onClick}>

@@ -36,7 +36,16 @@ export const FlashcardComponent: React.FC<FlashcardComponentProps> = ({
           } ${isFlipped ? 'rotate-y-180' : ''}`}
       >
         <FlashCardFront word={flashcard.front} audioUrl={flashcard.audio_url} onClick={onFlip} />
-        <FlashCardBack front={flashcard.front} back={flashcard.back} audioUrl={flashcard.audio_url} onClick={onFlip} exampleSentences={flashcard.example_sentences} />
+        <FlashCardBack 
+          front={flashcard.front} 
+          back={flashcard.back} 
+          audioUrl={flashcard.audio_url} 
+          onClick={onFlip} 
+          example_sentence_1={flashcard.example_sentence_1}
+          sentence_translation_1={flashcard.sentence_translation_1}
+          example_sentence_2={flashcard.example_sentence_2}
+          sentence_translation_2={flashcard.sentence_translation_2}
+        />
       </div>
     </div>
   );

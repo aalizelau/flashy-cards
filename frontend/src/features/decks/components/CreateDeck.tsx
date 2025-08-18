@@ -13,10 +13,10 @@ interface Flashcard {
   id: string;
   front: string;
   back: string;
-  exampleSentence1?: string;
-  sentenceTranslation1?: string;
-  exampleSentence2?: string;
-  sentenceTranslation2?: string;
+  example_sentence_1?: string;
+  sentence_translation_1?: string;
+  example_sentence_2?: string;
+  sentence_translation_2?: string;
 }
 
 type ImportMode = 'individual' | 'bulk';
@@ -85,19 +85,19 @@ function CreateDeck() {
       const back = parts[1]?.trim() || '';
       
       // Handle optional sentence fields
-      const exampleSentence1 = parts[2]?.trim() || undefined;
-      const sentenceTranslation1 = parts[3]?.trim() || undefined;
-      const exampleSentence2 = parts[4]?.trim() || undefined;
-      const sentenceTranslation2 = parts[5]?.trim() || undefined;
+      const example_sentence_1 = parts[2]?.trim() || undefined;
+      const sentence_translation_1 = parts[3]?.trim() || undefined;
+      const example_sentence_2 = parts[4]?.trim() || undefined;
+      const sentence_translation_2 = parts[5]?.trim() || undefined;
       
       return {
         id: `bulk-${index}-${Date.now()}`,
         front,
         back,
-        ...(exampleSentence1 && { exampleSentence1 }),
-        ...(sentenceTranslation1 && { sentenceTranslation1 }),
-        ...(exampleSentence2 && { exampleSentence2 }),
-        ...(sentenceTranslation2 && { sentenceTranslation2 }),
+        ...(example_sentence_1 && { example_sentence_1 }),
+        ...(sentence_translation_1 && { sentence_translation_1 }),
+        ...(example_sentence_2 && { example_sentence_2 }),
+        ...(sentence_translation_2 && { sentence_translation_2 }),
       };
     }).filter(card => card.front && card.back); // Only include cards with both front and back
   };
@@ -109,7 +109,11 @@ function CreateDeck() {
     const newCard: Flashcard = {
       id: Date.now().toString(),
       front: '',
-      back: ''
+      back: '',
+      example_sentence_1: undefined,
+      sentence_translation_1: undefined,
+      example_sentence_2: undefined,
+      sentence_translation_2: undefined
     };
     setFlashcards([...flashcards, newCard]);
   };
@@ -120,7 +124,7 @@ function CreateDeck() {
     }
   };
 
-  const updateFlashcard = (id: string, field: 'front' | 'back' | 'exampleSentence1' | 'sentenceTranslation1' | 'exampleSentence2' | 'sentenceTranslation2', value: string) => {
+  const updateFlashcard = (id: string, field: 'front' | 'back' | 'example_sentence_1' | 'sentence_translation_1' | 'example_sentence_2' | 'sentence_translation_2', value: string) => {
     setFlashcards(flashcards.map(card => 
       card.id === id ? { ...card, [field]: value } : card
     ));
@@ -179,7 +183,11 @@ function CreateDeck() {
       // Transform to API format
       const apiCards: CardCreate[] = cardsToSubmit.map(card => ({
         front: card.front.trim(),
-        back: card.back.trim()
+        back: card.back.trim(),
+        ...(card.example_sentence_1 && { example_sentence_1: card.example_sentence_1.trim() }),
+        ...(card.sentence_translation_1 && { sentence_translation_1: card.sentence_translation_1.trim() }),
+        ...(card.example_sentence_2 && { example_sentence_2: card.example_sentence_2.trim() }),
+        ...(card.sentence_translation_2 && { sentence_translation_2: card.sentence_translation_2.trim() })
       }));
 
       const deckData: DeckWithCardsCreate = {

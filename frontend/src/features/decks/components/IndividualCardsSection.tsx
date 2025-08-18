@@ -5,10 +5,10 @@ interface Flashcard {
   id: string;
   front: string;
   back: string;
-  exampleSentence1?: string;
-  sentenceTranslation1?: string;
-  exampleSentence2?: string;
-  sentenceTranslation2?: string;
+  example_sentence_1?: string;
+  sentence_translation_1?: string;
+  example_sentence_2?: string;
+  sentence_translation_2?: string;
 }
 
 interface IndividualCardsSectionProps {
@@ -16,7 +16,7 @@ interface IndividualCardsSectionProps {
   errors: { [key: string]: string };
   languageDisplay: string;
   expandedCards: Set<string>;
-  onUpdateFlashcard: (id: string, field: 'front' | 'back' | 'exampleSentence1' | 'sentenceTranslation1' | 'exampleSentence2' | 'sentenceTranslation2', value: string) => void;
+  onUpdateFlashcard: (id: string, field: 'front' | 'back' | 'example_sentence_1' | 'sentence_translation_1' | 'example_sentence_2' | 'sentence_translation_2', value: string) => void;
   onRemoveFlashcard: (id: string) => void;
   onAddFlashcard: () => void;
   onToggleExpansion: (id: string) => void;
@@ -132,8 +132,8 @@ function IndividualCardsSection({
                         Sentence 1{languageDisplay ? ` (${languageDisplay})` : ''}
                       </label>
                       <input
-                        value={card.exampleSentence1 || ''}
-                        onChange={(e) => onUpdateFlashcard(card.id, 'exampleSentence1', e.target.value)}
+                        value={card.example_sentence_1 || ''}
+                        onChange={(e) => onUpdateFlashcard(card.id, 'example_sentence_1', e.target.value)}
                         className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-accent transition-all duration-200 resize-none h-12"
                       />
                     </div>
@@ -143,8 +143,8 @@ function IndividualCardsSection({
                         Translation 1
                       </label>
                       <input
-                        value={card.sentenceTranslation1 || ''}
-                        onChange={(e) => onUpdateFlashcard(card.id, 'sentenceTranslation1', e.target.value)}
+                        value={card.sentence_translation_1 || ''}
+                        onChange={(e) => onUpdateFlashcard(card.id, 'sentence_translation_1', e.target.value)}
                         className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 transition-all duration-200 resize-none h-12"
                       />
                     </div>
@@ -157,8 +157,8 @@ function IndividualCardsSection({
                         Sentence 2{languageDisplay ? ` (${languageDisplay})` : ''}
                       </label>
                       <input
-                        value={card.exampleSentence2 || ''}
-                        onChange={(e) => onUpdateFlashcard(card.id, 'exampleSentence2', e.target.value)}
+                        value={card.example_sentence_2 || ''}
+                        onChange={(e) => onUpdateFlashcard(card.id, 'example_sentence_2', e.target.value)}
                         className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-accent transition-all duration-200 resize-none h-12"
                       />
                     </div>
@@ -168,8 +168,8 @@ function IndividualCardsSection({
                         Translation 2
                       </label>
                       <input
-                        value={card.sentenceTranslation2 || ''}
-                        onChange={(e) => onUpdateFlashcard(card.id, 'sentenceTranslation2', e.target.value)}
+                        value={card.sentence_translation_2 || ''}
+                        onChange={(e) => onUpdateFlashcard(card.id, 'sentence_translation_2', e.target.value)}
                         className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 transition-all duration-200 resize-none h-12"
                       />
                     </div>

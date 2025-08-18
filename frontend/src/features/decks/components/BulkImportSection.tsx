@@ -6,10 +6,10 @@ interface Flashcard {
   id: string;
   front: string;
   back: string;
-  exampleSentence1?: string;
-  sentenceTranslation1?: string;
-  exampleSentence2?: string;
-  sentenceTranslation2?: string;
+  example_sentence_1?: string;
+  sentence_translation_1?: string;
+  example_sentence_2?: string;
+  sentence_translation_2?: string;
 }
 
 type TermDelimiter = 'tab' | 'comma' | 'pipe' | 'semicolon' | 'custom';
@@ -208,20 +208,20 @@ function BulkImportSection({
                     </div>
 
                     {/* Show sentence fields if they exist */}
-                    {(card.exampleSentence1 || card.sentenceTranslation1 || card.exampleSentence2 || card.sentenceTranslation2) && (
+                    {(card.example_sentence_1 || card.sentence_translation_1 || card.example_sentence_2 || card.sentence_translation_2) && (
                       <>
                         {/* Separator */}
                         <div className="my-3 border-t border-gray-200"></div>
                         
                         {/* Sentence 1 */}
-                        {(card.exampleSentence1 || card.sentenceTranslation1) && (
+                        {(card.example_sentence_1 || card.sentence_translation_1) && (
                           <div className="grid md:grid-cols-2 gap-4 mb-3">
                             <div>
                               <label className="block text-xs font-medium text-gray-400 uppercase tracking-wide mb-1">
                                 Sentence 1{languageDisplay ? ` (${languageDisplay})` : ''}
                               </label>
                               <div className="w-full h-12 px-3 bg-gray-50 border border-gray-200 rounded-md text-sm text-gray-600 flex items-center">
-                                {card.exampleSentence1 || '-'}
+                                {card.example_sentence_1 || '-'}
                               </div>
                             </div>
                             <div>
@@ -229,21 +229,21 @@ function BulkImportSection({
                                 Translation 1
                               </label>
                               <div className="w-full h-12 px-3 bg-gray-50 border border-gray-200 rounded-md text-sm text-gray-600 flex items-center">
-                                {card.sentenceTranslation1 || '-'}
+                                {card.sentence_translation_1 || '-'}
                               </div>
                             </div>
                           </div>
                         )}
 
                         {/* Sentence 2 */}
-                        {(card.exampleSentence2 || card.sentenceTranslation2) && (
+                        {(card.example_sentence_2 || card.sentence_translation_2) && (
                           <div className="grid md:grid-cols-2 gap-4">
                             <div>
                               <label className="block text-xs font-medium text-gray-400 uppercase tracking-wide mb-1">
                                 Sentence 2{languageDisplay ? ` (${languageDisplay})` : ''}
                               </label>
                               <div className="w-full h-12 px-3 bg-gray-50 border border-gray-200 rounded-md text-sm text-gray-600 flex items-center">
-                                {card.exampleSentence2 || '-'}
+                                {card.example_sentence_2 || '-'}
                               </div>
                             </div>
                             <div>
@@ -251,7 +251,7 @@ function BulkImportSection({
                                 Translation 2
                               </label>
                               <div className="w-full h-12 px-3 bg-gray-50 border border-gray-200 rounded-md text-sm text-gray-600 flex items-center">
-                                {card.sentenceTranslation2 || '-'}
+                                {card.sentence_translation_2 || '-'}
                               </div>
                             </div>
                           </div>
