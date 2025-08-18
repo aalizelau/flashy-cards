@@ -7,6 +7,7 @@ import AllDecks from "../features/collections/components/AllDecks";
 import DeckDetail from "../features/collections/components/DeckDetail";
 import AnalyticsPage from "../features/analytics/components/Analytics";
 import CreateDeck from "../features/decks/components/CreateDeck";
+import EditDeck from "../features/decks/components/EditDeck";
 import Login from "../features/auth/components/login";
 import Onboarding from "../features/auth/components/Onboarding";
 import Settings from "../features/settings/pages/Settings";
@@ -19,6 +20,7 @@ export const AppRouter = () => (
     <Route path="/onboarding" element={<ProtectedRoute requireOnboarding={false}><Onboarding /></ProtectedRoute>} />
     <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
     <Route path="/create-deck" element={<ProtectedRoute><CreateDeck /></ProtectedRoute>} />
+    <Route path="/edit-deck/:deckId" element={<ProtectedRoute><EditDeck /></ProtectedRoute>} />
     <Route path="/test/:deckId" element={<ProtectedRoute><TestSession /></ProtectedRoute>} />
     <Route path="/test" element={<ProtectedRoute><TestSession /></ProtectedRoute>} />
     <Route path="/all-decks" element={<ProtectedRoute><AllDecks /></ProtectedRoute>} />

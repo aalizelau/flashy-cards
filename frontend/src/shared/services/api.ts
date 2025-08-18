@@ -159,6 +159,19 @@ class ApiClient {
       body: JSON.stringify(cardData),
     });
   }
+
+  // Get deck by ID
+  async getDeckById(deckId: number): Promise<Deck> {
+    return this.request<Deck>(`/decks/${deckId}`);
+  }
+
+  // Update deck with cards
+  async updateDeckWithCards(deckId: number, deckData: DeckWithCardsCreate): Promise<DeckWithCardsResponse> {
+    return this.request<DeckWithCardsResponse>(`/decks/${deckId}/with-cards`, {
+      method: 'PUT',
+      body: JSON.stringify(deckData),
+    });
+  }
 }
 
 export const apiClient = new ApiClient();

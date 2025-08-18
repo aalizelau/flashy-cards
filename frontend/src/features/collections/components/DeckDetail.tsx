@@ -144,6 +144,10 @@ const DeckDetail: React.FC = () => {
     console.log('Export deck clicked for deck:', deckId);
   };
 
+  const handleEditDeck = () => {
+    navigate(`/edit-deck/${deckId}`);
+  };
+
   const handleDeleteDeck = () => {
     setShowDeleteDialog(true);
   };
@@ -253,6 +257,7 @@ const DeckDetail: React.FC = () => {
           {/* Deck Menu Dropdown - Hidden for All Words view */}
           {!isAllWordsView && (
             <DeckMenuDropdown
+              onEditDeck={handleEditDeck}
               onDuplicateDeck={handleDuplicateDeck}
               onExportDeck={handleExportDeck}
               onDeleteDeck={handleDeleteDeck}
