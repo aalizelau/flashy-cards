@@ -6,6 +6,10 @@ interface Flashcard {
   id: string;
   front: string;
   back: string;
+  exampleSentence1?: string;
+  sentenceTranslation1?: string;
+  exampleSentence2?: string;
+  sentenceTranslation2?: string;
 }
 
 type TermDelimiter = 'tab' | 'comma' | 'pipe' | 'semicolon' | 'custom';
@@ -154,7 +158,7 @@ function BulkImportSection({
         <textarea
           value={bulkText}
           onChange={(e) => onBulkTextChange(e.target.value)}
-          placeholder={`Paste your flashcard content here. Example format:\nQuestion 1${getDelimiterChar(termDelimiter)}Answer 1${getCardSeparator(cardDelimiter)}Question 2${getDelimiterChar(termDelimiter)}Answer 2`}
+          placeholder={`Example formats:\n\nBasic: <word>${getDelimiterChar(termDelimiter)}<translation>${getCardSeparator(cardDelimiter)}With one sentence: <word>${getDelimiterChar(termDelimiter)}<translation>${getDelimiterChar(termDelimiter)}<example sentence>${getDelimiterChar(termDelimiter)}<sentence translation>${getCardSeparator(cardDelimiter)}With two sentences: <word>${getDelimiterChar(termDelimiter)}<translation>${getDelimiterChar(termDelimiter)}<sentence1>${getDelimiterChar(termDelimiter)}<translation1>${getDelimiterChar(termDelimiter)}<sentence2>${getDelimiterChar(termDelimiter)}<translation2>`}
           className={`w-full px-4 py-3 border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all duration-200 resize-none ${
             errors.bulkText 
               ? 'border-red-300 focus:border-red-500' 
@@ -183,6 +187,7 @@ function BulkImportSection({
               <div className="space-y-3 max-h-64 overflow-y-auto">
                 {bulkCards.slice(0, 5).map((card) => (
                   <div key={card.id} >
+                    {/* Main word and translation */}
                     <div className="grid md:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
@@ -201,6 +206,58 @@ function BulkImportSection({
                         </div>
                       </div>
                     </div>
+
+                    {/* Show sentence fields if they exist */}
+                    {(card.exampleSentence1 || card.sentenceTranslation1 || card.exampleSentence2 || card.sentenceTranslation2) && (
+                      <>
+                        {/* Separator */}
+                        <div className="my-3 border-t border-gray-200"></div>
+                        
+                        {/* Sentence 1 */}
+                        {(card.exampleSentence1 || card.sentenceTranslation1) && (
+                          <div className="grid md:grid-cols-2 gap-4 mb-3">
+                            <div>
+                              <label className="block text-xs font-medium text-gray-400 uppercase tracking-wide mb-1">
+                                Sentence 1{languageDisplay ? ` (${languageDisplay})` : ''}
+                              </label>
+                              <div className="w-full h-12 px-3 bg-gray-50 border border-gray-200 rounded-md text-sm text-gray-600 flex items-center">
+                                {card.exampleSentence1 || '-'}
+                              </div>
+                            </div>
+                            <div>
+                              <label className="block text-xs font-medium text-gray-400 uppercase tracking-wide mb-1">
+                                Translation 1
+                              </label>
+                              <div className="w-full h-12 px-3 bg-gray-50 border border-gray-200 rounded-md text-sm text-gray-600 flex items-center">
+                                {card.sentenceTranslation1 || '-'}
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Sentence 2 */}
+                        {(card.exampleSentence2 || card.sentenceTranslation2) && (
+                          <div className="grid md:grid-cols-2 gap-4">
+                            <div>
+                              <label className="block text-xs font-medium text-gray-400 uppercase tracking-wide mb-1">
+                                Sentence 2{languageDisplay ? ` (${languageDisplay})` : ''}
+                              </label>
+                              <div className="w-full h-12 px-3 bg-gray-50 border border-gray-200 rounded-md text-sm text-gray-600 flex items-center">
+                                {card.exampleSentence2 || '-'}
+                              </div>
+                            </div>
+                            <div>
+                              <label className="block text-xs font-medium text-gray-400 uppercase tracking-wide mb-1">
+                                Translation 2
+                              </label>
+                              <div className="w-full h-12 px-3 bg-gray-50 border border-gray-200 rounded-md text-sm text-gray-600 flex items-center">
+                                {card.sentenceTranslation2 || '-'}
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </>
+                    )}
                   </div>
                 ))}
 

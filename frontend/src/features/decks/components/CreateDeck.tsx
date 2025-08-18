@@ -82,12 +82,22 @@ function CreateDeck() {
     return lines.map((line, index) => {
       const parts = line.split(termDelimiterChar);
       const front = parts[0]?.trim() || '';
-      const back = parts.slice(1).join(termDelimiterChar).trim() || '';
+      const back = parts[1]?.trim() || '';
+      
+      // Handle optional sentence fields
+      const exampleSentence1 = parts[2]?.trim() || undefined;
+      const sentenceTranslation1 = parts[3]?.trim() || undefined;
+      const exampleSentence2 = parts[4]?.trim() || undefined;
+      const sentenceTranslation2 = parts[5]?.trim() || undefined;
       
       return {
         id: `bulk-${index}-${Date.now()}`,
         front,
-        back
+        back,
+        ...(exampleSentence1 && { exampleSentence1 }),
+        ...(sentenceTranslation1 && { sentenceTranslation1 }),
+        ...(exampleSentence2 && { exampleSentence2 }),
+        ...(sentenceTranslation2 && { sentenceTranslation2 }),
       };
     }).filter(card => card.front && card.back); // Only include cards with both front and back
   };
