@@ -6,15 +6,17 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/shared/components/ui/dropdown-menu";
-import { MoreHorizontal, Copy, Download, Trash2 } from 'lucide-react';
+import { MoreHorizontal, Copy, Download, Trash2, Edit } from 'lucide-react';
 
 interface DeckMenuDropdownProps {
+  onEditDeck?: () => void;
   onDuplicateDeck?: () => void;
   onExportDeck?: () => void;
   onDeleteDeck?: () => void;
 }
 
 const DeckMenuDropdown: React.FC<DeckMenuDropdownProps> = ({
+  onEditDeck,
   onDuplicateDeck,
   onExportDeck,
   onDeleteDeck,
@@ -34,6 +36,13 @@ const DeckMenuDropdown: React.FC<DeckMenuDropdownProps> = ({
         className="w-44 bg-white border border-gray-200"
         sideOffset={8}
       >
+        <DropdownMenuItem 
+          className="hover:bg-gray-100 cursor-pointer flex items-center gap-2 px-4"
+          onClick={onEditDeck}
+        >
+          <Edit className="w-4 h-4" />
+          Edit
+        </DropdownMenuItem>
         <DropdownMenuItem 
           className="hover:bg-gray-100 cursor-pointer flex items-center gap-2 px-4"
           onClick={onDuplicateDeck}
