@@ -28,6 +28,10 @@ class Card(BaseModel):
     deck_id: int
     front: str
     back: str
+    example_sentence_1: Optional[str] = None
+    sentence_translation_1: Optional[str] = None
+    example_sentence_2: Optional[str] = None
+    sentence_translation_2: Optional[str] = None
     accuracy: float = 0.0
     total_attempts: int = 0
     correct_answers: int = 0
@@ -58,6 +62,10 @@ class DeckOut(BaseModel):
 class CardCreate(BaseModel):
     front: str
     back: str
+    example_sentence_1: Optional[str] = None
+    sentence_translation_1: Optional[str] = None
+    example_sentence_2: Optional[str] = None
+    sentence_translation_2: Optional[str] = None
 
 
 class DeckWithCardsCreate(BaseModel):

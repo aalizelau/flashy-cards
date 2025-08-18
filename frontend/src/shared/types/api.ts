@@ -35,16 +35,16 @@ export interface Card {
   deck_id: number;
   front: string;
   back: string;
+  example_sentence_1?: string;
+  sentence_translation_1?: string;
+  example_sentence_2?: string;
+  sentence_translation_2?: string;
   accuracy: number;
   total_attempts: number;
   correct_answers: number;
   last_reviewed_at: string;
   created_at: string;
   audio_url?: string;
-  example_sentences?: Array<{
-    italian: string;
-    english: string;
-  }>;
 }
 
 export interface TestResult {
@@ -90,6 +90,10 @@ export interface TestAnalytics {
 export interface CardCreate {
   front: string;
   back: string;
+  example_sentence_1?: string;
+  sentence_translation_1?: string;
+  example_sentence_2?: string;
+  sentence_translation_2?: string;
 }
 
 export interface DeckWithCardsCreate {
