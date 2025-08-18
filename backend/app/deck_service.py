@@ -126,6 +126,24 @@ class DeckService:
             DeckORM.language == user_language
         ).all()
 
+    def get_deck_by_id(self, deck_id: int, user_id: str) -> DeckORM:
+        """Get a specific deck by ID for a user in their selected language"""
+        # Get user's selected language
+        user = self.db.query(UserORM).filter(UserORM.uid == user_id).first()
+        user_language = user.selected_language if user and user.selected_language else 'en'
+        
+        # Verify deck belongs to user and matches their language
+        deck = self.db.query(DeckORM).filter(
+            DeckORM.id == deck_id, 
+            DeckORM.user_id == user_id,
+            DeckORM.language == user_language
+        ).first()
+        
+        if not deck:
+            raise Exception("Deck not found or access denied")
+        
+        return deck
+
     def get_user_deck_cards(self, deck_id: int, user_id: str) -> List[CardORM]:
         """Get all cards for a specific deck belonging to a user in their selected language"""
         # Get user's selected language
@@ -255,4 +273,92 @@ class DeckService:
         except Exception as e:
             self.db.rollback()
             logger.error(f"Error adding card to deck {deck_id}: {str(e)}")
+            raise e
+
+    def update_deck_with_cards(self, deck_id: int, deck_data: DeckWithCardsCreate, user_id: str) -> DeckWithCardsResponse:
+        """Update a deck and replace all its cards atomically"""
+        try:
+            # Get user's selected language
+            user = self.db.query(UserORM).filter(UserORM.uid == user_id).first()
+            user_language = user.selected_language if user and user.selected_language else 'en'
+            
+            # Verify deck belongs to user and matches their language
+            deck = self.db.query(DeckORM).filter(
+                DeckORM.id == deck_id, 
+                DeckORM.user_id == user_id,
+                DeckORM.language == user_language
+            ).first()
+            
+            if not deck:
+                raise Exception("Deck not found or access denied")
+            
+            # Start transaction
+            # Update deck name and card count
+            deck.name = deck_data.name
+            deck.card_count = len(deck_data.cards)
+            
+            # Delete existing cards
+            self.db.query(CardORM).filter(CardORM.deck_id == deck_id).delete()
+            
+            # Create new cards
+            db_cards = []
+            for card_data in deck_data.cards:
+                # Generate audio with fault tolerance
+                audio_path = None
+                try:
+                    if voice_generator.is_language_supported(user_language):
+                        audio_path = voice_generator.get_voice(user_language, card_data.front)
+                        if audio_path:
+                            logger.info(f"Generated audio for '{card_data.front}' in {user_language}: {audio_path}")
+                        else:
+                            logger.warning(f"Failed to generate audio for '{card_data.front}' in {user_language}")
+                    else:
+                        logger.info(f"Audio generation skipped for '{card_data.front}' - language '{user_language}' not supported for TTS")
+                except Exception as e:
+                    logger.error(f"Audio generation failed for '{card_data.front}' in {user_language}: {e}")
+                
+                db_card = CardORM(
+                    deck_id=deck_id,
+                    front=card_data.front,
+                    back=card_data.back,
+                    example_sentence_1=getattr(card_data, 'example_sentence_1', None),
+                    sentence_translation_1=getattr(card_data, 'sentence_translation_1', None),
+                    example_sentence_2=getattr(card_data, 'example_sentence_2', None),
+                    sentence_translation_2=getattr(card_data, 'sentence_translation_2', None),
+                    accuracy=0.0,
+                    total_attempts=0,
+                    correct_answers=0,
+                    created_at=datetime.now(),
+                    audio_path=audio_path
+                )
+                self.db.add(db_card)
+                db_cards.append(db_card)
+            
+            # Commit transaction
+            self.db.commit()
+            
+            # Refresh to get all data
+            self.db.refresh(deck)
+            for card in db_cards:
+                self.db.refresh(card)
+            
+            # Convert to response schema
+            card_schemas = [CardSchema.model_validate(card) for card in db_cards]
+            
+            return DeckWithCardsResponse(
+                id=deck.id,
+                name=deck.name,
+                created_at=deck.created_at,
+                progress=deck.progress,
+                card_count=deck.card_count,
+                cards=card_schemas
+            )
+            
+        except SQLAlchemyError as e:
+            self.db.rollback()
+            logger.error(f"Failed to update deck {deck_id}: {str(e)}")
+            raise Exception(f"Failed to update deck with cards: {str(e)}")
+        except Exception as e:
+            self.db.rollback()
+            logger.error(f"Error updating deck {deck_id}: {str(e)}")
             raise e

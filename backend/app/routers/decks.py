@@ -48,6 +48,26 @@ def read_decks(
     deck_service = DeckService(db)
     return deck_service.get_user_decks(user_id)
 
+@router.get("/{deck_id}", response_model=schemas.DeckOut)
+def get_deck_by_id(
+    deck_id: int,
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
+):
+    try:
+        user_id = current_user["uid"]
+        
+        # Ensure user exists in database
+        user_service = UserService(db)
+        user_service.get_or_create_user(current_user["firebase_token"])
+        
+        deck_service = DeckService(db)
+        return deck_service.get_deck_by_id(deck_id, user_id)
+    except Exception as e:
+        if "not found or access denied" in str(e):
+            raise HTTPException(status_code=404, detail="Deck not found or access denied")
+        raise HTTPException(status_code=400, detail=str(e))
+
 @router.post("/", response_model=schemas.DeckOut)
 def create_deck(
     deck_data: DeckCreate,
@@ -82,6 +102,27 @@ def create_deck_with_cards(
         deck_service = DeckService(db)
         return deck_service.create_deck_with_cards(deck_data, user_id)
     except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@router.put("/{deck_id}/with-cards", response_model=DeckWithCardsResponse)
+def update_deck_with_cards(
+    deck_id: int,
+    deck_data: DeckWithCardsCreate,
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
+):
+    try:
+        user_id = current_user["uid"]
+        
+        # Ensure user exists in database
+        user_service = UserService(db)
+        user_service.get_or_create_user(current_user["firebase_token"])
+        
+        deck_service = DeckService(db)
+        return deck_service.update_deck_with_cards(deck_id, deck_data, user_id)
+    except Exception as e:
+        if "not found or access denied" in str(e):
+            raise HTTPException(status_code=404, detail="Deck not found or access denied")
         raise HTTPException(status_code=400, detail=str(e))
 
 @router.get("/all/cards", response_model=List[Card])
