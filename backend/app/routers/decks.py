@@ -104,8 +104,8 @@ def create_deck_with_cards(
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-@router.put("/{deck_id}/with-cards", response_model=DeckWithCardsResponse)
-def update_deck_with_cards(
+@router.patch("/{deck_id}/with-cards", response_model=DeckWithCardsResponse)
+def patch_deck_with_cards(
     deck_id: int,
     deck_data: DeckWithCardsCreate,
     db: Session = Depends(get_db),
@@ -119,7 +119,7 @@ def update_deck_with_cards(
         user_service.get_or_create_user(current_user["firebase_token"])
         
         deck_service = DeckService(db)
-        return deck_service.update_deck_with_cards(deck_id, deck_data, user_id)
+        return deck_service.patch_deck_with_cards(deck_id, deck_data, user_id)
     except Exception as e:
         if "not found or access denied" in str(e):
             raise HTTPException(status_code=404, detail="Deck not found or access denied")
@@ -199,6 +199,32 @@ def add_card_to_deck(
     except Exception as e:
         if "not found or access denied" in str(e):
             raise HTTPException(status_code=404, detail="Deck not found or access denied")
+        raise HTTPException(status_code=400, detail=str(e))
+
+@router.delete("/{deck_id}/cards/{card_id}")
+def delete_card(
+    deck_id: int,
+    card_id: int,
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
+):
+    try:
+        user_id = current_user["uid"]
+        
+        # Ensure user exists in database
+        user_service = UserService(db)
+        user_service.get_or_create_user(current_user["firebase_token"])
+        
+        deck_service = DeckService(db)
+        success = deck_service.delete_card(deck_id, card_id, user_id)
+        
+        if not success:
+            raise HTTPException(status_code=404, detail="Card not found")
+        
+        return {"message": "Card deleted successfully"}
+    except Exception as e:
+        if "not found or access denied" in str(e):
+            raise HTTPException(status_code=404, detail="Card not found or access denied")
         raise HTTPException(status_code=400, detail=str(e))
 
 @router.delete("/{deck_id}")
