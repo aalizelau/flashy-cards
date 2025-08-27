@@ -55,7 +55,7 @@ const FlashCardBack: React.FC<FlashCardBackProps> = ({
                                 <p className="text-sm italic text-gray-700 font-medium">
                                     {example.italian}
                                 </p>
-                                <p className="text-xs text-gray-500 italic font-light ">
+                                <p className="text-sm text-gray-500 italic font-light ">
                                     {example.english}
                                 </p>
                             </div>
