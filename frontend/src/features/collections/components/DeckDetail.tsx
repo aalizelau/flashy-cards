@@ -32,7 +32,7 @@ const DeckDetail: React.FC = () => {
   
   const { data: decks, isLoading: decksLoading } = useDecks();
   const selectedDeck = decks?.find(deck => deck.name === decodedName);
-  const deckId = selectedDeck?.id || 1;
+  const deckId = selectedDeck?.id;
   
   // Use different API calls based on whether it's "All Words" or a regular deck
   const { data: regularCards, isLoading: regularCardsLoading } = useDeckCards(deckId);
