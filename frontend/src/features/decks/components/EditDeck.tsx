@@ -9,12 +9,14 @@ import IndividualCardsSection from './IndividualCardsSection';
 
 interface Flashcard {
   id: string;
+  numericId?: number; // Original database ID for existing cards
   front: string;
   back: string;
   example_sentence_1?: string;
   sentence_translation_1?: string;
   example_sentence_2?: string;
   sentence_translation_2?: string;
+  isNew?: boolean; // Flag to indicate if this is a new card
 }
 
 function EditDeck() {
@@ -23,8 +25,9 @@ function EditDeck() {
   const { userProfile } = useAuth();
   const [deckTitle, setDeckTitle] = useState('');
   const [flashcards, setFlashcards] = useState<Flashcard[]>([
-    { id: '1', front: '', back: '' }
+    { id: '1', front: '', back: '', isNew: true }
   ]);
+  const [originalCards, setOriginalCards] = useState<Flashcard[]>([]); // Track original state for diff
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingData, setIsLoadingData] = useState(true);
@@ -56,18 +59,21 @@ function EditDeck() {
 
         setDeckTitle(deck.name);
         
-        // Convert cards to flashcard format
+        // Convert cards to flashcard format, preserving numeric IDs
         const convertedCards: Flashcard[] = cards.map((card: Card, index: number) => ({
           id: card.id?.toString() || `existing-${index}`,
+          numericId: card.id, // Preserve original database ID
           front: card.front,
           back: card.back,
           example_sentence_1: card.example_sentence_1 || undefined,
           sentence_translation_1: card.sentence_translation_1 || undefined,
           example_sentence_2: card.example_sentence_2 || undefined,
           sentence_translation_2: card.sentence_translation_2 || undefined,
+          isNew: false, // Existing cards
         }));
 
-        setFlashcards(convertedCards.length > 0 ? convertedCards : [{ id: '1', front: '', back: '' }]);
+        setFlashcards(convertedCards.length > 0 ? convertedCards : [{ id: '1', front: '', back: '', isNew: true }]);
+        setOriginalCards(convertedCards); // Store original state for comparison
       } catch (error) {
         console.error('Failed to load deck data:', error);
         setErrors({
@@ -89,7 +95,8 @@ function EditDeck() {
       example_sentence_1: undefined,
       sentence_translation_1: undefined,
       example_sentence_2: undefined,
-      sentence_translation_2: undefined
+      sentence_translation_2: undefined,
+      isNew: true // Mark as new card
     };
     setFlashcards([...flashcards, newCard]);
   };
@@ -140,27 +147,91 @@ function EditDeck() {
     setErrors({});
 
     try {
-      const cardsToSubmit = flashcards.filter(card => card.front.trim() && card.back.trim());
+      const deckIdNum = parseInt(deckId);
       
-      // Transform to API format
-      const apiCards: CardCreate[] = cardsToSubmit.map(card => ({
-        front: card.front.trim(),
-        back: card.back.trim(),
-        ...(card.example_sentence_1 && { example_sentence_1: card.example_sentence_1.trim() }),
-        ...(card.sentence_translation_1 && { sentence_translation_1: card.sentence_translation_1.trim() }),
-        ...(card.example_sentence_2 && { example_sentence_2: card.example_sentence_2.trim() }),
-        ...(card.sentence_translation_2 && { sentence_translation_2: card.sentence_translation_2.trim() })
-      }));
+      // Filter out empty cards
+      const validCards = flashcards.filter(card => card.front.trim() && card.back.trim());
+      
+      // Categorize cards by operation needed
+      const cardsToDelete: Flashcard[] = [];
+      const cardsToUpdate: Flashcard[] = [];
+      const cardsToCreate: Flashcard[] = [];
+      
+      // Find cards to delete (original cards not in current flashcards)
+      for (const originalCard of originalCards) {
+        if (!validCards.find(card => card.id === originalCard.id)) {
+          cardsToDelete.push(originalCard);
+        }
+      }
+      
+      // Categorize remaining cards
+      for (const card of validCards) {
+        if (card.isNew) {
+          cardsToCreate.push(card);
+        } else if (card.numericId) {
+          // Check if card has been modified
+          const originalCard = originalCards.find(orig => orig.id === card.id);
+          if (originalCard) {
+            const hasChanged = 
+              originalCard.front !== card.front ||
+              originalCard.back !== card.back ||
+              originalCard.example_sentence_1 !== card.example_sentence_1 ||
+              originalCard.sentence_translation_1 !== card.sentence_translation_1 ||
+              originalCard.example_sentence_2 !== card.example_sentence_2 ||
+              originalCard.sentence_translation_2 !== card.sentence_translation_2;
+            
+            if (hasChanged) {
+              cardsToUpdate.push(card);
+            }
+          }
+        }
+      }
 
-      const deckData: DeckWithCardsCreate = {
-        name: deckTitle.trim(),
-        cards: apiCards
-      };
+      // Execute operations in sequence
+      
+      // 1. Delete cards first
+      for (const card of cardsToDelete) {
+        if (card.numericId) {
+          await apiClient.deleteCard(deckIdNum, card.numericId);
+        }
+      }
+      
+      // 2. Update existing cards (PATCH) if there are any changes
+      if (cardsToUpdate.length > 0) {
+        const apiCards: CardCreate[] = cardsToUpdate.map(card => ({
+          id: card.numericId,
+          front: card.front.trim(),
+          back: card.back.trim(),
+          ...(card.example_sentence_1 && { example_sentence_1: card.example_sentence_1.trim() }),
+          ...(card.sentence_translation_1 && { sentence_translation_1: card.sentence_translation_1.trim() }),
+          ...(card.example_sentence_2 && { example_sentence_2: card.example_sentence_2.trim() }),
+          ...(card.sentence_translation_2 && { sentence_translation_2: card.sentence_translation_2.trim() })
+        }));
 
-      const response = await apiClient.updateDeckWithCards(parseInt(deckId), deckData);
+        const deckData: DeckWithCardsCreate = {
+          name: deckTitle.trim(),
+          cards: apiCards
+        };
+
+        await apiClient.patchDeckWithCards(deckIdNum, deckData);
+      }
+      
+      // 3. Create new cards
+      for (const card of cardsToCreate) {
+        const cardData: CardCreate = {
+          front: card.front.trim(),
+          back: card.back.trim(),
+          ...(card.example_sentence_1 && { example_sentence_1: card.example_sentence_1.trim() }),
+          ...(card.sentence_translation_1 && { sentence_translation_1: card.sentence_translation_1.trim() }),
+          ...(card.example_sentence_2 && { example_sentence_2: card.example_sentence_2.trim() }),
+          ...(card.sentence_translation_2 && { sentence_translation_2: card.sentence_translation_2.trim() })
+        };
+        
+        await apiClient.addCardToDeck(deckIdNum, cardData);
+      }
       
       // Navigate back to the deck detail page
-      navigate(`/decks/${encodeURIComponent(response.name)}`);
+      // navigate(`/decks/${encodeURIComponent(deckTitle.trim())}`);
       
     } catch (error) {
       console.error('Failed to update deck:', error);

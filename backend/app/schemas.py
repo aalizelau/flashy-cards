@@ -60,6 +60,7 @@ class DeckOut(BaseModel):
 
 
 class CardCreate(BaseModel):
+    id: Optional[int] = None
     front: str
     back: str
     example_sentence_1: Optional[str] = None

@@ -88,6 +88,7 @@ export interface TestAnalytics {
 }
 
 export interface CardCreate {
+  id?: number;
   front: string;
   back: string;
   example_sentence_1?: string;
