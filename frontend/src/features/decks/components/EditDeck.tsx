@@ -231,7 +231,7 @@ function EditDeck() {
       }
       
       // Navigate back to the deck detail page
-      // navigate(`/decks/${encodeURIComponent(deckTitle.trim())}`);
+      navigate(`/decks/${encodeURIComponent(deckTitle.trim())}`);
       
     } catch (error) {
       console.error('Failed to update deck:', error);
