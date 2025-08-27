@@ -54,7 +54,7 @@ const FlashcardTable: React.FC<FlashcardTableProps> = ({
             return (
               <React.Fragment key={card.id}>
                 <tr>
-                  <td className="py-3 pl-6 pr-3 align-middle max-w-[200px]">
+                  <td className="py-1 pl-6 pr-3 align-middle max-w-[200px]">
                     <div className="flex items-center gap-2">
                       <span className="font-medium text-sm truncate block">{card.front}</span>
                       {card.audio_url ? (
@@ -77,24 +77,24 @@ const FlashcardTable: React.FC<FlashcardTableProps> = ({
                       )}
                     </div>
                   </td>
-                  <td className="py-3 px-3 align-middle max-w-[300px]">
+                  <td className="py-1 px-3 align-middle max-w-[300px]">
                     <span className="text-xs text-muted-foreground truncate block">{card.back}</span>
                   </td>
-                  <td className="py-3 px-3 align-middle">
+                  <td className="py-1 px-3 align-middle">
                     <ProgressDots progress={percentage} />
                   </td>
-                  <td className="py-3 px-3 align-middle">
+                  <td className="py-1  px-3 align-middle">
                     <span className="px-2 py-1 rounded-full text-xs font-medium bg-gray-200 text-gray-800">
                       {card.correct_answers}/{card.total_attempts}
                     </span>
                   </td>
-                  <td className="py-3 px-3 align-middle">
+                  <td className="py-1  px-3 align-middle">
                     <span className="text-xs text-muted-foreground">{lastReviewed}</span>
                   </td>
-                  <td className="py-3 px-0 align-middle">
+                  <td className="py-1 px-0 align-middle">
                     <span className="text-xs text-muted-foreground">{dateCreated}</span>
                   </td>
-                  <td className="py-3 px-0 align-middle">
+                  <td className="py-1 px-0 align-middle">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button size="icon" variant="ghost" aria-label="Actions">
