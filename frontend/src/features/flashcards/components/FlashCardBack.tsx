@@ -37,7 +37,6 @@ const FlashCardBack: React.FC<FlashCardBackProps> = ({
             english: sentence_translation_2
         });
     }
-    console.log("📘 examplesData:", examplesData);
     
     return (
         <FlashCardBase word={front} audioUrl={audioUrl} className="rotate-y-180 items-center justify-center text-center !shadow-elevated" onClick={onClick}>

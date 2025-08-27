@@ -28,10 +28,10 @@ const ProtectedRoute = ({ children, requireOnboarding = true }: ProtectedRoutePr
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  if (!loading && user){
-      const completed = Boolean(hasCompletedOnboarding);
-  console.log("completed", completed)
-  }
+  // if (!loading && user){
+  //     const completed = Boolean(hasCompletedOnboarding);
+  // console.log("completed", completed)
+  // }
 
   // If onboarding is required and user hasn't completed it, redirect to onboarding
   if (!loading && user && requireOnboarding && !hasCompletedOnboarding) {
