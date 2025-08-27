@@ -16,7 +16,7 @@ const AppContent = () => {
   const hideLayout = isLoginPage || isOnboardingPage;
 
   return (
-    <div className="flex">
+    <div className="flex h-screen">
       {!hideLayout && <SidebarNav />}
       <div className={`flex-1 bg-gradient-bg ${hideLayout ? 'w-full' : ''}`}>
         <AppRouter />
