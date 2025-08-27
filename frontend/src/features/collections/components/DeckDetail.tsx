@@ -230,7 +230,7 @@ const DeckDetail: React.FC = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-5xl">
+    <div className="container mx-auto px-4 pt-8 pb-16 max-w-5xl">
       <Button
         variant="outline"
         onClick={() => navigate('/all-decks')}
@@ -315,7 +315,7 @@ const DeckDetail: React.FC = () => {
             )}
           </div>
           
-          <ScrollArea className="h-[600px]">
+          <ScrollArea className="h-[700px]">
             <div className="px-4 py-0">
               <FlashcardTable
                 cards={filteredAndSortedCards}
