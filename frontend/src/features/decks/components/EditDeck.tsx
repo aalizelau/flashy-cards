@@ -28,6 +28,7 @@ function EditDeck() {
     { id: '1', front: '', back: '', isNew: true }
   ]);
   const [originalCards, setOriginalCards] = useState<Flashcard[]>([]); // Track original state for diff
+  const [originalDeckTitle, setOriginalDeckTitle] = useState(''); // Track original title for diff
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingData, setIsLoadingData] = useState(true);
@@ -58,6 +59,7 @@ function EditDeck() {
         ]);
 
         setDeckTitle(deck.name);
+        setOriginalDeckTitle(deck.name); // Store original title for comparison
         
         // Convert cards to flashcard format, preserving numeric IDs
         const convertedCards: Flashcard[] = cards.map((card: Card, index: number) => ({
@@ -152,6 +154,9 @@ function EditDeck() {
       // Filter out empty cards
       const validCards = flashcards.filter(card => card.front.trim() && card.back.trim());
       
+      // Check if deck title has changed
+      const titleHasChanged = originalDeckTitle !== deckTitle.trim();
+      
       // Categorize cards by operation needed
       const cardsToDelete: Flashcard[] = [];
       const cardsToUpdate: Flashcard[] = [];
@@ -196,8 +201,8 @@ function EditDeck() {
         }
       }
       
-      // 2. Update existing cards (PATCH) if there are any changes
-      if (cardsToUpdate.length > 0) {
+      // 2. Update existing cards and/or deck title (PATCH) if there are any changes
+      if (cardsToUpdate.length > 0 || titleHasChanged) {
         const apiCards: CardCreate[] = cardsToUpdate.map(card => ({
           id: card.numericId,
           front: card.front.trim(),
