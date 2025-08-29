@@ -14,21 +14,26 @@ interface FlashCardBaseProps {
 
 const FlashCardBase: React.FC<FlashCardBaseProps> = ({ children, className = "", onClick, word, audioUrl }) => {
     const [playingAudio, setPlayingAudio] = useState(false);
+    const manualAudioRef = React.useRef<HTMLAudioElement | null>(null);
 
     const playAudio = async () => {
         if (!audioUrl) return;
 
         try {
           setPlayingAudio(true);
-          const audio = new Audio(audioUrl);
-
-          audio.onended = () => setPlayingAudio(false);
-          audio.onerror = () => {
+          
+          if (manualAudioRef.current) {
+            manualAudioRef.current.pause();
+          }
+          
+          manualAudioRef.current = new Audio(audioUrl);
+          manualAudioRef.current.onended = () => setPlayingAudio(false);
+          manualAudioRef.current.onerror = () => {
             setPlayingAudio(false);
             console.error('Failed to play audio for:', word);
           };
     
-          await audio.play();
+          await manualAudioRef.current.play();
         } catch (error) {
           setPlayingAudio(false);
           console.error('Audio playback failed:', error);
