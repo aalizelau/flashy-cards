@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/shared/components/ui/button';
 import { Progress } from '@/shared/components/ui/progress';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/shared/components/ui/tooltip';
 import { FlashcardComponent } from '@/features/flashcards/components/FlashcardComponent';
 import { Card, TestResult, StudySessionRequest } from '@/shared/types/api';
 import { useStartTestSession, useCompleteStudySession } from '@/shared/hooks/useApi';
@@ -44,6 +45,28 @@ export const TestingMode: React.FC<TestingModeProps> = ({ testType, deckIds, lim
 
     initializeTestSession();
   }, [testType, deckIds, limit]);
+
+  // Keyboard event listener for arrow keys
+  useEffect(() => {
+    const handleKeyPress = (event: KeyboardEvent) => {
+      // Only handle keyboard events when we have cards and are not in loading state
+      if (flashcards.length === 0 || currentIndex >= flashcards.length) return;
+      
+      switch (event.key) {
+        case 'ArrowLeft':
+          event.preventDefault();
+          handleResponse(false); // I forget
+          break;
+        case 'ArrowRight':
+          event.preventDefault();
+          handleResponse(true); // I remember
+          break;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [flashcards.length, currentIndex, results, completeSessionMutation]);
 
   const currentCard = flashcards[currentIndex];
   const progress = flashcards.length > 0 ? ((currentIndex) / flashcards.length) * 100 : 0;
@@ -186,25 +209,43 @@ export const TestingMode: React.FC<TestingModeProps> = ({ testType, deckIds, lim
       </div>
 
       {/* Action Buttons */}
-      <div className="flex gap-12 justify-center animate-scale-in">
-  <Button
-    variant="forgot"
-    size="icon-lg" // important: makes it a square button
-    onClick={() => handleResponse(false)}
-    className="rounded-full flex items-center justify-center "
-  >
-    <X className="h-8 w-8" /> {/* Bigger icon */}
-  </Button>
+      <TooltipProvider>
+        <div className="flex gap-12 justify-center animate-scale-in">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="forgot"
+                size="icon-lg"
+                onClick={() => handleResponse(false)}
+                className="rounded-full flex items-center justify-center"
+                aria-label="I forgot (Left arrow key)"
+              >
+                <X className="h-8 w-8" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom" align="center">
+              <p>Forgot (←)</p>
+            </TooltipContent>
+          </Tooltip>
 
-  <Button
-    variant="remembered"
-    size="icon-lg"
-    onClick={() => handleResponse(true)}
-    className=" rounded-full flex items-center justify-center"
-  >
-    <Check className="h-8 w-8" />
-  </Button>
-</div>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="remembered"
+                size="icon-lg"
+                onClick={() => handleResponse(true)}
+                className="rounded-full flex items-center justify-center"
+                aria-label="I remember (Right arrow key)"
+              >
+                <Check className="h-8 w-8" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom" align="center" >
+              <p>Remember (→)</p>
+            </TooltipContent>
+          </Tooltip>
+        </div>
+      </TooltipProvider>
 
     </div>
   );
