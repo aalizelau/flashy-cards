@@ -10,9 +10,8 @@ DATABASE_URL = URL.create(
     password=os.getenv("POSTGRES_PASSWORD", "password"),
     host=os.getenv("DB_HOST", "localhost"),
     port=os.getenv("DB_PORT", "5432"),
-    database=os.getenv("POSTGRES_DB", "postgres")
+    database=os.getenv("POSTGRES_DB", "mydb")
 )
-
 engine = create_engine(DATABASE_URL, echo=True)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
