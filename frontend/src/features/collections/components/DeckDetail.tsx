@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/shared/components/ui/card';
 import { ScrollArea } from '@/shared/components/ui/scroll-area';
@@ -221,10 +221,10 @@ const DeckDetail: React.FC = () => {
 
   if (decksLoading || cardsLoading) {
     return (
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
-        <div className="text-center py-12">
+      <div className="container flex items-center justify-center min-h-screen">
+        <div className="text-center">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900 mx-auto"></div>
-          <p className="mt-4 text-lg">Loading chapter details...</p>
+          <p className="mt-4 text-lg">Loading cards...</p>
         </div>
       </div>
     );
