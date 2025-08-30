@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import FlashcardTable from './FlashcardTable';
 import DeckMenuDropdown from './DeckMenuDropdown';
 import AddCardDialog from './AddCardDialog';
+import ExportDeckDialog from './ExportDeckDialog';
 import { Button } from '@/shared/components/ui/button';
 import {
   Dialog,
@@ -51,6 +52,7 @@ const DeckDetail: React.FC = () => {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showAddCardDialog, setShowAddCardDialog] = useState(false);
   const [showTestConfig, setShowTestConfig] = useState(false);
+  const [showExportDialog, setShowExportDialog] = useState(false);
   const [testStats, setTestStats] = useState<TestStats | null>(null);
   const [isLoadingStats, setIsLoadingStats] = useState(false);
 
@@ -140,8 +142,7 @@ const DeckDetail: React.FC = () => {
   };
 
   const handleExportDeck = () => {
-    // TODO: Implement deck export
-    console.log('Export deck clicked for deck:', deckId);
+    setShowExportDialog(true);
   };
 
   const handleEditDeck = () => {
@@ -379,6 +380,16 @@ const DeckDetail: React.FC = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Export Deck Dialog */}
+      {showExportDialog && cards && (
+        <ExportDeckDialog
+          isOpen={showExportDialog}
+          onClose={() => setShowExportDialog(false)}
+          cards={cards}
+          deckName={isAllWordsView ? "All Words" : selectedDeck?.name || "Deck"}
+        />
+      )}
     </div>
   );
 };
