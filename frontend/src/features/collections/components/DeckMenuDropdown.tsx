@@ -13,6 +13,11 @@ interface DeckMenuDropdownProps {
   onDuplicateDeck?: () => void;
   onExportDeck?: () => void;
   onDeleteDeck?: () => void;
+  // Optional props to control which menu items are shown
+  showEdit?: boolean;
+  showDuplicate?: boolean;
+  showExport?: boolean;
+  showDelete?: boolean;
 }
 
 const DeckMenuDropdown: React.FC<DeckMenuDropdownProps> = ({
@@ -20,6 +25,11 @@ const DeckMenuDropdown: React.FC<DeckMenuDropdownProps> = ({
   onDuplicateDeck,
   onExportDeck,
   onDeleteDeck,
+  // Default all menu items to visible for backward compatibility
+  showEdit = true,
+  showDuplicate = true,
+  showExport = true,
+  showDelete = true,
 }) => {
   return (
     <DropdownMenu>
@@ -36,35 +46,43 @@ const DeckMenuDropdown: React.FC<DeckMenuDropdownProps> = ({
         className="w-44 bg-white border border-gray-200"
         sideOffset={8}
       >
-        <DropdownMenuItem 
-          className="hover:bg-gray-100 cursor-pointer flex items-center gap-2 px-4"
-          onClick={onEditDeck}
-        >
-          <Edit className="w-4 h-4" />
-          Edit
-        </DropdownMenuItem>
-        <DropdownMenuItem 
-          className="hover:bg-gray-100 cursor-pointer flex items-center gap-2 px-4"
-          onClick={onDuplicateDeck}
-        >
-          <Copy className="w-4 h-4" />
-          Duplicate
-        </DropdownMenuItem>
-        <DropdownMenuItem 
-          className="hover:bg-gray-100 cursor-pointer flex items-center gap-2 px-4"
-          onClick={onExportDeck}
-        >
-          <Download className="w-4 h-4" />
-          Export
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem 
-          className="hover:bg-red-100 text-red-600 cursor-pointer flex items-center gap-2 px-4"
-          onClick={onDeleteDeck}
-        >
-          <Trash2 className="w-4 h-4" />
-          Delete
-        </DropdownMenuItem>
+        {showEdit && (
+          <DropdownMenuItem 
+            className="hover:bg-gray-100 cursor-pointer flex items-center gap-2 px-4"
+            onClick={onEditDeck}
+          >
+            <Edit className="w-4 h-4" />
+            Edit
+          </DropdownMenuItem>
+        )}
+        {showDuplicate && (
+          <DropdownMenuItem 
+            className="hover:bg-gray-100 cursor-pointer flex items-center gap-2 px-4"
+            onClick={onDuplicateDeck}
+          >
+            <Copy className="w-4 h-4" />
+            Duplicate
+          </DropdownMenuItem>
+        )}
+        {showExport && (
+          <DropdownMenuItem 
+            className="hover:bg-gray-100 cursor-pointer flex items-center gap-2 px-4"
+            onClick={onExportDeck}
+          >
+            <Download className="w-4 h-4" />
+            Export
+          </DropdownMenuItem>
+        )}
+        {(showEdit || showDuplicate || showExport) && showDelete && <DropdownMenuSeparator />}
+        {showDelete && (
+          <DropdownMenuItem 
+            className="hover:bg-red-100 text-red-600 cursor-pointer flex items-center gap-2 px-4"
+            onClick={onDeleteDeck}
+          >
+            <Trash2 className="w-4 h-4" />
+            Delete
+          </DropdownMenuItem>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

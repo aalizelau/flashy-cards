@@ -255,15 +255,18 @@ const DeckDetail: React.FC = () => {
             {isLoadingStats ? 'Loading...' : 'Start Test'}
           </Button>
 
-          {/* Deck Menu Dropdown - Hidden for All Words view */}
-          {!isAllWordsView && (
-            <DeckMenuDropdown
-              onEditDeck={handleEditDeck}
-              onDuplicateDeck={handleDuplicateDeck}
-              onExportDeck={handleExportDeck}
-              onDeleteDeck={handleDeleteDeck}
-            />
-          )}
+          {/* Deck Menu Dropdown - Limited options for All Words view */}
+          <DeckMenuDropdown
+            onEditDeck={handleEditDeck}
+            onDuplicateDeck={handleDuplicateDeck}
+            onExportDeck={handleExportDeck}
+            onDeleteDeck={handleDeleteDeck}
+            // For "All Words" view, only show export option
+            showEdit={!isAllWordsView}
+            showDuplicate={!isAllWordsView}
+            showExport={true}
+            showDelete={!isAllWordsView}
+          />
         </div>
       </div>
 
