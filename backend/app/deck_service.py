@@ -411,3 +411,65 @@ class DeckService:
             self.db.rollback()
             logger.error(f"Error deleting card {card_id} from deck {deck_id}: {str(e)}")
             raise e
+
+    def update_card(self, deck_id: int, card_id: int, card_data: CardCreate, user_id: str) -> CardORM:
+        """Update a specific card while preserving statistics"""
+        try:
+            # Get user's selected language
+            user = self.db.query(UserORM).filter(UserORM.uid == user_id).first()
+            user_language = user.selected_language if user and user.selected_language else 'en'
+            
+            # Verify deck belongs to user and matches their language
+            deck = self.db.query(DeckORM).filter(
+                DeckORM.id == deck_id, 
+                DeckORM.user_id == user_id,
+                DeckORM.language == user_language
+            ).first()
+            
+            if not deck:
+                raise Exception("Deck not found or access denied")
+            
+            # Find the card and verify it belongs to the deck
+            card = self.db.query(CardORM).filter(
+                CardORM.id == card_id,
+                CardORM.deck_id == deck_id
+            ).first()
+            
+            if not card:
+                raise Exception("Card not found or access denied")
+            
+            # Update content fields only, preserve statistics
+            card.front = card_data.front
+            card.back = card_data.back
+            card.example_sentence_1 = getattr(card_data, 'example_sentence_1', None)
+            card.sentence_translation_1 = getattr(card_data, 'sentence_translation_1', None)
+            card.example_sentence_2 = getattr(card_data, 'example_sentence_2', None)
+            card.sentence_translation_2 = getattr(card_data, 'sentence_translation_2', None)
+            
+            # Generate new audio if front text changed
+            try:
+                if voice_generator.is_language_supported(user_language):
+                    audio_path = voice_generator.get_voice(user_language, card_data.front)
+                    if audio_path:
+                        card.audio_path = audio_path
+                        logger.info(f"Updated audio for '{card_data.front}' in {user_language}: {audio_path}")
+                    else:
+                        logger.warning(f"Failed to generate audio for '{card_data.front}' in {user_language}")
+                else:
+                    logger.info(f"Audio generation skipped for '{card_data.front}' - language '{user_language}' not supported for TTS")
+            except Exception as e:
+                logger.error(f"Audio generation failed for '{card_data.front}' in {user_language}: {e}")
+            
+            self.db.commit()
+            self.db.refresh(card)
+            
+            return card
+            
+        except SQLAlchemyError as e:
+            self.db.rollback()
+            logger.error(f"Failed to update card {card_id} in deck {deck_id}: {str(e)}")
+            raise Exception(f"Failed to update card: {str(e)}")
+        except Exception as e:
+            self.db.rollback()
+            logger.error(f"Error updating card {card_id} in deck {deck_id}: {str(e)}")
+            raise e

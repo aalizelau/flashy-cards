@@ -173,6 +173,14 @@ class ApiClient {
     });
   }
 
+  // Update specific card in deck
+  async updateCard(deckId: number, cardId: number, cardData: CardCreate): Promise<Card> {
+    return this.request<Card>(`/decks/${deckId}/cards/${cardId}`, {
+      method: 'PUT',
+      body: JSON.stringify(cardData),
+    });
+  }
+
   // Delete specific card from deck
   async deleteCard(deckId: number, cardId: number): Promise<{ message: string }> {
     return this.request<{ message: string }>(`/decks/${deckId}/cards/${cardId}`, {

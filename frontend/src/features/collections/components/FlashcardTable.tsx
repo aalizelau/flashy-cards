@@ -9,12 +9,16 @@ interface FlashcardTableProps {
   cards: FlashCard[];
   playingAudio: number | null;
   onPlayAudio: (card: FlashCard) => void;
+  onEditCard?: (card: FlashCard) => void;
+  onDeleteCard?: (card: FlashCard) => void;
 }
 
 const FlashcardTable: React.FC<FlashcardTableProps> = ({
   cards,
   playingAudio,
   onPlayAudio,
+  onEditCard,
+  onDeleteCard,
 }) => {
   const getProgressPercentage = (card: FlashCard): number =>
     Math.round(card.accuracy * 100);
@@ -102,8 +106,8 @@ const FlashcardTable: React.FC<FlashcardTableProps> = ({
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem>Edit</DropdownMenuItem>
-                        <DropdownMenuItem className="text-red-500">Delete</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => onEditCard?.(card)}>Edit</DropdownMenuItem>
+                        <DropdownMenuItem className="text-red-500" onClick={() => onDeleteCard?.(card)}>Delete</DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </td>

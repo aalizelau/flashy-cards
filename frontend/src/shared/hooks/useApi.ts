@@ -109,3 +109,19 @@ export const useAddCardToDeck = () => {
     },
   });
 };
+
+// Update card mutation
+export const useUpdateCard = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: ({ deckId, cardId, cardData }: { deckId: number; cardId: number; cardData: CardCreate }) => 
+      apiClient.updateCard(deckId, cardId, cardData),
+    onSuccess: (data, variables) => {
+      // Invalidate the specific deck's cards query to refresh the list
+      queryClient.invalidateQueries({ queryKey: queryKeys.deckCards(variables.deckId) });
+      // Also invalidate all user cards query
+      queryClient.invalidateQueries({ queryKey: ['all-user-cards'] });
+    },
+  });
+};

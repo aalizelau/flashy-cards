@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import FlashcardTable from './FlashcardTable';
 import DeckMenuDropdown from './DeckMenuDropdown';
 import AddCardDialog from './AddCardDialog';
+import EditCardDialog from './EditCardDialog';
 import ExportDeckDialog from './ExportDeckDialog';
 import { Button } from '@/shared/components/ui/button';
 import {
@@ -51,6 +52,8 @@ const DeckDetail: React.FC = () => {
   const [playingAudio, setPlayingAudio] = useState<number | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showAddCardDialog, setShowAddCardDialog] = useState(false);
+  const [showEditCardDialog, setShowEditCardDialog] = useState(false);
+  const [editingCard, setEditingCard] = useState<FlashCard | null>(null);
   const [showTestConfig, setShowTestConfig] = useState(false);
   const [showExportDialog, setShowExportDialog] = useState(false);
   const [testStats, setTestStats] = useState<TestStats | null>(null);
@@ -86,6 +89,23 @@ const DeckDetail: React.FC = () => {
   const handleAddCardSuccess = () => {
     // Card list will be automatically refreshed due to query invalidation
     console.log('Card added successfully');
+  };
+
+  const handleEditCard = (card: FlashCard) => {
+    setEditingCard(card);
+    setShowEditCardDialog(true);
+  };
+
+  const handleEditCardSuccess = () => {
+    setEditingCard(null);
+    setShowEditCardDialog(false);
+    // Card list will be automatically refreshed due to query invalidation
+    console.log('Card updated successfully');
+  };
+
+  const handleDeleteCard = (card: FlashCard) => {
+    // TODO: Implement delete confirmation dialog
+    console.log('Delete card:', card.id);
   };
 
   const handleStartTest = async () => {
@@ -325,6 +345,8 @@ const DeckDetail: React.FC = () => {
                 cards={filteredAndSortedCards}
                 playingAudio={playingAudio}
                 onPlayAudio={playAudio}
+                onEditCard={handleEditCard}
+                onDeleteCard={handleDeleteCard}
               />
             </div>
           </ScrollArea>
@@ -337,6 +359,14 @@ const DeckDetail: React.FC = () => {
         open={showAddCardDialog}
         onOpenChange={setShowAddCardDialog}
         onSuccess={handleAddCardSuccess}
+      />
+
+      {/* Edit Card Dialog */}
+      <EditCardDialog
+        card={editingCard}
+        open={showEditCardDialog}
+        onOpenChange={setShowEditCardDialog}
+        onSuccess={handleEditCardSuccess}
       />
 
       {/* Test Configuration Modal */}

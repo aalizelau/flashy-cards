@@ -201,6 +201,36 @@ def add_card_to_deck(
             raise HTTPException(status_code=404, detail="Deck not found or access denied")
         raise HTTPException(status_code=400, detail=str(e))
 
+@router.put("/{deck_id}/cards/{card_id}", response_model=Card)
+def update_card(
+    deck_id: int,
+    card_id: int,
+    card_data: CardCreate,
+    request: Request,
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
+):
+    try:
+        user_id = current_user["uid"]
+        
+        # Ensure user exists in database
+        user_service = UserService(db)
+        user_service.get_or_create_user(current_user["firebase_token"])
+        
+        deck_service = DeckService(db)
+        db_card = deck_service.update_card(deck_id, card_id, card_data, user_id)
+        
+        # Convert to Card schema with audio URL
+        card_schema = Card.model_validate(db_card)
+        base_url = str(request.base_url).rstrip('/')
+        card_schema.audio_url = f"{base_url}/audio/{db_card.audio_path.replace('voices/', '')}" if db_card.audio_path else None
+        
+        return card_schema
+    except Exception as e:
+        if "not found or access denied" in str(e):
+            raise HTTPException(status_code=404, detail="Card not found or access denied")
+        raise HTTPException(status_code=400, detail=str(e))
+
 @router.delete("/{deck_id}/cards/{card_id}")
 def delete_card(
     deck_id: int,
