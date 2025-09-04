@@ -71,7 +71,6 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
 
         {/* Start Practice Section */}
         <div className="mb-8">
-          {/* <h2 className="text-2xl font-bold text-darkest-blue mb-6">Start Practice</h2> */}
           
           <div className="grid grid-cols-2 gap-4">
             {/* Daily Challenges - Large card */}
@@ -82,7 +81,7 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
               <CardContent className="p-6 h-full flex flex-col justify-between">
                 <div>
                   <div className="flex items-center gap-8 mb-4">
-                    <div className="p-3 bg-main-secondary rounded-full">
+                    <div className="p-3 bg-home-gray-beige-bg/40 rounded-full">
                       <Rocket className="w-6 h-6 text-main-foreground" />
                     </div>
                     <h3 className="text-4xl font-md text-main-foreground font-alumni-sans">
@@ -94,7 +93,7 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
                   </p>
                 </div>
                 <div className="flex justify-end">
-                  <div className="p-2 bg-main-secondary rounded-full shadow-custom-dark">
+                  <div className="p-2 rounded-full ">
                     <ArrowRight className="w-5 h-5 text-main-foreground" />
                   </div>
                 </div>
@@ -108,14 +107,14 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
             >
               <CardContent className="p-6 flex items-center justify-between">
                 <div className="flex items-center gap-8">
-                  <div className="p-3 bg-main-dark-gray rounded-full">
+                  <div className="p-3 bg-home-gray-neutral-bg rounded-full">
                     <Sparkles className="w-6 h-6 text-main-foreground" />
                   </div>
                   <h3 className="text-3xl font-md text-main-foreground font-alumni-sans">
                     Test Newly Added
                   </h3>
                 </div>
-                <div className="p-2 bg-main-dark-gray rounded-full shadow-custom-dark">
+                <div className="p-2 rounded-full">
                   <ArrowRight className="w-5 h-5 text-main-foreground" />
                 </div>
               </CardContent>
@@ -128,14 +127,14 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
             >
               <CardContent className="p-6 flex items-center justify-between">
                 <div className="flex items-center gap-8">
-                  <div className="p-3 bg-main-primary rounded-full">
+                  <div className="p-3 bg-home-gray-beige-bg rounded-full">
                     <WalletCards className="w-6 h-6 text-main-foreground" />
                   </div>
                   <h3 className="text-3xl font-md text-main-foreground font-alumni-sans">
                     Test By Decks
                   </h3>
                 </div>
-               <div className="p-2 bg-main-dark-gray rounded-full shadow-custom-dark">
+               <div className="p-2  rounded-full">
                   <ArrowRight className="w-5 h-5 text-main-foreground" />
                 </div>
               </CardContent>
@@ -148,14 +147,14 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
             >
               <CardContent className="p-6 flex items-center justify-between">
                 <div className="flex items-center gap-8">
-                  <div className="p-3 bg-main-secondary rounded-full">
+                  <div className="p-3 bg-home-gray-green-bg rounded-full">
                     <Swords className="w-6 h-6 text-main-foreground" />
                   </div>
                   <h3 className="text-3xl font-md text-main-foreground font-alumni-sans">
                     Test All Words
                   </h3>
                 </div>
-                 <div className="p-2 bg-main-secondary rounded-full shadow-custom-dark">
+                 <div className="p-2  rounded-full">
                   <ArrowRight className="w-5 h-5 text-main-foreground" />
                 </div>
               </CardContent>
@@ -168,14 +167,14 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
             >
               <CardContent className="p-6 flex items-center justify-between">
                 <div className="flex items-center gap-8">
-                  <div className="p-3 bg-main-dark-gray rounded-full">
+                  <div className="p-3 bg-home-gray-blue-bg rounded-full">
                     <MousePointerClick className="w-6 h-6 text-main-foreground" />
                   </div>
                   <h3 className="text-3xl font-md text-main-foreground font-alumni-sans">
                     Test Unfamiliar
                   </h3>
                 </div>
-                <div className="p-2 bg-main-dark-gray rounded-full shadow-custom-dark">
+                <div className="p-2  rounded-full">
                   <ArrowRight className="w-5 h-5 text-main-foreground" />
                 </div>
               </CardContent>

@@ -40,10 +40,15 @@ All colors MUST be HSL.
     --main-primary: #A8B2C4;
     --main-dark-gray: #B8BEC7;
 
-    --home-light-gray: #E8EAED;
-    --home-gray-green: #E2E7E9;
-    --home-gray-neutral: #DCE0E4;
-    --home-gray-beige: #D6D8DC;
+    --home-light-gray: 216 12% 92%;
+    --home-gray-green: 197 14% 90%;
+    --home-gray-green-bg: 204 13% 85%;
+    --home-gray-neutral: 210 13% 88%;
+    --home-gray-neutral-bg: 212 15% 83%;
+    --home-gray-beige: 220 8% 85%;
+    --home-gray-beige-bg: 218 11% 80%;
+    --home-gray-blue-bg: 222 14% 82%;
+
 
     --de-yellow: 35 21% 59%;
     --de-green: 189 30% 63%;
