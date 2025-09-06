@@ -31,8 +31,8 @@ const navItems = [
   { icon: HomeIcon, label: 'Home', path: '/dashboard' },
   { icon: PlusIcon, label: 'Create', path: '/create-deck' },
   { icon: BookOpenIcon, label: 'Browse', path: '/all-decks' },
-  { icon: ChartColumnIncreasing, label: 'Analytics', path: '/analytics' },
-  { icon: Shapes, label: 'Community', path: null },
+  { icon: ChartColumnIncreasing, label: 'Coming soon', path: '/analytics' },
+  { icon: Shapes, label: 'Coming soon', path: null },
 ];
 
 const BREAKPOINTS = {
@@ -224,11 +224,13 @@ const SidebarNav: React.FC = () => {
             </DropdownMenuItem>
             <DropdownMenuItem className="hover:bg-gray-100">
               <User className="mr-2 h-4 w-4" />
-              Preferences
+              {/* Preferences */}
+              Coming soon
             </DropdownMenuItem>
             <DropdownMenuItem className="hover:bg-gray-100">
               <HelpCircle className="mr-2 h-4 w-4" />
-              Learn more
+              {/* Learn more */}
+              Coming soon
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem 
