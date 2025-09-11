@@ -147,18 +147,22 @@ export function LanguageSelector({
 
   return (
     <Card className="p-6">
-      <div className="mb-6">
-        <div className="flex items-center gap-3 mb-2">
-          <Globe className="w-6 h-6 text-gray-600" />
-          <h2 className="text-xl font-semibold">{title}</h2>
+      {(title || description) && (
+        <div className="mb-6">
+          {title && (
+            <div className="flex items-center gap-3 mb-2">
+              <Globe className="w-6 h-6 text-gray-600" />
+              <h2 className="text-xl font-semibold">{title}</h2>
+            </div>
+          )}
+          {description && <p className="text-gray-600">{description}</p>}
+          {currentLang && (
+            <p className="text-sm text-gray-500 mt-1">
+              Currently using: <span className="font-medium">{currentLang.flag} {currentLang.name}</span>
+            </p>
+          )}
         </div>
-        <p className="text-gray-600">{description}</p>
-        {currentLang && (
-          <p className="text-sm text-gray-500 mt-1">
-            Currently using: <span className="font-medium">{currentLang.flag} {currentLang.name}</span>
-          </p>
-        )}
-      </div>
+      )}
       
       <div className="space-y-4">
         <RadioGroup

@@ -217,7 +217,6 @@ function CreateDeck() {
         {/* Header */}
         <div className=" mb-8">
           <div className="flex items-center justify-start gap-3 mb-4 mt-10">
-            {/* <BookOpen className="w-8 h-8 text-test-chapters-foreground" /> */}
             <h1 className="text-4xl font-semibold font-alumni-sans text-main-foreground">CREATE A NEW DECK</h1>
           </div>
         </div>
