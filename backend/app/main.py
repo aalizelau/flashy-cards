@@ -4,7 +4,7 @@ from fastapi.staticfiles import StaticFiles
 from pathlib import Path
 # Database schema is now managed by Alembic migrations
 
-from app.routers import decks, sessions, analytics, users
+from app.routers import decks, sessions, analytics, users, export
 import app.firebase_config  # Initialize Firebase
 from app.auth_middleware import get_current_user
 
@@ -56,4 +56,5 @@ app.include_router(decks.router)
 app.include_router(sessions.router)
 app.include_router(analytics.router)
 app.include_router(users.router)
+app.include_router(export.router)
 
