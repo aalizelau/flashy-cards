@@ -47,7 +47,7 @@ export function LanguageSelector({
 
   const handleSave = async () => {
     if (!hasChanges) return;
-    
+
     if (showConfirmation) {
       const selectedLang = LANGUAGES.find(lang => lang.code === selectedLanguage);
       const confirmed = window.confirm(
@@ -55,9 +55,9 @@ export function LanguageSelector({
       );
       if (!confirmed) return;
     }
-    
+
     setIsLoading(true);
-    
+
     try {
       const result = await onLanguageChange(selectedLanguage);
       if (result.error) {
@@ -87,7 +87,7 @@ export function LanguageSelector({
             <p className="text-xs text-gray-500">{description}</p>
           </div>
         </div>
-        
+
         <div className="space-y-3">
           <RadioGroup
             value={selectedLanguage}
@@ -117,7 +117,7 @@ export function LanguageSelector({
               </div>
             ))}
           </RadioGroup>
-          
+
           {hasChanges && (
             <div className="flex gap-2 pt-2 border-t">
               <Button
@@ -148,22 +148,17 @@ export function LanguageSelector({
   return (
     <Card className="p-6">
       {(title || description) && (
-        <div className="mb-6">
+        <div className="mb-3">
           {title && (
             <div className="flex items-center gap-3 mb-2">
               <Globe className="w-6 h-6 text-gray-600" />
               <h2 className="text-xl font-semibold">{title}</h2>
             </div>
           )}
-          {description && <p className="text-gray-600">{description}</p>}
-          {currentLang && (
-            <p className="text-sm text-gray-500 mt-1">
-              Currently using: <span className="font-medium">{currentLang.flag} {currentLang.name}</span>
-            </p>
-          )}
+          {description && <p className="text-sm font-medium text-gray-700">{description}</p>}
         </div>
       )}
-      
+
       <div className="space-y-4">
         <RadioGroup
           value={selectedLanguage}
@@ -193,7 +188,7 @@ export function LanguageSelector({
             </div>
           ))}
         </RadioGroup>
-        
+
         {hasChanges && (
           <div className="flex gap-3 pt-4 border-t">
             <Button

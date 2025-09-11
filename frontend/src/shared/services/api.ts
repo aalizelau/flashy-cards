@@ -187,6 +187,11 @@ class ApiClient {
       method: 'DELETE',
     });
   }
+
+  // Export all user data
+  async exportAllData(): Promise<any> {
+    return this.request<any>('/export/all');
+  }
 }
 
 export const apiClient = new ApiClient();
