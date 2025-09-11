@@ -13,31 +13,31 @@ export default function Settings() {
   const handleExportData = async () => {
     try {
       setIsExporting(true);
-      
+
       // Call the export API
       const exportData = await apiClient.exportAllData();
-      
+
       // Create a downloadable JSON file
       const dataStr = JSON.stringify(exportData, null, 2);
       const dataBlob = new Blob([dataStr], { type: 'application/json' });
-      
+
       // Create download link
       const url = URL.createObjectURL(dataBlob);
       const link = document.createElement('a');
       link.href = url;
-      
+
       // Generate filename with timestamp
       const timestamp = new Date().toISOString().split('T')[0];
       link.download = `flash-wise-buddy-export-${timestamp}.json`;
-      
+
       // Trigger download
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      
+
       // Clean up
       URL.revokeObjectURL(url);
-      
+
     } catch (error) {
       console.error('Export failed:', error);
       alert('Failed to export data. Please try again.');
@@ -130,7 +130,7 @@ export default function Settings() {
               <div className="space-y-4">
                 <div>
                   <p className="text-sm text-gray-600 mb-4">
-                    Download all your flashcards, decks, and progress data as a JSON file. 
+                    Download all your flashcards, decks, and progress data as a JSON file.
                     This can be used for backup or importing into another device.
                   </p>
                   <Button

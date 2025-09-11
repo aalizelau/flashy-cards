@@ -18,12 +18,23 @@ def get_db():
     finally:
         db.close()
 
-class ExportCard(schemas.Card):
+class ExportCard(BaseModel):
     """Card schema for export without audio_url"""
-    audio_url: Optional[str] = None
+    id: int
+    deck_id: int
+    front: str
+    back: str
+    example_sentence_1: Optional[str] = None
+    sentence_translation_1: Optional[str] = None
+    example_sentence_2: Optional[str] = None
+    sentence_translation_2: Optional[str] = None
+    accuracy: float = 0.0
+    total_attempts: int = 0
+    correct_answers: int = 0
+    last_reviewed_at: Optional[datetime] = None
+    created_at: datetime
     
-    class Config:
-        exclude = {"audio_url"}
+    model_config = {"from_attributes": True}
 
 class ExportDeck(BaseModel):
     id: int
@@ -32,6 +43,8 @@ class ExportDeck(BaseModel):
     progress: float
     card_count: int
     cards: List[ExportCard]
+    
+    model_config = {"from_attributes": True}
 
 class ExportAnalytics(BaseModel):
     total_cards_studied: int
@@ -83,23 +96,7 @@ def export_all_data(
             ).all()
             
             # Convert cards to export format (excluding audio_url)
-            export_cards = [
-                ExportCard(
-                    id=card.id,
-                    deck_id=card.deck_id,
-                    front=card.front,
-                    back=card.back,
-                    example_sentence_1=card.example_sentence_1,
-                    sentence_translation_1=card.sentence_translation_1,
-                    example_sentence_2=card.example_sentence_2,
-                    sentence_translation_2=card.sentence_translation_2,
-                    accuracy=card.accuracy,
-                    total_attempts=card.total_attempts,
-                    correct_answers=card.correct_answers,
-                    last_reviewed_at=card.last_reviewed_at,
-                    created_at=card.created_at
-                ) for card in cards
-            ]
+            export_cards = [ExportCard.model_validate(card) for card in cards]
             
             export_deck = ExportDeck(
                 id=deck.id,
