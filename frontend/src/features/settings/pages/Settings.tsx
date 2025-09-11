@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useAuth } from '@/features/auth/contexts/AuthContext';
 import { LanguageSelector } from '@/shared/components/LanguageSelector';
 import { Card } from '@/shared/components/ui/card';
 import { Button } from '@/shared/components/ui/button';
-import { User, Settings as SettingsIcon, Download, Loader2 } from 'lucide-react';
+import { User, Settings as SettingsIcon, Download, Upload, Loader2, AlertTriangle } from 'lucide-react';
 import { apiClient } from '@/shared/services/api';
 
 export default function Settings() {
   const { userProfile, setLanguage, loading } = useAuth();
   const [isExporting, setIsExporting] = useState(false);
+  const [isImporting, setIsImporting] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleExportData = async () => {
     try {
@@ -43,6 +45,56 @@ export default function Settings() {
       alert('Failed to export data. Please try again.');
     } finally {
       setIsExporting(false);
+    }
+  };
+
+  const handleImportData = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.name.endsWith('.json')) {
+      alert('Please select a JSON file');
+      return;
+    }
+
+    // Confirm destructive action
+    const confirmed = window.confirm(
+      'This will PERMANENTLY DELETE all your current data and replace it with the imported data.\n\n' +
+      'This action cannot be undone. Make sure you have exported your current data as backup.\n\n' +
+      'Do you want to continue?'
+    );
+
+    if (!confirmed) {
+      // Reset file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+      return;
+    }
+
+    try {
+      setIsImporting(true);
+      
+      const result = await apiClient.importAllData(file);
+      
+      if (result.success) {
+        alert(`Import successful!\n\nImported:\n• ${result.imported_decks} decks\n• ${result.imported_cards} cards\n\nThe page will now reload.`);
+        // Reload the page to refresh all data
+        window.location.reload();
+      } else {
+        alert(`Import failed: ${result.message}`);
+      }
+      
+    } catch (error) {
+      console.error('Import failed:', error);
+      alert(`Import failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    } finally {
+      setIsImporting(false);
+      // Reset file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
     }
   };
 
@@ -125,10 +177,11 @@ export default function Settings() {
 
           {/* Data Management */}
           <div>
-            <h2 className="text-md font-semibold text-gray-700 mb-3">Export/ Import</h2>
+            <h2 className="text-md font-semibold text-gray-700 mb-3">Data Management</h2>
             <Card className="p-6">
-              <div className="space-y-4">
+              <div className="space-y-6">
                 <div>
+                  {/* <h3 className="text-sm font-medium text-gray-700 mb-2">Export Your Data</h3> */}
                   <p className="text-sm text-gray-600 mb-4">
                     Download all your flashcards, decks, and progress data as a JSON file.
                     This can be used for backup or importing into another device.
@@ -143,8 +196,41 @@ export default function Settings() {
                     ) : (
                       <Download className="w-4 h-4" />
                     )}
-                    {isExporting ? 'Exporting...' : 'Export All Data'}
+                    {isExporting ? 'Exporting...' : 'Export Data'}
                   </Button>
+                </div>
+
+                <div className="border-t pt-6">
+                  {/* <h3 className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                    Import Data
+                  </h3> */}
+                  <p className="text-sm text-gray-600 mb-4">
+                    This will
+                    replace all your current data it with the imported data. Make sure to export your current data first as backup.
+                  </p>
+                  <div className="flex items-center gap-3">
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept=".json"
+                      onChange={handleImportData}
+                      disabled={isImporting}
+                      className="hidden"
+                      id="import-file"
+                    />
+                    <Button
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={isImporting}
+                      className="flex items-center gap-2"
+                    >
+                      {isImporting ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <Upload className="w-4 h-4" />
+                      )}
+                      {isImporting ? 'Importing...' : 'Import Data'}
+                    </Button>
+                  </div>
                 </div>
               </div>
             </Card>
@@ -156,7 +242,6 @@ export default function Settings() {
             <div className="space-y-2 text-sm text-gray-600">
               <p>• Notification preferences</p>
               <p>• Study session defaults</p>
-              <p>• Import data</p>
               <p>• Theme customization</p>
               <p>• Account management</p>
             </div>

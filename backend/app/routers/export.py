@@ -1,8 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
 from sqlalchemy.orm import Session
 from datetime import datetime
 from typing import List, Optional
 from pydantic import BaseModel
+import json
 
 from app.database import SessionLocal
 from app import models, schemas
@@ -67,6 +68,12 @@ class FullExportResponse(BaseModel):
     export_metadata: ExportMetadata
     decks: List[ExportDeck]
     analytics: Optional[ExportAnalytics] = None
+
+class ImportResult(BaseModel):
+    success: bool
+    message: str
+    imported_decks: int
+    imported_cards: int
 
 @router.get("/all", response_model=FullExportResponse)
 def export_all_data(
@@ -148,3 +155,128 @@ def export_all_data(
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Export failed: {str(e)}")
+
+@router.post("/import", response_model=ImportResult)
+def import_all_data(
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
+):
+    """Import all user data - DESTRUCTIVE: replaces all existing data"""
+    try:
+        user_id = current_user["uid"]
+        
+        # Ensure user exists in database
+        user_service = UserService(db)
+        user_service.get_or_create_user(current_user["firebase_token"])
+        
+        # Read and parse the uploaded file
+        if not file.filename.endswith('.json'):
+            raise HTTPException(status_code=400, detail="File must be a JSON file")
+        
+        content = file.file.read()
+        try:
+            import_data = json.loads(content)
+        except json.JSONDecodeError:
+            raise HTTPException(status_code=400, detail="Invalid JSON file")
+        
+        # Validate the import data structure
+        if not all(key in import_data for key in ['export_metadata', 'decks']):
+            raise HTTPException(status_code=400, detail="Invalid export file format")
+        
+        # Start transaction for atomic operation
+        db.begin()
+        
+        try:
+            # DESTRUCTIVE: Delete all existing user data
+            # Delete study sessions first (foreign key constraint)
+            db.query(models.StudySession).filter(
+                models.StudySession.user_id == user_id
+            ).delete()
+            
+            # Delete analytics
+            db.query(models.TestAnalytics).filter(
+                models.TestAnalytics.user_id == user_id
+            ).delete()
+            
+            # Delete cards (will cascade from decks, but explicit for clarity)
+            deck_ids = db.query(models.Deck.id).filter(
+                models.Deck.user_id == user_id
+            ).subquery()
+            
+            db.query(models.Card).filter(
+                models.Card.deck_id.in_(deck_ids)
+            ).delete(synchronize_session=False)
+            
+            # Delete decks
+            db.query(models.Deck).filter(
+                models.Deck.user_id == user_id
+            ).delete()
+            
+            # Import new data
+            imported_decks = 0
+            imported_cards = 0
+            
+            for deck_data in import_data['decks']:
+                # Create new deck
+                new_deck = models.Deck(
+                    user_id=user_id,
+                    name=deck_data['name'],
+                    created_at=datetime.fromisoformat(deck_data['created_at'].replace('Z', '+00:00')),
+                    progress=deck_data['progress'],
+                    card_count=deck_data['card_count']
+                )
+                db.add(new_deck)
+                db.flush()  # Get the new deck ID
+                
+                imported_decks += 1
+                
+                # Import cards for this deck
+                for card_data in deck_data['cards']:
+                    new_card = models.Card(
+                        deck_id=new_deck.id,
+                        front=card_data['front'],
+                        back=card_data['back'],
+                        example_sentence_1=card_data.get('example_sentence_1'),
+                        sentence_translation_1=card_data.get('sentence_translation_1'),
+                        example_sentence_2=card_data.get('example_sentence_2'),
+                        sentence_translation_2=card_data.get('sentence_translation_2'),
+                        accuracy=card_data['accuracy'],
+                        total_attempts=card_data['total_attempts'],
+                        correct_answers=card_data['correct_answers'],
+                        last_reviewed_at=datetime.fromisoformat(card_data['last_reviewed_at'].replace('Z', '+00:00')) if card_data.get('last_reviewed_at') else None,
+                        created_at=datetime.fromisoformat(card_data['created_at'].replace('Z', '+00:00'))
+                    )
+                    db.add(new_card)
+                    imported_cards += 1
+            
+            # Import analytics if present
+            if import_data.get('analytics'):
+                analytics_data = import_data['analytics']
+                new_analytics = models.TestAnalytics(
+                    user_id=user_id,
+                    total_cards_studied=analytics_data['total_cards_studied'],
+                    total_correct_answers=analytics_data['total_correct_answers'],
+                    cards_mastered=analytics_data['cards_mastered'],
+                    overall_average_progress=analytics_data['overall_average_progress']
+                )
+                db.add(new_analytics)
+            
+            # Commit the transaction
+            db.commit()
+            
+            return ImportResult(
+                success=True,
+                message=f"Successfully imported {imported_decks} decks with {imported_cards} cards",
+                imported_decks=imported_decks,
+                imported_cards=imported_cards
+            )
+            
+        except Exception as e:
+            db.rollback()
+            raise e
+            
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Import failed: {str(e)}")

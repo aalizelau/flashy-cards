@@ -192,6 +192,45 @@ class ApiClient {
   async exportAllData(): Promise<any> {
     return this.request<any>('/export/all');
   }
+
+  // Import all user data (destructive)
+  async importAllData(file: File): Promise<{ success: boolean; message: string; imported_decks: number; imported_cards: number }> {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    // Get authentication token
+    let authHeaders = {};
+    try {
+      const user = auth.currentUser;
+      if (user) {
+        const token = await user.getIdToken();
+        authHeaders = {
+          'Authorization': `Bearer ${token}`,
+        };
+      } else {
+        throw new Error('User not authenticated');
+      }
+    } catch (error) {
+      console.error('Failed to get auth token for API request:', error);
+      throw new Error('Authentication required');
+    }
+
+    const response = await fetch(`${BASE_URL}/export/import`, {
+      method: 'POST',
+      headers: authHeaders,
+      body: formData,
+    });
+
+    if (!response.ok) {
+      if (response.status === 401 || response.status === 403) {
+        throw new Error('Authentication failed. Please login again.');
+      }
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.detail || `HTTP error! status: ${response.status}`);
+    }
+
+    return await response.json();
+  }
 }
 
 export const apiClient = new ApiClient();
