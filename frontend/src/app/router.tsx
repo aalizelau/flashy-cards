@@ -11,6 +11,7 @@ import EditDeck from "../features/decks/components/EditDeck";
 import Login from "../features/auth/components/login";
 import Onboarding from "../features/auth/components/Onboarding";
 import Settings from "../features/settings/pages/Settings";
+import AllCommunityDecks from "../features/community/components/AllCommunityDecks";
 import ProtectedRoute from "../shared/components/auth/ProtectedRoute";
 
 export const AppRouter = () => (
@@ -26,6 +27,7 @@ export const AppRouter = () => (
     <Route path="/all-decks" element={<ProtectedRoute><AllDecks /></ProtectedRoute>} />
     <Route path="/decks/:collectionName" element={<ProtectedRoute><DeckDetail /></ProtectedRoute>} />
     <Route path="/analytics" element={<ProtectedRoute><AnalyticsPage /></ProtectedRoute>} />
+    <Route path="/community" element={<ProtectedRoute><AllCommunityDecks /></ProtectedRoute>} />
     <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
     <Route path="*" element={<ProtectedRoute><NotFound /></ProtectedRoute>} />

@@ -32,7 +32,7 @@ const navItems = [
   { icon: PlusIcon, label: 'Create', path: '/create-deck' },
   { icon: BookOpenIcon, label: 'Browse', path: '/all-decks' },
   { icon: ChartColumnIncreasing, label: 'Coming soon', path: '/analytics' },
-  { icon: Shapes, label: 'Coming soon', path: null },
+  { icon: Shapes, label: 'Community', path: '/community' },
 ];
 
 const BREAKPOINTS = {
