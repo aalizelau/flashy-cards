@@ -3,7 +3,10 @@
     "allow": [
       "Bash(mkdir:*)",
       "Bash(find:*)",
-      "Bash(uv pip compile:*)"
+      "Bash(uv pip compile:*)",
+      "Bash(source:*)",
+      "Bash(alembic revision:*)",
+      "Bash(alembic upgrade:*)"
     ],
     "deny": []
   }

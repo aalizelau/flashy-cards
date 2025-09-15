@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import Optional
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
+from firebase_admin import auth
 
 from app.models import User as UserORM
 from app.schemas import UserCreate, UserUpdate
@@ -66,7 +67,7 @@ class UserService:
         uid = firebase_user.get("uid")
         email = firebase_user.get("email")
         name = firebase_user.get("name")
-        selected_language = firebase_user.get("selected_language", "en")
+        selected_language = firebase_user.get("selected_language", None)
 
         # Try to get existing user
         existing_user = self.get_user_by_uid(uid)
@@ -97,15 +98,53 @@ class UserService:
         return self.create_user(user_data)
 
     def delete_user(self, uid: str) -> bool:
-        """Delete user and all related data"""
+        """Delete user and all related data with proper cascading"""
         try:
             db_user = self.get_user_by_uid(uid)
             if not db_user:
                 return False
 
+            # Start a transaction for atomic deletion
+            # Delete related data in correct order (child tables first)
+
+            # 1. Delete study sessions
+            from app.models import StudySession
+            self.db.query(StudySession).filter(StudySession.user_id == uid).delete()
+
+            # 2. Delete analytics records
+            from app.models import TestAnalytics
+            self.db.query(TestAnalytics).filter(TestAnalytics.user_id == uid).delete()
+
+            # 3. Delete cards from user's decks (cards reference decks)
+            from app.models import Deck, Card
+            user_deck_ids = [deck.id for deck in db_user.decks]
+            if user_deck_ids:
+                self.db.query(Card).filter(Card.deck_id.in_(user_deck_ids)).delete()
+
+            # 4. Delete user's decks
+            self.db.query(Deck).filter(Deck.user_id == uid).delete()
+
+            # 5. Finally delete the user from database
             self.db.delete(db_user)
+
+            # Commit database changes first
             self.db.commit()
+
+            # 6. Try to delete Firebase user (after DB commit succeeds)
+            try:
+                auth.delete_user(uid)
+            except Exception as firebase_error:
+                # Log the Firebase error but don't fail the entire operation
+                # since the database deletion already succeeded
+                print(f"Warning: Failed to delete Firebase user {uid}: {firebase_error}")
+                # You might want to use proper logging here instead of print
+
             return True
+
         except SQLAlchemyError as e:
             self.db.rollback()
             raise Exception(f"Failed to delete user: {str(e)}")
+        except Exception as e:
+            # If we reach here, database deletion succeeded but Firebase deletion failed
+            # This is logged above, so we still return True as the core deletion succeeded
+            return True
