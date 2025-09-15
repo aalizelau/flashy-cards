@@ -40,6 +40,7 @@ function CreateDeck() {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isLoading, setIsLoading] = useState(false);
   const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
+  const [isPublic, setIsPublic] = useState(false);
 
   // Helper function to get language display name
   const getLanguageDisplayName = (languageCode?: string | null): string => {
@@ -195,6 +196,11 @@ function CreateDeck() {
         cards: apiCards
       };
 
+      // Mock: Log the public deck setting (no actual API integration)
+      if (isPublic) {
+        console.log('Deck will be set as public:', deckData.name);
+      }
+
       const response = await apiClient.createDeckWithCards(deckData);
       
       // Navigate to the newly created deck detail page
@@ -244,6 +250,33 @@ function CreateDeck() {
                 {errors.deckTitle}
               </p>
             )}
+          </div>
+
+          {/* Public Deck Toggle */}
+          <div>
+            <h3 className="text-md font-semibold text-gray-700 mb-3">
+              Set as public
+            </h3>
+            <div className="flex items-center space-x-3">
+              <button
+                type="button"
+                onClick={() => setIsPublic(!isPublic)}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                  isPublic
+                    ? 'bg-muted-foreground'
+                    : 'bg-gray-200'
+                }`}
+              >
+                <span
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                    isPublic ? 'translate-x-6' : 'translate-x-1'
+                  }`}
+                />
+              </button>
+              <label className="text-sm text-gray-600 cursor-pointer" onClick={() => setIsPublic(!isPublic)}>
+                Allow other users to discover and use this deck
+              </label>
+            </div>
           </div>
 
           {/* Import Mode Toggle */}

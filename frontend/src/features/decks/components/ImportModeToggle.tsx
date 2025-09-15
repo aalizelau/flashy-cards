@@ -10,7 +10,7 @@ interface ImportModeToggleProps {
 function ImportModeToggle({ importMode, onModeChange }: ImportModeToggleProps) {
   return (
     <div>
-      <h2 className="text-md font-semibold text-gray-900 mb-4">Choose Import Method</h2>
+      <h2 className="text-md font-semibold text-gray-700 mb-4">Choose Import Method</h2>
       <div className="bg-white/80 rounded-xl border border-gray-200 p-6">
         <div className="flex gap-4">
           <button

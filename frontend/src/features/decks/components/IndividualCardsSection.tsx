@@ -41,9 +41,9 @@ function IndividualCardsSection({
   }, [flashcards.length]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-md font-semibold text-gray-900">Flashcards</h2>
+        <h2 className="text-md font-semibold text-gray-700">Flashcards</h2>
         <span className="text-sm text-gray-900 bg-muted-foreground/20 px-3 py-1 rounded-full ">
           {flashcards.length} {flashcards.length === 1 ? 'card' : 'cards'}
         </span>
