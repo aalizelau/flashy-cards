@@ -1,6 +1,18 @@
-# Flashy Cards
+<div align="center">
+  <img width="944" height="337" alt="Frame 10" src="https://github.com/user-attachments/assets/999b233b-c16f-4a09-b7c7-34f0dba84a2b" />
+  <hr/>
+  <p>
+    A full-stack flashcard application with Firebase authentication, React frontend, 
+    and FastAPI backend. The app provides multiple study modes including browsing, testing, 
+    and reviewing flashcards with analytics and progress tracking.
+  </p>
 
-A full-stack flashcard application with Firebase authentication, React frontend, and FastAPI backend. The app provides multiple study modes including browsing, testing, and reviewing flashcards with analytics and progress tracking.
+  <p>
+    ✨ <a href="http://64.23.144.100/" target="_blank">Live Demo</a> ✨
+  </p>
+</div>
+
+
 
 ## Features
 
@@ -18,6 +30,7 @@ A full-stack flashcard application with Firebase authentication, React frontend,
 - Vite
 - shadcn/ui + Tailwind CSS
 - React Query
+
 - Firebase SDK
 
 ### Backend
