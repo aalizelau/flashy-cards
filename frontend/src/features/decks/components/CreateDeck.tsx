@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { Button } from '@/shared/components/ui/button';
 import { apiClient } from '@/shared/services/api';
 import { DeckWithCardsCreate, CardCreate } from '@/shared/types/api';
 import { useAuth } from '@/features/auth/contexts/AuthContext';
@@ -330,20 +331,21 @@ function CreateDeck() {
 
           {/* Create Deck Button */}
           <div className="flex justify-end pt-8">
-            <button
+            <Button
               type="submit"
               disabled={isLoading}
-              className="flex items-center gap-3 px-6 py-4 bg-main-foreground text-white font-semibold font-alumni-sans rounded-xl hover:shadow-xl hover:from-blue-700 hover:to-indigo-700 transform hover:scale-105 transition-all duration-200 text-2xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+              className="flex items-center gap-3 px-5 py-8 text-md font-semibold rounded-xl"
+              size="lg"
             >
               {isLoading ? (
                 <>
-                  <Loader2 className="w-6 h-6 animate-spin" />
+                  <Loader2 className="w-5 h-5 animate-spin" />
                   Creating...
                 </>
               ) : (
                 'Create Deck'
               )}
-            </button>
+            </Button>
           </div>
         </form>
 

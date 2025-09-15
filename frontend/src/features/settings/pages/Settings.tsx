@@ -302,8 +302,8 @@ export default function Settings() {
                 <div className="flex items-start gap-3">
                   <AlertTriangle className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
                   <div>
-                    <h3 className="text-sm font-medium text-red-800 mb-2">Delete Account</h3>
-                    <p className="text-sm text-red-700 mb-4">
+                    {/* <h3 className="text-sm font-medium text-red-800 mb-2">Delete Account</h3> */}
+                    <p className="text-sm text-red-700 ">
                       Permanently delete your account and all associated data including flashcards,
                       study progress, and analytics. This action cannot be undone.
                     </p>
