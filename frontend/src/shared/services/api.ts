@@ -231,6 +231,13 @@ class ApiClient {
 
     return await response.json();
   }
+
+  // Delete user account and all associated data
+  async deleteAccount(): Promise<{ message: string }> {
+    return this.request<{ message: string }>('/users/me', {
+      method: 'DELETE',
+    });
+  }
 }
 
 export const apiClient = new ApiClient();

@@ -3,13 +3,14 @@ import { useAuth } from '@/features/auth/contexts/AuthContext';
 import { LanguageSelector } from '@/shared/components/LanguageSelector';
 import { Card } from '@/shared/components/ui/card';
 import { Button } from '@/shared/components/ui/button';
-import { User, Settings as SettingsIcon, Download, Upload, Loader2, AlertTriangle } from 'lucide-react';
+import { User, Settings as SettingsIcon, Download, Upload, Loader2, AlertTriangle, Trash2 } from 'lucide-react';
 import { apiClient } from '@/shared/services/api';
 
 export default function Settings() {
-  const { userProfile, setLanguage, loading } = useAuth();
+  const { userProfile, setLanguage, loading, logout } = useAuth();
   const [isExporting, setIsExporting] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleExportData = async () => {
@@ -95,6 +96,52 @@ export default function Settings() {
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    // First confirmation
+    const firstConfirm = window.confirm(
+      'Are you sure you want to delete your account?\n\n' +
+      'This will PERMANENTLY DELETE:\n' +
+      '• All your flashcard decks\n' +
+      '• All your study progress\n' +
+      '• All your analytics data\n' +
+      '• Your user profile\n\n' +
+      'This action cannot be undone!'
+    );
+
+    if (!firstConfirm) return;
+
+    // Second confirmation for extra safety
+    const secondConfirm = window.confirm(
+      'FINAL WARNING!\n\n' +
+      'You are about to permanently delete your account and ALL associated data.\n\n' +
+      'Type "DELETE" in your mind and click OK to proceed, or Cancel to abort.'
+    );
+
+    if (!secondConfirm) return;
+
+    try {
+      setIsDeleting(true);
+
+      // Call the delete account API
+      await apiClient.deleteAccount();
+
+      // Show success message
+      alert('Your account has been successfully deleted. You will now be logged out.');
+
+      // Log out the user
+      await logout();
+
+      // Redirect to home/login page
+      window.location.href = '/';
+
+    } catch (error) {
+      console.error('Account deletion failed:', error);
+      alert(`Failed to delete account: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -246,6 +293,39 @@ export default function Settings() {
               <p>• Account management</p>
             </div>
           </Card>
+
+          {/* Account Deletion Section */}
+          <div>
+            <h2 className="text-md font-semibold text-gray-700 mb-3">Danger Zone</h2>
+            <Card className="p-6 border-red-200 bg-red-50">
+              <div className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <AlertTriangle className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <h3 className="text-sm font-medium text-red-800 mb-2">Delete Account</h3>
+                    <p className="text-sm text-red-700 mb-4">
+                      Permanently delete your account and all associated data including flashcards,
+                      study progress, and analytics. This action cannot be undone.
+                    </p>
+                  </div>
+                </div>
+
+                <Button
+                  onClick={handleDeleteAccount}
+                  disabled={isDeleting}
+                  variant="destructive"
+                  className="flex items-center gap-2"
+                >
+                  {isDeleting ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Trash2 className="w-4 h-4" />
+                  )}
+                  {isDeleting ? 'Deleting Account...' : 'Delete Account'}
+                </Button>
+              </div>
+            </Card>
+          </div>
         </div>
       </div>
     </div>
