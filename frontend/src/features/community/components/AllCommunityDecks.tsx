@@ -9,7 +9,7 @@ const AllCommunityDecks: React.FC = () => {
 		{
 			id: 1,
 			name: "Spanish Essentials",
-			wordCount: 500,
+			wordCount: 50,
 			author: "Fun Lau",
 			lastModified: "2025-06-09",
 			category: "Language",
@@ -17,7 +17,7 @@ const AllCommunityDecks: React.FC = () => {
 		{
 			id: 2,
 			name: "French Vocabulary",
-			wordCount: 350,
+			wordCount: 35,
 			author: "Alex Wong",
 			lastModified: "2025-06-08",
 			category: "Language",
@@ -25,7 +25,7 @@ const AllCommunityDecks: React.FC = () => {
 		{
 			id: 3,
 			name: "Medical Terminology",
-			wordCount: 800,
+			wordCount: 80,
 			author: "Sarah Chen",
 			lastModified: "2025-06-07",
 			category: "Medical",
@@ -33,7 +33,7 @@ const AllCommunityDecks: React.FC = () => {
 		{
 			id: 4,
 			name: "Programming Concepts",
-			wordCount: 200,
+			wordCount: 20,
 			author: "Alex Johnson",
 			lastModified: "2025-06-05",
 			category: "Technology",
@@ -41,7 +41,7 @@ const AllCommunityDecks: React.FC = () => {
 		{
 			id: 5,
 			name: "Japanese Kanji",
-			wordCount: 1000,
+			wordCount: 100,
 			author: "Hiroshi",
 			lastModified: "2025-06-03",
 			category: "Language",
@@ -49,7 +49,7 @@ const AllCommunityDecks: React.FC = () => {
 		{
 			id: 6,
 			name: "Chemistry Basics",
-			wordCount: 300,
+			wordCount: 30,
 			author: "Emily Wilson",
 			lastModified: "2025-06-01",
 			category: "Science",

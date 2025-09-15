@@ -1,5 +1,5 @@
 import React from 'react';
-import { User, Heart, Clock } from 'lucide-react';
+import { User, Heart, Clock, BookOpen } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card';
 
 export interface CommunityDeck {
@@ -32,8 +32,9 @@ const CommunityCard: React.FC<CommunityCardProps> = ({ deck, onClick }) => {
       </CardHeader>
       <CardContent className="pt-0">
         <div className="mb-8">
-          <span className="text-xs px-2 py-1 rounded bg-gray-100 text-gray-600">
-            {deck.wordCount} words
+          <span className="text-xs px-2 py-1 rounded bg-gray-100 text-gray-600 flex items-center space-x-1 w-fit">
+            <BookOpen className="h-3 w-3" />
+            <span>{deck.wordCount} words</span>
           </span>
         </div>
         <div className="flex justify-between items-center">
