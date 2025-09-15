@@ -30,7 +30,6 @@
 - Vite
 - shadcn/ui + Tailwind CSS
 - React Query
-
 - Firebase SDK
 
 ### Backend
