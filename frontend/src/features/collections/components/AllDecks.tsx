@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Search } from 'lucide-react';
 import CollectionCard, { FlashcardCollection } from './CollectionCard';
 import { useDecks } from '@/shared/hooks/useApi';
 
@@ -83,13 +84,16 @@ const AllDecks: React.FC = () => {
 			<div className="max-w-4xl mx-auto">
 				<h1 className="text-4xl font-semibold font-alumni-sans mb-4 mt-16 text-main-foreground">YOUR COLLECTIONS</h1>
 				<div className="mb-6">
-					<input
-						type="text"
-						placeholder="Search collections..."
-						value={search}
-						onChange={e => setSearch(e.target.value)}
-						className="w-full p-3 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary"
-					/>
+					<div className="relative">
+						<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+						<input
+							type="text"
+							placeholder="Search collections..."
+							value={search}
+							onChange={e => setSearch(e.target.value)}
+							className="w-full pl-10 pr-3 py-3 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary"
+						/>
+					</div>
 				</div>
 				{filteredCollections.length > 0 ? (
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
