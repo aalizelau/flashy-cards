@@ -25,8 +25,8 @@ const CommunityCard: React.FC<CommunityCardProps> = ({ deck, onClick }) => {
     >
       <CardHeader className="pb-1">
         <CardTitle className="flex justify-between items-center">
-          <span className="text-lg font-medium truncate">{deck.name}</span>
-          
+          <span className="text-lg font-medium font-Koh-Santepheap truncate">{deck.name}</span>
+
           <Heart className="h-5 w-5 text-gray-400 hover:text-red-500 transition-colors cursor-pointer" />
         </CardTitle>
       </CardHeader>

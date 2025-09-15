@@ -25,6 +25,7 @@ export default {
 				'gloock': ['Gloock', 'serif'],
 				'bonbon': ['Bonbon', 'cursive'],
 				'Inria-serif': ['Inria Serif', 'serif'],
+				'Koh-Santepheap': ['Koh Santepheap', 'sans-serif'],
 			},
 			colors: {
 				border: 'hsl(var(--border))',

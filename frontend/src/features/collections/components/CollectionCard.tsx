@@ -24,7 +24,7 @@ const CollectionCard: React.FC<CollectionCardProps> = ({ collection, onClick }) 
     >
       <CardHeader className="pb-2">
         <CardTitle className="flex justify-between items-center">
-          <span className="text-lg font-medium truncate">{collection.name}</span>
+          <span className="text-lg font-medium font-Koh-Santepheap truncate">{collection.name}</span>
           <span className="text-xs px-2 py-1 rounded bg-gray-100 text-gray-600">{collection.category}</span>
         </CardTitle>
       </CardHeader>
