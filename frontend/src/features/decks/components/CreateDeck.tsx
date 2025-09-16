@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Zap } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/shared/components/ui/button';
 import { apiClient } from '@/shared/services/api';
@@ -223,8 +223,26 @@ function CreateDeck() {
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className=" mb-8">
-          <div className="flex items-center justify-start gap-3 mb-4 mt-10">
+          <div className="flex items-center justify-between gap-3 mb-4 mt-10">
             <h1 className="text-4xl font-semibold font-alumni-sans text-main-foreground">CREATE A NEW DECK</h1>
+            <Button
+              type="submit"
+              disabled={isLoading}
+              className="flex items-center gap-2 px-4 py-2 text-md font-regular h-12"
+              size="lg"
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  Creating...
+                </>
+              ) : (
+                <>
+                  <Zap className="w-4 h-4" />
+                  Create
+                </>
+              )}
+            </Button>
           </div>
         </div>
 
