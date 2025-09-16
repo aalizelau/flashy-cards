@@ -283,6 +283,19 @@ class ApiClient {
 
     return this.publicRequest<PublicDeck[]>(endpoint);
   }
+
+  // Get public deck cards (no authentication required)
+  async getPublicDeckCards(deckId: number): Promise<Card[]> {
+    return this.publicRequest<Card[]>(`/decks/public/${deckId}/cards`);
+  }
+
+  // Copy public deck to user's collection
+  async copyPublicDeck(deckId: number): Promise<DeckWithCardsResponse> {
+    return this.request<DeckWithCardsResponse>('/decks/copy-from-public', {
+      method: 'POST',
+      body: JSON.stringify({ public_deck_id: deckId }),
+    });
+  }
 }
 
 export const apiClient = new ApiClient();

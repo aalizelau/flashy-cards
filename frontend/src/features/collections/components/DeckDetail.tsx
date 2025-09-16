@@ -1,15 +1,16 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/shared/components/ui/card';
 import { ScrollArea } from '@/shared/components/ui/scroll-area';
-import { Input } from '@/shared/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/components/ui/select';
 import FlashcardTable from './FlashcardTable';
 import DeckMenuDropdown from './DeckMenuDropdown';
 import AddCardDialog from './AddCardDialog';
 import EditCardDialog from './EditCardDialog';
 import ExportDeckDialog from './ExportDeckDialog';
 import { Button } from '@/shared/components/ui/button';
+import CardControls from '@/shared/components/CardControls';
+import { useCardFiltering, SortBy, OrderBy } from '@/shared/hooks/useCardFiltering';
+import { useAudioPlayback } from '@/shared/hooks/useAudioPlayback';
 import {
   Dialog,
   DialogContent,
@@ -18,7 +19,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/shared/components/ui/dialog";
-import { ArrowUp, ArrowDown, ArrowUpDown, Plus, GraduationCap, Search, ArrowLeft } from 'lucide-react';
+import { GraduationCap } from 'lucide-react';
 import { useDecks, useDeckCards, useDeleteDeck, useAllUserCards } from '@/shared/hooks/useApi';
 import { Card as FlashCard, TestStats } from '@/shared/types/api';
 import { TestConfigModal } from '@/features/test/components/Popup';
@@ -47,9 +48,8 @@ const DeckDetail: React.FC = () => {
   const deleteDeck = useDeleteDeck();
 
   const [searchTerm, setSearchTerm] = useState('');
-  const [sortBy, setSortBy] = useState<'progress' | 'recent' | 'alphabet' | 'attempts' | 'last_reviewed'>('progress');
-  const [orderBy, setOrderBy] = useState<'asc' | 'desc'>('desc');
-  const [playingAudio, setPlayingAudio] = useState<number | null>(null);
+  const [sortBy, setSortBy] = useState<SortBy>('progress');
+  const [orderBy, setOrderBy] = useState<OrderBy>('desc');
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showAddCardDialog, setShowAddCardDialog] = useState(false);
   const [showEditCardDialog, setShowEditCardDialog] = useState(false);
@@ -59,28 +59,12 @@ const DeckDetail: React.FC = () => {
   const [testStats, setTestStats] = useState<TestStats | null>(null);
   const [isLoadingStats, setIsLoadingStats] = useState(false);
 
+  // Use custom hooks
+  const { playingAudio, playAudio } = useAudioPlayback();
+  const filteredAndSortedCards = useCardFiltering({ cards, searchTerm, sortBy, orderBy });
+
   const totalWords = cards?.length || 0;
 
-  const getSortIcon = () => {
-    if (orderBy === 'asc') return <ArrowUp className="w-4 h-4" />;
-    if (orderBy === 'desc') return <ArrowDown className="w-4 h-4" />;
-    return <ArrowUpDown className="w-4 h-4" />;
-  };
-
-  const getOrderLabel = (sortType: string) => {
-    switch (sortType) {
-      case 'alphabet':
-        return orderBy === 'asc' ? 'A-Z' : 'Z-A';
-      case 'recent':
-      case 'last_reviewed':
-        return orderBy === 'asc' ? 'Oldest' : 'Newest';
-      case 'attempts':
-      case 'progress':
-        return orderBy === 'asc' ? 'Least' : 'Most';
-      default:
-        return orderBy === 'asc' ? 'Ascending' : 'Descending';
-    }
-  };
 
   const handleAddCard = () => {
     setShowAddCardDialog(true);
@@ -186,58 +170,7 @@ const DeckDetail: React.FC = () => {
   };
 
 
-  const playAudio = async (card: FlashCard) => {
-    if (!card.audio_url) return;
-    
-    try {
-      setPlayingAudio(card.id);
-      const audio = new Audio(card.audio_url);
-      
-      audio.onended = () => setPlayingAudio(null);
-      audio.onerror = () => {
-        setPlayingAudio(null);
-        console.error('Failed to play audio for:', card.front);
-      };
-      
-      await audio.play();
-    } catch (error) {
-      setPlayingAudio(null);
-      console.error('Audio playback failed:', error);
-    }
-  };
 
-  const filteredAndSortedCards = useMemo(() => {
-    if (!cards) return [];
-
-    let filtered = cards.filter(card =>
-      card.front.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      card.back.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-
-    return filtered.sort((a, b) => {
-      let comparison = 0;
-      switch (sortBy) {
-        case 'progress':
-          comparison = Math.round(b.accuracy * 100) - Math.round(a.accuracy * 100);
-          break;
-        case 'recent':
-          comparison = new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime();
-          break;
-        case 'last_reviewed':
-          comparison = new Date(b.last_reviewed_at || 0).getTime() - new Date(a.last_reviewed_at || 0).getTime();
-          break;
-        case 'alphabet':
-          comparison = a.front.localeCompare(b.front);
-          break;
-        case 'attempts':
-          comparison = b.total_attempts - a.total_attempts;
-          break;
-        default:
-          comparison = 0;
-      }
-      return orderBy === 'asc' ? -comparison : comparison;
-    });
-  }, [cards, searchTerm, sortBy, orderBy]);
 
   if (decksLoading || cardsLoading) {
     return (
@@ -293,51 +226,16 @@ const DeckDetail: React.FC = () => {
       <Card className="bg-gradient-card shadow-elevated">
         <CardContent className="p-0">
           {/* Controls Section */}
-          <div className="flex items-center justify-between py-6 px-4 ">
-            <div className="flex items-center gap-4">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <Input
-                  type="text"
-                  placeholder="Search words..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-44 pl-10"
-                />
-              </div>
-              
-              <Select value={sortBy} onValueChange={(value) => setSortBy(value as typeof sortBy)}>
-                <SelectTrigger className="w-36">
-                  <SelectValue placeholder="Sort by..." />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="progress">Progress</SelectItem>
-                  <SelectItem value="recent">Date Added</SelectItem>
-                  <SelectItem value="last_reviewed">Last Reviewed</SelectItem>
-                  <SelectItem value="alphabet">Alphabetical</SelectItem>
-                  <SelectItem value="attempts">Attempts</SelectItem>
-                </SelectContent>
-              </Select>
-
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setOrderBy(orderBy === 'asc' ? 'desc' : 'asc')}
-                className="flex items-center gap-2"
-              >
-                {getSortIcon()}
-                <span className="font-normal">{getOrderLabel(sortBy)}</span>
-              </Button>
-            </div>
-
-            {/* Add New Card Button - Hidden for All Words view */}
-            {!isAllWordsView && (
-              <Button variant="outline" onClick={handleAddCard} className="flex items-center gap-2">
-                <Plus className="w-4 h-4" />
-                Add New Card
-              </Button>
-            )}
-          </div>
+          <CardControls
+            searchTerm={searchTerm}
+            onSearchChange={setSearchTerm}
+            sortBy={sortBy}
+            onSortChange={setSortBy}
+            orderBy={orderBy}
+            onOrderChange={setOrderBy}
+            showAddButton={!isAllWordsView}
+            onAddCard={handleAddCard}
+          />
           
           <ScrollArea className="h-[700px]">
             <div className="px-4 py-0">

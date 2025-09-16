@@ -11,6 +11,7 @@ interface FlashcardTableProps {
   onPlayAudio: (card: FlashCard) => void;
   onEditCard?: (card: FlashCard) => void;
   onDeleteCard?: (card: FlashCard) => void;
+  readOnly?: boolean;
 }
 
 const FlashcardTable: React.FC<FlashcardTableProps> = ({
@@ -19,6 +20,7 @@ const FlashcardTable: React.FC<FlashcardTableProps> = ({
   onPlayAudio,
   onEditCard,
   onDeleteCard,
+  readOnly = false,
 }) => {
   const getProgressPercentage = (card: FlashCard): number =>
     Math.round(card.accuracy * 100);
@@ -35,7 +37,7 @@ const FlashcardTable: React.FC<FlashcardTableProps> = ({
               <th className="py-3 px-3 text-sm font-normal text-gray-600 text-left">Attempts</th>
               <th className="py-3 px-3 text-sm font-normal text-gray-600 text-left">Last Reviewed</th>
               <th className="py-3 px-0 text-sm font-normal text-gray-600 text-left">Date Created</th>
-              <th className="py-3 px-0 text-sm font-normal text-gray-600 text-left"></th>
+              {!readOnly && <th className="py-3 px-0 text-sm font-normal text-gray-600 text-left"></th>}
             </tr>
           </thead>
         <tbody>
@@ -98,23 +100,25 @@ const FlashcardTable: React.FC<FlashcardTableProps> = ({
                   <td className="py-1 px-0 align-middle">
                     <span className="text-xs text-muted-foreground">{dateCreated}</span>
                   </td>
-                  <td className="py-1 px-0 align-middle">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button size="icon" variant="ghost" aria-label="Actions">
-                          <MoreVertical className="w-5 h-5 text-muted-foreground" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => onEditCard?.(card)}>Edit</DropdownMenuItem>
-                        <DropdownMenuItem className="text-red-500" onClick={() => onDeleteCard?.(card)}>Delete</DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </td>
+                  {!readOnly && (
+                    <td className="py-1 px-0 align-middle">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button size="icon" variant="ghost" aria-label="Actions">
+                            <MoreVertical className="w-5 h-5 text-muted-foreground" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={() => onEditCard?.(card)}>Edit</DropdownMenuItem>
+                          <DropdownMenuItem className="text-red-500" onClick={() => onDeleteCard?.(card)}>Delete</DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </td>
+                  )}
                 </tr>
                 {idx < arr.length - 1 && (
                   <tr>
-                    <td colSpan={7}>
+                    <td colSpan={readOnly ? 6 : 7}>
                       <div className="border-b border-gray-200" />
                     </td>
                   </tr>

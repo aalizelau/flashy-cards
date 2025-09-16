@@ -9,7 +9,7 @@ const AllCommunityDecks: React.FC = () => {
 	const [search, setSearch] = useState('');
 	const [selectedLanguage, setSelectedLanguage] = useState('All');
 
-	const languages = ['All', 'French', 'German', 'Chinese', 'English', 'Italian', 'Japanese'];
+	const languages = ['All', 'French', 'German', 'Chinese', 'English', 'Italian', 'Japanese', 'Spanish', 'Ukrainian'];
 
 	// Language mapping for display names to database codes
 	const languageMapping: { [key: string]: string } = {
@@ -18,7 +18,9 @@ const AllCommunityDecks: React.FC = () => {
 		'Chinese': 'zh',
 		'English': 'en',
 		'Italian': 'it',
-		'Japanese': 'ja'
+		'Japanese': 'ja',
+		'Spanish': 'es',
+		'Ukrainian': 'uk'
 	};
 
 	// Fetch public decks using React Query
@@ -47,7 +49,7 @@ const AllCommunityDecks: React.FC = () => {
 
 	const handleDeckClick = (deck: CommunityDeck) => {
 		// Navigate to the community deck detail page
-		window.location.href = `/community/${encodeURIComponent(deck.name)}`;
+		window.location.href = `/community/deck/${deck.id}`;
 	};
 
 	return (

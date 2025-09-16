@@ -12,6 +12,7 @@ import Login from "../features/auth/components/login";
 import Onboarding from "../features/auth/components/Onboarding";
 import Settings from "../features/settings/pages/Settings";
 import AllCommunityDecks from "../features/community/components/AllCommunityDecks";
+import CommunityDeckDetail from "../features/community/components/CommunityDeckDetail";
 import ProtectedRoute from "../shared/components/auth/ProtectedRoute";
 
 export const AppRouter = () => (
@@ -28,6 +29,7 @@ export const AppRouter = () => (
     <Route path="/decks/:collectionName" element={<ProtectedRoute><DeckDetail /></ProtectedRoute>} />
     <Route path="/analytics" element={<ProtectedRoute><AnalyticsPage /></ProtectedRoute>} />
     <Route path="/community" element={<ProtectedRoute><AllCommunityDecks /></ProtectedRoute>} />
+    <Route path="/community/deck/:deckId" element={<ProtectedRoute><CommunityDeckDetail /></ProtectedRoute>} />
     <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
     <Route path="*" element={<ProtectedRoute><NotFound /></ProtectedRoute>} />
