@@ -4,7 +4,7 @@ from typing import List
 
 from app.database import SessionLocal
 from app import models, schemas
-from app.schemas import Card, DeckCreate, DeckWithCardsCreate, DeckWithCardsResponse, CardCreate, PublicDeckOut
+from app.schemas import Card, DeckCreate, DeckWithCardsCreate, DeckWithCardsResponse, CardCreate, PublicDeckOut, CopyPublicDeckRequest
 from app.models import Card as CardORM
 from app.deck_service import DeckService
 from app.auth_middleware import get_current_user, get_user_id
@@ -44,6 +44,47 @@ def get_public_decks(
         deck_service = DeckService(db)
         return deck_service.get_public_decks(language=language, search=search)
     except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@router.get("/public/{deck_id}/cards", response_model=List[Card])
+def get_public_deck_cards(
+    deck_id: int,
+    request: Request,
+    db: Session = Depends(get_db)
+):
+    """Get cards from a public deck (no authentication required)"""
+    try:
+        deck_service = DeckService(db)
+        cards = deck_service.get_public_deck_cards(deck_id)
+
+        if not cards:
+            raise HTTPException(status_code=404, detail="Public deck not found or has no cards")
+
+        return populate_audio_urls(cards, request)
+    except Exception as e:
+        if "not found" in str(e).lower():
+            raise HTTPException(status_code=404, detail="Public deck not found")
+        raise HTTPException(status_code=400, detail=str(e))
+
+@router.post("/copy-from-public", response_model=DeckWithCardsResponse)
+def copy_public_deck(
+    request_data: CopyPublicDeckRequest,
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
+):
+    """Copy a public deck to user's collection"""
+    try:
+        user_id = current_user["uid"]
+
+        # Ensure user exists in database
+        user_service = UserService(db)
+        user_service.get_or_create_user(current_user["firebase_token"])
+
+        deck_service = DeckService(db)
+        return deck_service.copy_public_deck(request_data.public_deck_id, user_id)
+    except Exception as e:
+        if "not found" in str(e).lower():
+            raise HTTPException(status_code=404, detail="Public deck not found")
         raise HTTPException(status_code=400, detail=str(e))
 
 @router.get("/", response_model=list[schemas.DeckOut]) 

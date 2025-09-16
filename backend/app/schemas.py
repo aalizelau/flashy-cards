@@ -146,3 +146,6 @@ class SessionComplete(BaseModel):
 class TestStats(BaseModel):
     available_cards: int
     total_decks: Optional[int] = None
+
+class CopyPublicDeckRequest(BaseModel):
+    public_deck_id: int

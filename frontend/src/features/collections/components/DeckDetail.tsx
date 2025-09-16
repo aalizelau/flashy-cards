@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/shared/components/ui/card';
 import { ScrollArea } from '@/shared/components/ui/scroll-area';
@@ -273,6 +273,7 @@ const DeckDetail: React.FC = () => {
           deck={isAllWordsView ? {
             id: -1,
             name: "All Words",
+            is_public: false,
             created_at: "",
             progress: 0,
             card_count: totalWords

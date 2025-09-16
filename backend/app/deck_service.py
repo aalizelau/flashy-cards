@@ -541,3 +541,127 @@ class DeckService:
         except Exception as e:
             logger.error(f"Error getting public decks: {str(e)}")
             raise e
+
+    def get_public_deck_cards(self, deck_id: int) -> List[CardORM]:
+        """Get cards from a public deck (no authentication required)"""
+        try:
+            # Verify deck exists and is public
+            deck = self.db.query(DeckORM).filter(
+                DeckORM.id == deck_id,
+                DeckORM.is_public == True
+            ).first()
+
+            if not deck:
+                raise Exception("Public deck not found")
+
+            # Get all cards for this deck
+            cards = self.db.query(CardORM).filter(
+                CardORM.deck_id == deck_id
+            ).order_by(CardORM.created_at.desc()).all()
+
+            return cards
+
+        except SQLAlchemyError as e:
+            logger.error(f"Failed to get public deck cards: {str(e)}")
+            raise Exception(f"Failed to get public deck cards: {str(e)}")
+        except Exception as e:
+            logger.error(f"Error getting public deck cards: {str(e)}")
+            raise e
+
+    def copy_public_deck(self, public_deck_id: int, user_id: str) -> DeckWithCardsResponse:
+        """Copy a public deck to user's collection"""
+        try:
+            # Get user's selected language
+            user = self.db.query(UserORM).filter(UserORM.uid == user_id).first()
+            user_language = user.selected_language if user and user.selected_language else 'en'
+
+            # Verify source deck exists and is public
+            source_deck = self.db.query(DeckORM).filter(
+                DeckORM.id == public_deck_id,
+                DeckORM.is_public == True
+            ).first()
+
+            if not source_deck:
+                raise Exception("Public deck not found")
+
+            # Get all cards from the source deck
+            source_cards = self.db.query(CardORM).filter(
+                CardORM.deck_id == public_deck_id
+            ).all()
+
+            # Start transaction
+            # Create new deck for the user (always private)
+            new_deck = DeckORM(
+                name=f"{source_deck.name} (Copy)",  # Add "(Copy)" to distinguish
+                is_public=False,  # Always create as private
+                user_id=user_id,
+                language=user_language,
+                created_at=datetime.now(),
+                progress=0.0,
+                card_count=len(source_cards)
+            )
+            self.db.add(new_deck)
+            self.db.commit()
+            self.db.refresh(new_deck)
+
+            # Copy all cards with fresh statistics
+            new_cards = []
+            for source_card in source_cards:
+                new_card = CardORM(
+                    deck_id=new_deck.id,
+                    front=source_card.front,
+                    back=source_card.back,
+                    example_sentence_1=source_card.example_sentence_1,
+                    sentence_translation_1=source_card.sentence_translation_1,
+                    example_sentence_2=source_card.example_sentence_2,
+                    sentence_translation_2=source_card.sentence_translation_2,
+                    accuracy=0.0,  # Reset statistics
+                    total_attempts=0,
+                    correct_answers=0,
+                    last_reviewed_at=None,
+                    created_at=datetime.now(),
+                    audio_path=source_card.audio_path  # Keep audio path reference
+                )
+                self.db.add(new_card)
+                new_cards.append(new_card)
+
+            # Generate audio for copied cards if needed
+            for card in new_cards:
+                try:
+                    if not card.audio_path and card.front:
+                        audio_path = voice_generator.generate_audio(card.front, user_language)
+                        if audio_path:
+                            card.audio_path = audio_path
+                except Exception as audio_error:
+                    logger.warning(f"Failed to generate audio for copied card {card.id}: {str(audio_error)}")
+                    # Continue without audio - don't fail the entire operation
+
+            self.db.commit()
+
+            # Refresh all objects
+            self.db.refresh(new_deck)
+            for card in new_cards:
+                self.db.refresh(card)
+
+            # Convert to response schema
+            card_schemas = [CardSchema.model_validate(card) for card in new_cards]
+
+            return DeckWithCardsResponse(
+                id=new_deck.id,
+                name=new_deck.name,
+                is_public=new_deck.is_public,
+                created_at=new_deck.created_at,
+                last_modified=new_deck.last_modified,
+                progress=new_deck.progress,
+                card_count=new_deck.card_count,
+                cards=card_schemas
+            )
+
+        except SQLAlchemyError as e:
+            self.db.rollback()
+            logger.error(f"Failed to copy public deck: {str(e)}")
+            raise Exception(f"Failed to copy public deck: {str(e)}")
+        except Exception as e:
+            self.db.rollback()
+            logger.error(f"Error copying public deck: {str(e)}")
+            raise e
