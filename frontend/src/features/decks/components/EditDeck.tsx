@@ -29,6 +29,8 @@ function EditDeck() {
   ]);
   const [originalCards, setOriginalCards] = useState<Flashcard[]>([]); // Track original state for diff
   const [originalDeckTitle, setOriginalDeckTitle] = useState(''); // Track original title for diff
+  const [isPublic, setIsPublic] = useState(false);
+  const [originalIsPublic, setOriginalIsPublic] = useState(false); // Track original public status for diff
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingData, setIsLoadingData] = useState(true);
@@ -60,6 +62,8 @@ function EditDeck() {
 
         setDeckTitle(deck.name);
         setOriginalDeckTitle(deck.name); // Store original title for comparison
+        setIsPublic(deck.is_public);
+        setOriginalIsPublic(deck.is_public); // Store original public status for comparison
         
         // Convert cards to flashcard format, preserving numeric IDs
         const convertedCards: Flashcard[] = cards.map((card: Card, index: number) => ({
@@ -154,8 +158,9 @@ function EditDeck() {
       // Filter out empty cards
       const validCards = flashcards.filter(card => card.front.trim() && card.back.trim());
       
-      // Check if deck title has changed
+      // Check if deck title or public status has changed
       const titleHasChanged = originalDeckTitle !== deckTitle.trim();
+      const publicStatusHasChanged = originalIsPublic !== isPublic;
       
       // Categorize cards by operation needed
       const cardsToDelete: Flashcard[] = [];
@@ -201,8 +206,8 @@ function EditDeck() {
         }
       }
       
-      // 2. Update existing cards and/or deck title (PATCH) if there are any changes
-      if (cardsToUpdate.length > 0 || titleHasChanged) {
+      // 2. Update existing cards and/or deck metadata (PATCH) if there are any changes
+      if (cardsToUpdate.length > 0 || titleHasChanged || publicStatusHasChanged) {
         const apiCards: CardCreate[] = cardsToUpdate.map(card => ({
           id: card.numericId,
           front: card.front.trim(),
@@ -215,6 +220,7 @@ function EditDeck() {
 
         const deckData: DeckWithCardsCreate = {
           name: deckTitle.trim(),
+          is_public: isPublic,
           cards: apiCards
         };
 
@@ -294,6 +300,33 @@ function EditDeck() {
                 {errors.deckTitle}
               </p>
             )}
+          </div>
+
+          {/* Public Deck Toggle */}
+          <div>
+            <h3 className="text-md font-semibold text-gray-700 mb-3">
+              Set as public
+            </h3>
+            <div className="flex items-center space-x-3">
+              <button
+                type="button"
+                onClick={() => setIsPublic(!isPublic)}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                  isPublic
+                    ? 'bg-muted-foreground'
+                    : 'bg-gray-200'
+                }`}
+              >
+                <span
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                    isPublic ? 'translate-x-6' : 'translate-x-1'
+                  }`}
+                />
+              </button>
+              <label className="text-sm text-gray-600 cursor-pointer" onClick={() => setIsPublic(!isPublic)}>
+                Allow other users to discover and use this deck
+              </label>
+            </div>
           </div>
 
           {/* Individual Cards Section */}
