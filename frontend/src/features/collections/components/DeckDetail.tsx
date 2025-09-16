@@ -19,7 +19,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/shared/components/ui/dialog";
-import { GraduationCap } from 'lucide-react';
+import { GraduationCap, User, BookOpen, Clock } from 'lucide-react';
 import { useDecks, useDeckCards, useDeleteDeck, useAllUserCards } from '@/shared/hooks/useApi';
 import { Card as FlashCard, TestStats } from '@/shared/types/api';
 import { TestConfigModal } from '@/features/test/components/Popup';
@@ -193,10 +193,30 @@ const DeckDetail: React.FC = () => {
         ← Back
       </Button>
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-4xl font-alumni-sans font-semibold text-main-foreground mt-12 uppercase">
-          <span className="uppercase">{decodedName}</span>{" "}
-          <span className="normal-case">({searchTerm ? `${filteredAndSortedCards.length}/${totalWords}` : totalWords} words)</span>
-        </h2>
+        <div>
+          <h2 className="text-4xl font-alumni-sans font-semibold text-main-foreground mt-12 uppercase">
+            {decodedName}
+          </h2>
+
+          {/* Deck metadata */}
+          <div className="flex items-center gap-4 mt-3 text-sm text-muted-foreground">
+            {/* Only show author if deck has original author info (not created by current user) */}
+            {selectedDeck?.original_author_name && (
+              <div className="flex items-center gap-1">
+                <User className="w-4 h-4" />
+                <span>by {selectedDeck.original_author_name}</span>
+              </div>
+            )}
+            <div className="flex items-center gap-1">
+              <BookOpen className="w-4 h-4" />
+              <span>{searchTerm ? `${filteredAndSortedCards.length}/${totalWords}` : totalWords} words</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <Clock className="w-4 h-4" />
+              <span>Created {selectedDeck ? new Date(selectedDeck.created_at).toLocaleDateString() : ''}</span>
+            </div>
+          </div>
+        </div>
         <div className="flex items-center gap-4 mt-12">
           {/* Start Test Button */}
           <Button 
@@ -275,6 +295,7 @@ const DeckDetail: React.FC = () => {
             name: "All Words",
             is_public: false,
             created_at: "",
+            last_modified: "",
             progress: 0,
             card_count: totalWords
           } : selectedDeck!}
