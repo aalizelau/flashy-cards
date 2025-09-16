@@ -603,7 +603,7 @@ class DeckService:
             # Start transaction
             # Create new deck for the user (always private)
             new_deck = DeckORM(
-                name=f"{source_deck.name} (Copy)",  # Add "(Copy)" to distinguish
+                name=source_deck.name,
                 is_public=False,  # Always create as private
                 user_id=user_id,
                 language=user_language,

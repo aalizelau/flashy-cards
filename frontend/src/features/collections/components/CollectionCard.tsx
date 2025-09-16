@@ -36,14 +36,6 @@ const CollectionCard: React.FC<CollectionCardProps> = ({ collection, onClick }) 
         </CardTitle>
       </CardHeader>
       <CardContent className="pt-0">
-        {/* Original Author Attribution */}
-        {collection.originalAuthor && (
-          <div className="flex items-center gap-1 mb-3 text-xs text-muted-foreground">
-            <User className="h-3 w-3" />
-            <span>Originally by {collection.originalAuthor}</span>
-          </div>
-        )}
-
         {/* Main Content */}
         <div className="flex justify-between items-center">
           <div className="flex items-center space-x-2">
