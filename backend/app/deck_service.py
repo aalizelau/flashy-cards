@@ -339,8 +339,8 @@ class DeckService:
                 else:
                     logger.warning(f"Card with ID {card_id} not found in deck {deck_id}. Use POST /decks/{deck_id}/cards to add new cards.")
             
-            # Update deck card count
-            deck.card_count = len(updated_cards)
+            # Update deck card count to reflect actual number of cards in database
+            deck.card_count = self.db.query(CardORM).filter(CardORM.deck_id == deck_id).count()
             
             # Commit transaction
             self.db.commit()
