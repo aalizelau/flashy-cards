@@ -18,7 +18,7 @@ const AllDecks: React.FC = () => {
 		name: deck.name,
 		wordCount: deck.card_count,
 		progress: Math.floor(deck.progress * 100), // TODO: Calculate real progress from analytics
-		category: 'Vocabulary', // Default category, could be enhanced
+		isPublic: deck.is_public,
 	})) || [];
 
 	// Create "All Words" virtual deck if user has any decks
@@ -26,9 +26,9 @@ const AllDecks: React.FC = () => {
 		id: -1, // Special ID for virtual deck
 		name: "All Words",
 		wordCount: decks.reduce((total, deck) => total + deck.card_count, 0),
-		progress: Math.floor(decks.reduce((sum, deck) => sum + (deck.progress * deck.card_count), 0) / 
+		progress: Math.floor(decks.reduce((sum, deck) => sum + (deck.progress * deck.card_count), 0) /
 			Math.max(1, decks.reduce((total, deck) => total + deck.card_count, 0)) * 100),
-		category: 'Browse All',
+		isPublic: false, // Virtual deck is always private
 	} : null;
 
 	// Combine collections with "All Words" at the top

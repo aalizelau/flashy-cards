@@ -7,7 +7,7 @@ export interface FlashcardCollection {
   name: string;
   wordCount: number;
   progress: number;
-  category: string;
+  isPublic: boolean;
   description?: string;
 }
 
@@ -25,7 +25,13 @@ const CollectionCard: React.FC<CollectionCardProps> = ({ collection, onClick }) 
       <CardHeader className="pb-2">
         <CardTitle className="flex justify-between items-center">
           <span className="text-lg font-medium font-Koh-Santepheap truncate">{collection.name}</span>
-          <span className="text-xs px-2 py-1 rounded bg-gray-100 text-gray-600">{collection.category}</span>
+          <span className={`text-xs px-2 py-1 rounded ${
+            collection.isPublic
+              ? 'bg-green-100 text-green-700'
+              : 'bg-gray-100 text-gray-600'
+          }`}>
+            {collection.isPublic ? 'Public' : 'Private'}
+          </span>
         </CardTitle>
       </CardHeader>
       <CardContent className="flex justify-between items-center pt-0">
