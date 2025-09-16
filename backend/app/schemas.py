@@ -54,8 +54,23 @@ class DeckOut(BaseModel):
     name: str
     is_public: bool
     created_at: datetime
+    last_modified: datetime
     progress: float
     card_count: int
+
+    class Config:
+        orm_mode = True
+
+
+class PublicDeckOut(BaseModel):
+    id: int
+    name: str
+    language: str
+    card_count: int
+    author_name: str
+    created_at: datetime
+    last_modified: Optional[datetime] = None
+    is_public: bool = True
 
     class Config:
         orm_mode = True
@@ -82,6 +97,7 @@ class DeckWithCardsResponse(BaseModel):
     name: str
     is_public: bool
     created_at: datetime
+    last_modified: datetime
     progress: float
     card_count: int
     cards: List[Card]

@@ -124,3 +124,14 @@ export interface StudySessionRequest {
   deck_ids?: number[];
   limit: number;
 }
+
+export interface PublicDeck {
+  id: number;
+  name: string;
+  language: string;
+  card_count: number;
+  author_name: string;
+  created_at: string;
+  last_modified?: string;
+  is_public: boolean;
+}

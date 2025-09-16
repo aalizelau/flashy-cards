@@ -1,16 +1,17 @@
-import { 
-  Deck, 
-  Card, 
-  StudySession, 
-  StudySessionComplete, 
-  StudySessionResponse, 
+import {
+  Deck,
+  Card,
+  StudySession,
+  StudySessionComplete,
+  StudySessionResponse,
   TestAnalytics,
   DeckWithCardsCreate,
   DeckWithCardsResponse,
   TestStats,
   StudySessionRequest,
   UserProfile,
-  CardCreate
+  CardCreate,
+  PublicDeck
 } from '@/shared/types/api';
 import { auth } from '@/features/auth/contexts/AuthContext';
 
@@ -22,7 +23,7 @@ class ApiClient {
     options: RequestInit = {}
   ): Promise<T> {
     const url = `${BASE_URL}${endpoint}`;
-    
+
     // Get authentication token
     let authHeaders = {};
     try {
@@ -39,7 +40,7 @@ class ApiClient {
       console.error('Failed to get auth token for API request:', error);
       throw new Error('Authentication required');
     }
-    
+
     const config: RequestInit = {
       headers: {
         'Content-Type': 'application/json',
@@ -51,17 +52,45 @@ class ApiClient {
 
     try {
       const response = await fetch(url, config);
-      
+
       if (!response.ok) {
         if (response.status === 401 || response.status === 403) {
           throw new Error('Authentication failed. Please login again.');
         }
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       return await response.json();
     } catch (error) {
       console.error(`API request failed: ${endpoint}`, error);
+      throw error;
+    }
+  }
+
+  private async publicRequest<T>(
+    endpoint: string,
+    options: RequestInit = {}
+  ): Promise<T> {
+    const url = `${BASE_URL}${endpoint}`;
+
+    const config: RequestInit = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...options.headers,
+      },
+      ...options,
+    };
+
+    try {
+      const response = await fetch(url, config);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error(`Public API request failed: ${endpoint}`, error);
       throw error;
     }
   }
@@ -237,6 +266,22 @@ class ApiClient {
     return this.request<{ message: string }>('/users/me', {
       method: 'DELETE',
     });
+  }
+
+  // Get public decks (no authentication required)
+  async getPublicDecks(language?: string, search?: string): Promise<PublicDeck[]> {
+    const params = new URLSearchParams();
+    if (language && language !== 'All') {
+      params.append('language', language.toLowerCase());
+    }
+    if (search) {
+      params.append('search', search);
+    }
+
+    const queryString = params.toString();
+    const endpoint = `/decks/public${queryString ? `?${queryString}` : ''}`;
+
+    return this.publicRequest<PublicDeck[]>(endpoint);
   }
 }
 

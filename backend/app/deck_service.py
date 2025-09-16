@@ -109,6 +109,7 @@ class DeckService:
                 name=db_deck.name,
                 is_public=db_deck.is_public,
                 created_at=db_deck.created_at,
+                last_modified=db_deck.last_modified,
                 progress=db_deck.progress,
                 card_count=db_deck.card_count,
                 cards=card_schemas
@@ -358,6 +359,7 @@ class DeckService:
                 name=deck.name,
                 is_public=deck.is_public,
                 created_at=deck.created_at,
+                last_modified=deck.last_modified,
                 progress=deck.progress,
                 card_count=deck.card_count,
                 cards=card_schemas
@@ -477,4 +479,65 @@ class DeckService:
         except Exception as e:
             self.db.rollback()
             logger.error(f"Error updating card {card_id} in deck {deck_id}: {str(e)}")
+            raise e
+
+    def get_public_decks(self, language: str = None, search: str = None):
+        """Get all public decks with author information"""
+        try:
+            from app.schemas import PublicDeckOut
+
+            # Build query for public decks with user joins
+            query = self.db.query(
+                DeckORM.id,
+                DeckORM.name,
+                DeckORM.language,
+                DeckORM.card_count,
+                DeckORM.created_at,
+                DeckORM.last_modified,
+                DeckORM.is_public,
+                UserORM.name.label('author_name')
+            ).join(UserORM, DeckORM.user_id == UserORM.uid).filter(
+                DeckORM.is_public == True
+            )
+
+            # Apply language filter if provided
+            if language and language.lower() != 'all':
+                query = query.filter(DeckORM.language == language.lower())
+
+            # Apply search filter if provided
+            if search:
+                search_term = f"%{search}%"
+                query = query.filter(
+                    (DeckORM.name.ilike(search_term)) |
+                    (UserORM.name.ilike(search_term)) |
+                    (DeckORM.language.ilike(search_term))
+                )
+
+            # Order by last_modified descending (most recently updated first)
+            query = query.order_by(DeckORM.last_modified.desc())
+
+            results = query.all()
+
+            # Convert to PublicDeckOut objects
+            public_decks = []
+            for result in results:
+                public_deck = PublicDeckOut(
+                    id=result.id,
+                    name=result.name,
+                    language=result.language,
+                    card_count=result.card_count,
+                    author_name=result.author_name or "Unknown",
+                    created_at=result.created_at,
+                    last_modified=result.last_modified or result.created_at,
+                    is_public=result.is_public
+                )
+                public_decks.append(public_deck)
+
+            return public_decks
+
+        except SQLAlchemyError as e:
+            logger.error(f"Failed to get public decks: {str(e)}")
+            raise Exception(f"Failed to get public decks: {str(e)}")
+        except Exception as e:
+            logger.error(f"Error getting public decks: {str(e)}")
             raise e

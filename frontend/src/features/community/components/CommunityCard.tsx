@@ -5,10 +5,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui
 export interface CommunityDeck {
   id: number;
   name: string;
-  wordCount: number;
-  author: string;
-  lastModified: string;
-  category: string;
+  language: string;
+  card_count: number;
+  author_name: string;
+  created_at: string;
+  last_modified?: string;
+  is_public: boolean;
   description?: string;
 }
 
@@ -34,20 +36,23 @@ const CommunityCard: React.FC<CommunityCardProps> = ({ deck, onClick }) => {
         <div className="mb-8">
           <span className="text-xs px-2 py-1 rounded bg-gray-100 text-gray-600 flex items-center space-x-1 w-fit">
             <BookOpen className="h-3 w-3" />
-            <span>{deck.wordCount} words</span>
+            <span>{deck.card_count} cards</span>
           </span>
         </div>
         <div className="flex justify-between items-center">
           <div className="flex items-center space-x-2">
             <User className="h-4 w-4 text-gray-500" />
             <span className="text-muted-foreground text-sm">
-              {deck.author}
+              {deck.author_name}
             </span>
           </div>
           <div className="flex items-center space-x-2 ml-4">
             <Clock className="h-4 w-4 text-gray-500" />
             <span className="text-muted-foreground text-sm">
-              {deck.lastModified}
+              {deck.last_modified
+                ? new Date(deck.last_modified).toLocaleDateString()
+                : new Date(deck.created_at).toLocaleDateString()
+              }
             </span>
           </div>
         </div>

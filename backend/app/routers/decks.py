@@ -4,7 +4,7 @@ from typing import List
 
 from app.database import SessionLocal
 from app import models, schemas
-from app.schemas import Card, DeckCreate, DeckWithCardsCreate, DeckWithCardsResponse, CardCreate
+from app.schemas import Card, DeckCreate, DeckWithCardsCreate, DeckWithCardsResponse, CardCreate, PublicDeckOut
 from app.models import Card as CardORM
 from app.deck_service import DeckService
 from app.auth_middleware import get_current_user, get_user_id
@@ -32,6 +32,19 @@ def populate_audio_urls(cards: List[CardORM], request: Request) -> List[Card]:
         result.append(card_schema)
     
     return result
+
+@router.get("/public", response_model=List[PublicDeckOut])
+def get_public_decks(
+    language: str = None,
+    search: str = None,
+    db: Session = Depends(get_db)
+):
+    """Get all public decks (no authentication required)"""
+    try:
+        deck_service = DeckService(db)
+        return deck_service.get_public_decks(language=language, search=search)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 @router.get("/", response_model=list[schemas.DeckOut]) 
 def read_decks(

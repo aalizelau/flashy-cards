@@ -29,6 +29,7 @@ class Deck(Base):
     name = Column(String, nullable=False)
     is_public = Column(Boolean, nullable=False, default=False, index=True)
     created_at = Column(DateTime, default=datetime.utcnow)
+    last_modified = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     progress = Column(Float, default=0.0)
     card_count = Column(Integer, default=0)
 

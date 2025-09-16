@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { Search } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
 import CommunityCard, { CommunityDeck } from './CommunityCard';
+import { apiClient } from '@/shared/services/api';
+import { PublicDeck } from '@/shared/types/api';
 
 const AllCommunityDecks: React.FC = () => {
 	const [search, setSearch] = useState('');
@@ -8,92 +11,39 @@ const AllCommunityDecks: React.FC = () => {
 
 	const languages = ['All', 'French', 'German', 'Chinese', 'English', 'Italian', 'Japanese'];
 
-	// Mock community decks data - in a real app, this would come from an API
-	const communityDecks: CommunityDeck[] = [
-		{
-			id: 1,
-			name: "Object Pronouns",
-			wordCount: 34,
-			author: "Fun Lau",
-			lastModified: "2025-06-23",
-			category: "French",
-		},
-		{
-			id: 2,
-			name: "Basic Greetings",
-			wordCount: 25,
-			author: "Alex Wong",
-			lastModified: "2025-06-22",
-			category: "German",
-		},
-		{
-			id: 3,
-			name: "Common Phrases",
-			wordCount: 42,
-			author: "Sarah Chen",
-			lastModified: "2025-06-21",
-			category: "Chinese",
-		},
-		{
-			id: 4,
-			name: "Business Vocabulary",
-			wordCount: 67,
-			author: "Alex Johnson",
-			lastModified: "2025-06-20",
-			category: "English",
-		},
-		{
-			id: 5,
-			name: "Food & Dining",
-			wordCount: 38,
-			author: "Hiroshi",
-			lastModified: "2025-06-19",
-			category: "Italian",
-		},
-		{
-			id: 6,
-			name: "Hiragana Basics",
-			wordCount: 46,
-			author: "Emily Wilson",
-			lastModified: "2025-06-18",
-			category: "Japanese",
-		},
-		{
-			id: 7,
-			name: "Past Tense Verbs",
-			wordCount: 29,
-			author: "Marie Dubois",
-			lastModified: "2025-06-17",
-			category: "French",
-		},
-		{
-			id: 8,
-			name: "Travel Essentials",
-			wordCount: 31,
-			author: "Hans Mueller",
-			lastModified: "2025-06-16",
-			category: "German",
-		},
-		{
-			id: 9,
-			name: "Numbers & Counting",
-			wordCount: 24,
-			author: "Li Wei",
-			lastModified: "2025-06-15",
-			category: "Chinese",
-		},
-	];
+	// Language mapping for display names to database codes
+	const languageMapping: { [key: string]: string } = {
+		'French': 'fr',
+		'German': 'de',
+		'Chinese': 'zh',
+		'English': 'en',
+		'Italian': 'it',
+		'Japanese': 'ja'
+	};
 
-	// Filter by language first, then by search
-	const languageFilteredDecks = selectedLanguage === 'All'
-		? communityDecks
-		: communityDecks.filter(deck => deck.category === selectedLanguage);
+	// Fetch public decks using React Query
+	const { data: publicDecks = [], isLoading, error } = useQuery({
+		queryKey: ['publicDecks', selectedLanguage, search],
+		queryFn: () => {
+			const language = selectedLanguage === 'All' ? undefined : languageMapping[selectedLanguage] || selectedLanguage.toLowerCase();
+			return apiClient.getPublicDecks(language, search);
+		},
+		staleTime: 5 * 60 * 1000, // 5 minutes
+	});
 
-	const filteredDecks = languageFilteredDecks.filter(deck =>
-		deck.name.toLowerCase().includes(search.toLowerCase()) ||
-		deck.author.toLowerCase().includes(search.toLowerCase()) ||
-		deck.category.toLowerCase().includes(search.toLowerCase())
-	);
+	// Convert PublicDeck to CommunityDeck format for display
+	const communityDecks: CommunityDeck[] = publicDecks.map(deck => ({
+		id: deck.id,
+		name: deck.name,
+		language: deck.language,
+		card_count: deck.card_count,
+		author_name: deck.author_name,
+		created_at: deck.created_at,
+		last_modified: deck.last_modified || deck.created_at,
+		is_public: deck.is_public
+	}));
+
+	const filteredDecks = communityDecks;
 
 	const handleDeckClick = (deck: CommunityDeck) => {
 		// Navigate to the community deck detail page
@@ -140,7 +90,15 @@ const AllCommunityDecks: React.FC = () => {
 					</div>
 				</div>
 
-				{filteredDecks.length > 0 ? (
+				{isLoading ? (
+					<div className="text-center text-muted-foreground py-12">
+						Loading community decks...
+					</div>
+				) : error ? (
+					<div className="text-center text-red-500 py-12">
+						Failed to load community decks. Please try again later.
+					</div>
+				) : filteredDecks.length > 0 ? (
 					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 						{filteredDecks.map(deck => (
 							<CommunityCard
@@ -152,7 +110,7 @@ const AllCommunityDecks: React.FC = () => {
 					</div>
 				) : (
 					<div className="text-center text-muted-foreground py-12">
-						{communityDecks.length === 0 ? 'No community decks available.' : 'No decks found matching your search.'}
+						{search ? 'No decks found matching your search.' : 'No community decks available.'}
 					</div>
 				)}
 			</div>
