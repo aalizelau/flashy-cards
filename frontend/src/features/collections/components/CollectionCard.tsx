@@ -1,5 +1,5 @@
 import React from 'react';
-import { BookOpen } from 'lucide-react';
+import { BookOpen, User } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card';
 
 export interface FlashcardCollection {
@@ -9,6 +9,7 @@ export interface FlashcardCollection {
   progress: number;
   isPublic: boolean;
   description?: string;
+  originalAuthor?: string;
 }
 
 interface CollectionCardProps {
@@ -34,24 +35,35 @@ const CollectionCard: React.FC<CollectionCardProps> = ({ collection, onClick }) 
           </span>
         </CardTitle>
       </CardHeader>
-      <CardContent className="flex justify-between items-center pt-0">
-        <div className="flex items-center space-x-2">
-          <BookOpen className="h-4 w-4 text-gray-500" />
-          <span className="text-muted-foreground">
-            {collection.wordCount} words
-          </span>
-        </div>
-        <div className="flex items-center space-x-3">
-          <span className="text-gray-900 font-semibold">
-            {collection.progress}%
-          </span>
-          <div className="w-20 h-2 bg-gray-300 rounded-full overflow-hidden">
-            <div 
-              className={`h-full rounded-full transition-all duration-300 ${
-                collection.progress > 50 ? 'bg-blue-500' : 'bg-red-400'
-              }`}
-              style={{ width: `${collection.progress}%` }}
-            />
+      <CardContent className="pt-0">
+        {/* Original Author Attribution */}
+        {collection.originalAuthor && (
+          <div className="flex items-center gap-1 mb-3 text-xs text-muted-foreground">
+            <User className="h-3 w-3" />
+            <span>Originally by {collection.originalAuthor}</span>
+          </div>
+        )}
+
+        {/* Main Content */}
+        <div className="flex justify-between items-center">
+          <div className="flex items-center space-x-2">
+            <BookOpen className="h-4 w-4 text-gray-500" />
+            <span className="text-muted-foreground">
+              {collection.wordCount} words
+            </span>
+          </div>
+          <div className="flex items-center space-x-3">
+            <span className="text-gray-900 font-semibold">
+              {collection.progress}%
+            </span>
+            <div className="w-20 h-2 bg-gray-300 rounded-full overflow-hidden">
+              <div
+                className={`h-full rounded-full transition-all duration-300 ${
+                  collection.progress > 50 ? 'bg-blue-500' : 'bg-red-400'
+                }`}
+                style={{ width: `${collection.progress}%` }}
+              />
+            </div>
           </div>
         </div>
       </CardContent>

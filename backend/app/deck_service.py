@@ -575,14 +575,18 @@ class DeckService:
             user = self.db.query(UserORM).filter(UserORM.uid == user_id).first()
             user_language = user.selected_language if user and user.selected_language else 'en'
 
-            # Verify source deck exists and is public
-            source_deck = self.db.query(DeckORM).filter(
+            # Verify source deck exists and is public, and get original author
+            source_deck_with_author = self.db.query(DeckORM, UserORM).join(
+                UserORM, DeckORM.user_id == UserORM.uid
+            ).filter(
                 DeckORM.id == public_deck_id,
                 DeckORM.is_public == True
             ).first()
 
-            if not source_deck:
+            if not source_deck_with_author:
                 raise Exception("Public deck not found")
+
+            source_deck, original_author = source_deck_with_author
 
             # Get all cards from the source deck
             source_cards = self.db.query(CardORM).filter(
@@ -598,7 +602,9 @@ class DeckService:
                 language=user_language,
                 created_at=datetime.now(),
                 progress=0.0,
-                card_count=len(source_cards)
+                card_count=len(source_cards),
+                original_author_name=original_author.name or original_author.email.split('@')[0],  # Use name or email prefix
+                copied_from_deck_id=public_deck_id
             )
             self.db.add(new_deck)
             self.db.commit()

@@ -19,6 +19,7 @@ const AllDecks: React.FC = () => {
 		wordCount: deck.card_count,
 		progress: Math.floor(deck.progress * 100), // TODO: Calculate real progress from analytics
 		isPublic: deck.is_public,
+		originalAuthor: deck.original_author_name,
 	})) || [];
 
 	// Create "All Words" virtual deck if user has any decks

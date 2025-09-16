@@ -57,6 +57,7 @@ class DeckOut(BaseModel):
     last_modified: datetime
     progress: float
     card_count: int
+    original_author_name: Optional[str] = None
 
     class Config:
         orm_mode = True

@@ -32,6 +32,8 @@ class Deck(Base):
     last_modified = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     progress = Column(Float, default=0.0)
     card_count = Column(Integer, default=0)
+    original_author_name = Column(String, nullable=True)  # For copied decks
+    copied_from_deck_id = Column(Integer, nullable=True)  # Reference to original deck
 
     user = relationship("User", back_populates="decks")
     cards = relationship("Card", back_populates="deck")

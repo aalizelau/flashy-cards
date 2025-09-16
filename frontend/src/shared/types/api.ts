@@ -27,8 +27,10 @@ export interface Deck {
   name: string;
   is_public: boolean;
   created_at: string;
+  last_modified: string;
   progress: number;
   card_count: number;
+  original_author_name?: string;
 }
 
 export interface Card {
