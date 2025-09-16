@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent } from '@/shared/components/ui/card';
 import { ScrollArea } from '@/shared/components/ui/scroll-area';
 import { Button } from '@/shared/components/ui/button';
-import { Loader2, GraduationCap, Download, User, BookOpen } from 'lucide-react';
+import { Loader2, GraduationCap, Download, User, BookOpen, Clock, Globe } from 'lucide-react';
 import { apiClient } from '@/shared/services/api';
 import { Card as FlashCard } from '@/shared/types/api';
 import FlashcardTable from '@/features/collections/components/FlashcardTable';
@@ -117,9 +117,6 @@ const CommunityDeckDetail: React.FC = () => {
         <div>
           <h2 className="text-4xl font-alumni-sans font-semibold text-main-foreground uppercase">
             {deck.name}
-            <span className="normal-case ml-2">
-              ({searchTerm ? `${filteredAndSortedCards.length}/${totalWords}` : totalWords} words)
-            </span>
           </h2>
 
           {/* Deck metadata */}
@@ -130,11 +127,16 @@ const CommunityDeckDetail: React.FC = () => {
             </div>
             <div className="flex items-center gap-1">
               <BookOpen className="w-4 h-4" />
+              <span>{searchTerm ? `${filteredAndSortedCards.length}/${totalWords}` : totalWords} words</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <Globe className="w-4 h-4" />
               <span>{deck.language.toUpperCase()}</span>
             </div>
-            <span>
-              Created {new Date(deck.created_at).toLocaleDateString()}
-            </span>
+            <div className="flex items-center gap-1">
+              <Clock className="w-4 h-4" />
+              <span>Updated {new Date(deck.last_modified).toLocaleDateString()}</span>
+            </div>
           </div>
         </div>
 

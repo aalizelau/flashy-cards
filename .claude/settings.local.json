@@ -6,7 +6,8 @@
       "Bash(uv pip compile:*)",
       "Bash(source:*)",
       "Bash(alembic revision:*)",
-      "Bash(alembic upgrade:*)"
+      "Bash(alembic upgrade:*)",
+      "WebSearch"
     ],
     "deny": []
   }
