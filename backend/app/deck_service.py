@@ -300,6 +300,13 @@ class DeckService:
             existing_cards = {card.id: card for card in self.db.query(CardORM).filter(CardORM.deck_id == deck_id).all()}
             
             # Start transaction
+            # Check if this is transitioning from private to public
+            if not deck.is_public and deck_data.is_public:
+                # If this was a copied deck, reset attribution since user is now "author"
+                if deck.original_author_name or deck.copied_from_deck_id:
+                    deck.original_author_name = None
+                    deck.copied_from_deck_id = None
+
             # Update deck name and public status
             deck.name = deck_data.name
             deck.is_public = deck_data.is_public
