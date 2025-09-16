@@ -59,7 +59,7 @@ const FlashcardTable: React.FC<FlashcardTableProps> = ({
               : '—';
             return (
               <React.Fragment key={card.id}>
-                <tr>
+                <tr className="h-12">
                   <td className="py-1 pl-6 pr-3 align-middle max-w-[200px]">
                     <div className="flex items-center gap-2">
                       <span className="font-medium text-sm truncate block">{card.front}</span>

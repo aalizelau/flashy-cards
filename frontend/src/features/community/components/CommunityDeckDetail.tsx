@@ -4,7 +4,18 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent } from '@/shared/components/ui/card';
 import { ScrollArea } from '@/shared/components/ui/scroll-area';
 import { Button } from '@/shared/components/ui/button';
-import { Loader2, GraduationCap, Download, User, BookOpen, Clock, Globe } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/shared/components/ui/alert-dialog';
+import { Loader2, GraduationCap, Bookmark, User, BookOpen, Clock, Globe } from 'lucide-react';
+import { useAuth } from '@/features/auth/contexts/AuthContext';
 import { apiClient } from '@/shared/services/api';
 import { Card as FlashCard } from '@/shared/types/api';
 import FlashcardTable from '@/features/collections/components/FlashcardTable';
@@ -21,9 +32,29 @@ const CommunityDeckDetail: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState<SortBy>('progress');
   const [orderBy, setOrderBy] = useState<OrderBy>('desc');
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
 
   // Use custom hooks
   const { playingAudio, playAudio } = useAudioPlayback();
+  const { userProfile } = useAuth();
+
+  // Language mapping for comparison
+  const languageMapping: { [key: string]: string } = {
+    'fr': 'French',
+    'de': 'German',
+    'zh': 'Chinese',
+    'en': 'English',
+    'it': 'Italian',
+    'ja': 'Japanese',
+    'es': 'Spanish',
+    'uk': 'Ukrainian'
+  };
+
+  // Helper function to normalize language for comparison
+  const normalizeLanguage = (lang: string): string => {
+    const lowerLang = lang.toLowerCase();
+    return languageMapping[lowerLang] || lang.charAt(0).toUpperCase() + lang.slice(1);
+  };
 
   // Fetch public deck cards
   const { data: cards = [], isLoading: cardsLoading, error } = useQuery({
@@ -41,6 +72,12 @@ const CommunityDeckDetail: React.FC = () => {
   });
 
   const deck = publicDecks.find(d => d.id === numericDeckId);
+
+  // Check if deck language differs from user's selected language
+  const userLanguage = userProfile?.selected_language;
+  const deckLanguageNormalized = deck ? normalizeLanguage(deck.language) : '';
+  const userLanguageNormalized = normalizeLanguage(userLanguage);
+  const isLanguageMismatch = deck && deckLanguageNormalized !== userLanguageNormalized;
 
   // Copy deck mutation
   const copyDeckMutation = useMutation({
@@ -63,8 +100,13 @@ const CommunityDeckDetail: React.FC = () => {
   const totalWords = cards?.length || 0;
 
   const handleCopyDeck = () => {
+    setIsPopupOpen(true);
+  };
+
+  const handleConfirmCopy = () => {
     if (numericDeckId) {
       copyDeckMutation.mutate(numericDeckId);
+      setIsPopupOpen(false);
     }
   };
 
@@ -109,7 +151,7 @@ const CommunityDeckDetail: React.FC = () => {
         onClick={handleBack}
         className="gap-2 px-3 mb-6"
       >
-        ← Back to Community
+        ← Back
       </Button>
 
       {/* Header */}
@@ -145,7 +187,7 @@ const CommunityDeckDetail: React.FC = () => {
           <Button
             onClick={handleCopyDeck}
             disabled={copyDeckMutation.isPending}
-            className="flex items-center gap-2 bg-main-foreground text-white hover:bg-main-foreground/90"
+            className="flex items-center gap-2 bg-muted-foreground text-white hover:bg-main-foreground"
           >
             {copyDeckMutation.isPending ? (
               <>
@@ -154,8 +196,8 @@ const CommunityDeckDetail: React.FC = () => {
               </>
             ) : (
               <>
-                <Download className="w-4 h-4" />
-                Save to My Collection
+                <Bookmark className="w-4 h-4" />
+                Save Deck
               </>
             )}
           </Button>
@@ -187,6 +229,44 @@ const CommunityDeckDetail: React.FC = () => {
           </ScrollArea>
         </CardContent>
       </Card>
+
+      <AlertDialog open={isPopupOpen} onOpenChange={setIsPopupOpen}>
+        <AlertDialogContent className="max-w-sm">
+          <AlertDialogHeader className="mb-4">
+            <AlertDialogTitle className="font-alumni-sans text-3xl text-main-foreground">Save Deck</AlertDialogTitle>
+            <AlertDialogDescription className="space-y-3">
+              {isLanguageMismatch && (
+                <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                  <p className="text-sm font-medium text-yellow-800">
+                    ⚠️ Deck is {deckLanguageNormalized}.
+                    Switch languages to view it.
+                  </p>
+                </div>
+              )}
+              <p className="text-muted-foreground">
+                This will create a copy you can study and modify.
+              </p>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex gap-3">
+            <AlertDialogCancel className="flex-1">Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleConfirmCopy}
+              disabled={copyDeckMutation.isPending}
+              className="bg-muted-foreground text-white hover:bg-main-foreground flex-1"
+            >
+              {copyDeckMutation.isPending ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                  Saving...
+                </>
+              ) : (
+                'Save to Collection'
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
