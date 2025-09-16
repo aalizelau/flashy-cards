@@ -14,6 +14,7 @@ import {
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/shared/services/api';
 import { PublicDeck } from '@/shared/types/api';
+import { useAuth } from '@/features/auth/contexts/AuthContext';
 
 interface CommunityCardProps {
   deck: PublicDeck;
@@ -24,6 +25,31 @@ interface CommunityCardProps {
 const CommunityCard: React.FC<CommunityCardProps> = ({ deck, onClick, onDeckCopied }) => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const queryClient = useQueryClient();
+  const { userProfile } = useAuth();
+
+  // Language mapping for comparison
+  const languageMapping: { [key: string]: string } = {
+    'fr': 'French',
+    'de': 'German',
+    'zh': 'Chinese',
+    'en': 'English',
+    'it': 'Italian',
+    'ja': 'Japanese',
+    'es': 'Spanish',
+    'uk': 'Ukrainian'
+  };
+
+  // Helper function to normalize language for comparison
+  const normalizeLanguage = (lang: string): string => {
+    const lowerLang = lang.toLowerCase();
+    return languageMapping[lowerLang] || lang.charAt(0).toUpperCase() + lang.slice(1);
+  };
+
+  // Check if deck language differs from user's selected language
+  const userLanguage = userProfile?.selected_language || 'en';
+  const deckLanguageNormalized = normalizeLanguage(deck.language);
+  const userLanguageNormalized = normalizeLanguage(userLanguage);
+  const isLanguageMismatch = deckLanguageNormalized !== userLanguageNormalized;
 
   // Copy deck mutation
   const copyDeckMutation = useMutation({
@@ -100,8 +126,18 @@ const CommunityCard: React.FC<CommunityCardProps> = ({ deck, onClick, onDeckCopi
         <AlertDialogContent className="max-w-sm ">
           <AlertDialogHeader className="mb-4">
             <AlertDialogTitle className="font-alumni-sans text-3xl text-main-foreground">Save Deck</AlertDialogTitle>
-            <AlertDialogDescription>
-              This will create a copy you can study and modify.
+            <AlertDialogDescription className="space-y-3">
+              {isLanguageMismatch && (
+                <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                  <p className="text-sm font-medium text-yellow-800">
+                    ⚠️ Deck is {deckLanguageNormalized}.
+                    Switch languages to view it.
+                  </p>
+                </div>
+              )}
+              <p className="text-muted-foreground">
+                This will create a copy you can study and modify.
+              </p>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="flex gap-3">

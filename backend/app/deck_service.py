@@ -578,10 +578,6 @@ class DeckService:
     def copy_public_deck(self, public_deck_id: int, user_id: str) -> DeckWithCardsResponse:
         """Copy a public deck to user's collection"""
         try:
-            # Get user's selected language
-            user = self.db.query(UserORM).filter(UserORM.uid == user_id).first()
-            user_language = user.selected_language if user and user.selected_language else 'en'
-
             # Verify source deck exists and is public, and get original author
             source_deck_with_author = self.db.query(DeckORM, UserORM).join(
                 UserORM, DeckORM.user_id == UserORM.uid
@@ -606,7 +602,7 @@ class DeckService:
                 name=source_deck.name,
                 is_public=False,  # Always create as private
                 user_id=user_id,
-                language=user_language,
+                language=source_deck.language,
                 created_at=datetime.now(),
                 progress=0.0,
                 card_count=len(source_cards),
@@ -642,7 +638,7 @@ class DeckService:
             for card in new_cards:
                 try:
                     if not card.audio_path and card.front:
-                        audio_path = voice_generator.generate_audio(card.front, user_language)
+                        audio_path = voice_generator.generate_audio(card.front, source_deck.language)
                         if audio_path:
                             card.audio_path = audio_path
                 except Exception as audio_error:
