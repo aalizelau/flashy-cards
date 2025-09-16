@@ -42,6 +42,7 @@ class Card(BaseModel):
 
 class DeckBase(BaseModel):
     name: str
+    is_public: bool = False
 
 
 class DeckCreate(DeckBase):
@@ -51,6 +52,7 @@ class DeckCreate(DeckBase):
 class DeckOut(BaseModel):
     id: int
     name: str
+    is_public: bool
     created_at: datetime
     progress: float
     card_count: int
@@ -71,12 +73,14 @@ class CardCreate(BaseModel):
 
 class DeckWithCardsCreate(BaseModel):
     name: str
+    is_public: bool = False
     cards: List[CardCreate]
 
 
 class DeckWithCardsResponse(BaseModel):
     id: int
     name: str
+    is_public: bool
     created_at: datetime
     progress: float
     card_count: int

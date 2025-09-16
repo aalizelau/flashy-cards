@@ -194,13 +194,9 @@ function CreateDeck() {
 
       const deckData: DeckWithCardsCreate = {
         name: deckTitle.trim(),
+        is_public: isPublic,
         cards: apiCards
       };
-
-      // Mock: Log the public deck setting (no actual API integration)
-      if (isPublic) {
-        console.log('Deck will be set as public:', deckData.name);
-      }
 
       const response = await apiClient.createDeckWithCards(deckData);
       

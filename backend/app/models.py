@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, ARRAY, func
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, ARRAY, Boolean, func
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from .database import Base
@@ -27,6 +27,7 @@ class Deck(Base):
     user_id = Column(String, ForeignKey("users.uid"), nullable=False, index=True)
     language = Column(String, nullable=False, default='en', index=True)
     name = Column(String, nullable=False)
+    is_public = Column(Boolean, nullable=False, default=False, index=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     progress = Column(Float, default=0.0)
     card_count = Column(Integer, default=0)

@@ -24,6 +24,7 @@ class DeckService:
         
         db_deck = DeckORM(
             name=deck_data.name,
+            is_public=deck_data.is_public,
             user_id=user_id,
             language=user_language,
             created_at=datetime.now(),
@@ -48,6 +49,7 @@ class DeckService:
             # Create deck
             db_deck = DeckORM(
                 name=deck_data.name,
+                is_public=deck_data.is_public,
                 user_id=user_id,
                 language=user_language,
                 created_at=datetime.now(),
@@ -105,6 +107,7 @@ class DeckService:
             return DeckWithCardsResponse(
                 id=db_deck.id,
                 name=db_deck.name,
+                is_public=db_deck.is_public,
                 created_at=db_deck.created_at,
                 progress=db_deck.progress,
                 card_count=db_deck.card_count,
@@ -296,8 +299,9 @@ class DeckService:
             existing_cards = {card.id: card for card in self.db.query(CardORM).filter(CardORM.deck_id == deck_id).all()}
             
             # Start transaction
-            # Update deck name
+            # Update deck name and public status
             deck.name = deck_data.name
+            deck.is_public = deck_data.is_public
             
             # Process cards from request
             updated_cards = []
@@ -352,6 +356,7 @@ class DeckService:
             return DeckWithCardsResponse(
                 id=deck.id,
                 name=deck.name,
+                is_public=deck.is_public,
                 created_at=deck.created_at,
                 progress=deck.progress,
                 card_count=deck.card_count,

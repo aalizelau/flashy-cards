@@ -25,6 +25,7 @@ export interface AuthenticatedUser extends User {
 export interface Deck {
   id: number;
   name: string;
+  is_public: boolean;
   created_at: string;
   progress: number;
   card_count: number;
@@ -99,12 +100,14 @@ export interface CardCreate {
 
 export interface DeckWithCardsCreate {
   name: string;
+  is_public?: boolean;
   cards: CardCreate[];
 }
 
 export interface DeckWithCardsResponse {
   id: number;
   name: string;
+  is_public: boolean;
   created_at: string;
   progress: number;
   card_count: number;
