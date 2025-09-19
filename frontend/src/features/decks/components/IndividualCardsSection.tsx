@@ -1,5 +1,7 @@
 import { useRef, useEffect } from 'react';
 import { Plus, Trash2, Paperclip } from 'lucide-react';
+import { CustomField } from '@/shared/types/api';
+import { getCustomFieldValue } from '@/shared/utils/customFields';
 
 interface Flashcard {
   id: string;
@@ -9,6 +11,7 @@ interface Flashcard {
   sentence_translation_1?: string;
   example_sentence_2?: string;
   sentence_translation_2?: string;
+  custom_data?: { [fieldName: string]: string };
 }
 
 interface IndividualCardsSectionProps {
@@ -16,7 +19,9 @@ interface IndividualCardsSectionProps {
   errors: { [key: string]: string };
   languageDisplay: string;
   expandedCards: Set<string>;
+  customFields?: CustomField[];
   onUpdateFlashcard: (id: string, field: 'front' | 'back' | 'example_sentence_1' | 'sentence_translation_1' | 'example_sentence_2' | 'sentence_translation_2', value: string) => void;
+  onUpdateCustomField: (id: string, fieldName: string, value: string) => void;
   onRemoveFlashcard: (id: string) => void;
   onAddFlashcard: () => void;
   onToggleExpansion: (id: string) => void;
@@ -27,7 +32,9 @@ function IndividualCardsSection({
   errors,
   languageDisplay,
   expandedCards,
+  customFields,
   onUpdateFlashcard,
+  onUpdateCustomField,
   onRemoveFlashcard,
   onAddFlashcard,
   onToggleExpansion
@@ -76,7 +83,7 @@ function IndividualCardsSection({
                         ? 'text-blue-600 hover:text-blue-700' 
                         : 'text-gray-400 hover:text-blue-500'
                     }`}
-                    aria-label="Toggle example sentence fields"
+                    aria-label={customFields && customFields.length > 0 ? "Toggle custom fields" : "Toggle additional fields"}
                   >
                     <Paperclip className="w-4 h-4" />
                   </button>
@@ -122,58 +129,97 @@ function IndividualCardsSection({
               <>
                 {/* Separator line */}
                 <div className="mx-6 border-t border-gray-200"></div>
-                
-                {/* Example sentence fields */}
-                <div className="p-6 pt-4 space-y-4">
-                  {/* Sentence 1 */}
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-xs font-semibold text-gray-500 mb-2 uppercase">
-                        Sentence 1{languageDisplay ? ` (${languageDisplay})` : ''}
-                      </label>
-                      <input
-                        value={card.example_sentence_1 || ''}
-                        onChange={(e) => onUpdateFlashcard(card.id, 'example_sentence_1', e.target.value)}
-                        className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-accent transition-all duration-200 resize-none h-12"
-                      />
-                    </div>
-                    
-                    <div>
-                      <label className="block text-xs font-semibold text-gray-500 mb-2 uppercase">
-                        Translation 1
-                      </label>
-                      <input
-                        value={card.sentence_translation_1 || ''}
-                        onChange={(e) => onUpdateFlashcard(card.id, 'sentence_translation_1', e.target.value)}
-                        className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 transition-all duration-200 resize-none h-12"
-                      />
-                    </div>
-                  </div>
 
-                  {/* Sentence 2 */}
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-xs font-semibold text-gray-500 mb-2 uppercase">
-                        Sentence 2{languageDisplay ? ` (${languageDisplay})` : ''}
-                      </label>
-                      <input
-                        value={card.example_sentence_2 || ''}
-                        onChange={(e) => onUpdateFlashcard(card.id, 'example_sentence_2', e.target.value)}
-                        className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-accent transition-all duration-200 resize-none h-12"
-                      />
+                {/* Custom fields or legacy fields */}
+                <div className="p-6 pt-4">
+                  {customFields && customFields.length > 0 ? (
+                    // Render custom fields
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between mb-4">
+                        <h4 className="text-xs font-semibold text-gray-600 uppercase">
+                          Custom Fields
+                        </h4>
+                        <span className="text-xs text-gray-500">
+                          {customFields.length} {customFields.length === 1 ? 'field' : 'fields'}
+                        </span>
+                      </div>
+
+                      {/* Render custom fields in a grid - 2 per row for up to 4, single column for 5 */}
+                      <div className={`grid gap-4 ${customFields.length <= 4 ? 'md:grid-cols-2' : 'grid-cols-1'}`}>
+                        {customFields.map((field) => (
+                          <div key={field.name}>
+                            <label className="block text-xs font-semibold text-gray-500 mb-2 uppercase">
+                              {field.label}
+                            </label>
+                            <input
+                              value={getCustomFieldValue(card.custom_data, field.name)}
+                              onChange={(e) => onUpdateCustomField(card.id, field.name, e.target.value)}
+                              className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 transition-all duration-200 resize-none h-12"
+                              placeholder={`Enter ${field.label.toLowerCase()}...`}
+                            />
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                    
-                    <div>
-                      <label className="block text-xs font-semibold text-gray-500 mb-2 uppercase">
-                        Translation 2
-                      </label>
-                      <input
-                        value={card.sentence_translation_2 || ''}
-                        onChange={(e) => onUpdateFlashcard(card.id, 'sentence_translation_2', e.target.value)}
-                        className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 transition-all duration-200 resize-none h-12"
-                      />
+                  ) : (
+                    // Fallback to legacy fields for backward compatibility
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between mb-4">
+                        <h4 className="text-xs font-semibold text-gray-600 uppercase">
+                          Additional Fields
+                        </h4>
+                      </div>
+
+                      {/* Legacy sentence fields */}
+                      <div className="grid md:grid-cols-2 gap-6">
+                        <div>
+                          <label className="block text-xs font-semibold text-gray-500 mb-2 uppercase">
+                            Sentence 1{languageDisplay ? ` (${languageDisplay})` : ''}
+                          </label>
+                          <input
+                            value={card.example_sentence_1 || ''}
+                            onChange={(e) => onUpdateFlashcard(card.id, 'example_sentence_1', e.target.value)}
+                            className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-accent transition-all duration-200 resize-none h-12"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-gray-500 mb-2 uppercase">
+                            Translation 1
+                          </label>
+                          <input
+                            value={card.sentence_translation_1 || ''}
+                            onChange={(e) => onUpdateFlashcard(card.id, 'sentence_translation_1', e.target.value)}
+                            className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 transition-all duration-200 resize-none h-12"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid md:grid-cols-2 gap-6">
+                        <div>
+                          <label className="block text-xs font-semibold text-gray-500 mb-2 uppercase">
+                            Sentence 2{languageDisplay ? ` (${languageDisplay})` : ''}
+                          </label>
+                          <input
+                            value={card.example_sentence_2 || ''}
+                            onChange={(e) => onUpdateFlashcard(card.id, 'example_sentence_2', e.target.value)}
+                            className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-accent transition-all duration-200 resize-none h-12"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-gray-500 mb-2 uppercase">
+                            Translation 2
+                          </label>
+                          <input
+                            value={card.sentence_translation_2 || ''}
+                            onChange={(e) => onUpdateFlashcard(card.id, 'sentence_translation_2', e.target.value)}
+                            className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 transition-all duration-200 resize-none h-12"
+                          />
+                        </div>
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               </>
             )}

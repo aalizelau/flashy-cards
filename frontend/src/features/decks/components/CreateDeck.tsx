@@ -19,6 +19,7 @@ interface Flashcard {
   sentence_translation_1?: string;
   example_sentence_2?: string;
   sentence_translation_2?: string;
+  custom_data?: { [fieldName: string]: string };
 }
 
 type ImportMode = 'individual' | 'bulk';
@@ -129,9 +130,27 @@ function CreateDeck() {
   };
 
   const updateFlashcard = (id: string, field: 'front' | 'back' | 'example_sentence_1' | 'sentence_translation_1' | 'example_sentence_2' | 'sentence_translation_2', value: string) => {
-    setFlashcards(flashcards.map(card => 
+    setFlashcards(flashcards.map(card =>
       card.id === id ? { ...card, [field]: value } : card
     ));
+  };
+
+  const updateCustomField = (id: string, fieldName: string, value: string) => {
+    setFlashcards(flashcards.map(card => {
+      if (card.id === id) {
+        const customData = card.custom_data || {};
+        if (value.trim()) {
+          customData[fieldName] = value.trim();
+        } else {
+          delete customData[fieldName];
+        }
+        return {
+          ...card,
+          custom_data: Object.keys(customData).length > 0 ? customData : undefined
+        };
+      }
+      return card;
+    }));
   };
 
   const toggleCardExpansion = (id: string) => {
@@ -224,7 +243,8 @@ function CreateDeck() {
         ...(card.example_sentence_1 && { example_sentence_1: card.example_sentence_1.trim() }),
         ...(card.sentence_translation_1 && { sentence_translation_1: card.sentence_translation_1.trim() }),
         ...(card.example_sentence_2 && { example_sentence_2: card.example_sentence_2.trim() }),
-        ...(card.sentence_translation_2 && { sentence_translation_2: card.sentence_translation_2.trim() })
+        ...(card.sentence_translation_2 && { sentence_translation_2: card.sentence_translation_2.trim() }),
+        ...(card.custom_data && Object.keys(card.custom_data).length > 0 && { custom_data: card.custom_data })
       }));
 
       const deckData: DeckWithCardsCreate = {
@@ -395,12 +415,16 @@ function CreateDeck() {
 
           {/* Individual Cards Mode */}
           {importMode === 'individual' && (
-            <IndividualCardsSection 
+            <IndividualCardsSection
               flashcards={flashcards}
               errors={errors}
               languageDisplay={languageDisplay}
               expandedCards={expandedCards}
+              customFields={customFields.filter(field => field.label.trim()).length > 0
+                ? processCustomFieldsForCreation(customFields.filter(field => field.label.trim()))
+                : undefined}
               onUpdateFlashcard={updateFlashcard}
+              onUpdateCustomField={updateCustomField}
               onRemoveFlashcard={removeFlashcard}
               onAddFlashcard={addFlashcard}
               onToggleExpansion={toggleCardExpansion}
