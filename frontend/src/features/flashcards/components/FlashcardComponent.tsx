@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Card as FlashCard, CustomField } from '@/shared/types/api';
+import { Card as FlashCard } from '@/shared/types/api';
 import FlashCardFront from './FlashCardFront';
 import FlashCardBack from './FlashCardBack';
 
@@ -9,7 +9,6 @@ interface FlashcardComponentProps {
   isSwapped?: boolean;
   onFlip: () => void;
   animateFlip?: boolean;
-  customFields?: CustomField[];
 }
 
 export const FlashcardComponent: React.FC<FlashcardComponentProps> = ({
@@ -17,7 +16,6 @@ export const FlashcardComponent: React.FC<FlashcardComponentProps> = ({
   isFlipped,
   onFlip,
   animateFlip = true,
-  customFields,
 }) => {
 
   useEffect(() => {
@@ -43,7 +41,6 @@ export const FlashcardComponent: React.FC<FlashcardComponentProps> = ({
           back={flashcard.back}
           audioUrl={flashcard.audio_url}
           onClick={onFlip}
-          customFields={customFields}
           customData={flashcard.custom_data}
         />
       </div>

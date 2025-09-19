@@ -1,15 +1,12 @@
 import React from "react";
 
 import FlashCardBase from "./FlashCardBase";
-import { CustomField } from "@/shared/types/api";
-import { getCustomFieldValue } from "@/shared/utils/customFields";
 
 interface FlashCardBackProps {
     front: string;
     back: string;
     audioUrl?: string;
     onClick?: () => void;
-    customFields?: CustomField[];
     customData?: { [fieldName: string]: string };
 }
 
@@ -18,7 +15,6 @@ const FlashCardBack: React.FC<FlashCardBackProps> = ({
     back,
     audioUrl,
     onClick,
-    customFields,
     customData
 }) => {
 
@@ -32,16 +28,13 @@ const FlashCardBack: React.FC<FlashCardBackProps> = ({
                     {front}
                 </h3>
 
-                {customFields && customFields.length > 0 && (
+                {customData && Object.keys(customData).length > 0 && (
                     <div className="space-y-2 flex flex-col justify-center max-w-sm">
-                        {customFields.map((field) => {
-                            const value = getCustomFieldValue(customData, field.name);
-                            return value ? (
-                                <p key={field.name} className="text-sm italic text-gray-700 font-medium">
-                                    {value}
-                                </p>
-                            ) : null;
-                        })}
+                        {Object.values(customData).map((value, index) => (
+                            <p key={index} className="text-sm italic text-gray-700 font-medium">
+                                {value}
+                            </p>
+                        ))}
                     </div>
                 )}
             </div>
