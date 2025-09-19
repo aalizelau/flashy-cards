@@ -117,10 +117,6 @@ class DeckService:
                     deck_id=db_deck.id,
                     front=card_data.front,
                     back=card_data.back,
-                    example_sentence_1=getattr(card_data, 'example_sentence_1', None),
-                    sentence_translation_1=getattr(card_data, 'sentence_translation_1', None),
-                    example_sentence_2=getattr(card_data, 'example_sentence_2', None),
-                    sentence_translation_2=getattr(card_data, 'sentence_translation_2', None),
                     accuracy=0.0,
                     total_attempts=0,
                     correct_answers=0,
@@ -288,10 +284,6 @@ class DeckService:
                 deck_id=deck_id,
                 front=card_data.front.strip(),
                 back=card_data.back.strip(),
-                example_sentence_1=getattr(card_data, 'example_sentence_1', None),
-                sentence_translation_1=getattr(card_data, 'sentence_translation_1', None),
-                example_sentence_2=getattr(card_data, 'example_sentence_2', None),
-                sentence_translation_2=getattr(card_data, 'sentence_translation_2', None),
                 accuracy=0.0,
                 total_attempts=0,
                 correct_answers=0,
@@ -363,10 +355,7 @@ class DeckService:
                     # Update content fields only
                     existing_card.front = card_data.front
                     existing_card.back = card_data.back
-                    existing_card.example_sentence_1 = getattr(card_data, 'example_sentence_1', None)
-                    existing_card.sentence_translation_1 = getattr(card_data, 'sentence_translation_1', None)
-                    existing_card.example_sentence_2 = getattr(card_data, 'example_sentence_2', None)
-                    existing_card.sentence_translation_2 = getattr(card_data, 'sentence_translation_2', None)
+                    existing_card.custom_data = getattr(card_data, 'custom_data', None)
                     
                     # Generate new audio if front text changed
                     try:
@@ -495,10 +484,6 @@ class DeckService:
             # Update content fields only, preserve statistics
             card.front = card_data.front
             card.back = card_data.back
-            card.example_sentence_1 = getattr(card_data, 'example_sentence_1', None)
-            card.sentence_translation_1 = getattr(card_data, 'sentence_translation_1', None)
-            card.example_sentence_2 = getattr(card_data, 'example_sentence_2', None)
-            card.sentence_translation_2 = getattr(card_data, 'sentence_translation_2', None)
             card.custom_data = getattr(card_data, 'custom_data', None)
             
             # Generate new audio if front text changed
@@ -661,16 +646,13 @@ class DeckService:
                     deck_id=new_deck.id,
                     front=source_card.front,
                     back=source_card.back,
-                    example_sentence_1=source_card.example_sentence_1,
-                    sentence_translation_1=source_card.sentence_translation_1,
-                    example_sentence_2=source_card.example_sentence_2,
-                    sentence_translation_2=source_card.sentence_translation_2,
                     accuracy=0.0,  # Reset statistics
                     total_attempts=0,
                     correct_answers=0,
                     last_reviewed_at=None,
                     created_at=datetime.now(),
-                    audio_path=source_card.audio_path  # Keep audio path reference
+                    audio_path=source_card.audio_path,  # Keep audio path reference
+                    custom_data=source_card.custom_data  # Keep custom data
                 )
                 self.db.add(new_card)
                 new_cards.append(new_card)
