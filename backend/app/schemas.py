@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Dict, Any
 from typing import List
 
 class User(BaseModel):
@@ -23,6 +23,15 @@ class UserUpdate(BaseModel):
     name: Optional[str] = None
     selected_language: Optional[str] = None
 
+
+class CustomField(BaseModel):
+    name: str
+    label: str
+
+
+class CustomFieldCreate(BaseModel):
+    label: str
+
 class Card(BaseModel):
     id: int
     deck_id: int
@@ -38,6 +47,7 @@ class Card(BaseModel):
     last_reviewed_at: Optional[datetime] = None
     created_at: datetime
     audio_url: Optional[str] = None  # Will be populated by API
+    custom_data: Optional[Dict[str, str]] = None
     model_config = {"from_attributes": True}
 
 class DeckBase(BaseModel):
@@ -46,7 +56,7 @@ class DeckBase(BaseModel):
 
 
 class DeckCreate(DeckBase):
-    pass
+    custom_fields: Optional[List[CustomFieldCreate]] = None
 
 
 class DeckOut(BaseModel):
@@ -58,6 +68,7 @@ class DeckOut(BaseModel):
     progress: float
     card_count: int
     original_author_name: Optional[str] = None
+    custom_fields: Optional[List[CustomField]] = None
 
     class Config:
         orm_mode = True
@@ -85,11 +96,13 @@ class CardCreate(BaseModel):
     sentence_translation_1: Optional[str] = None
     example_sentence_2: Optional[str] = None
     sentence_translation_2: Optional[str] = None
+    custom_data: Optional[Dict[str, str]] = None
 
 
 class DeckWithCardsCreate(BaseModel):
     name: str
     is_public: bool = False
+    custom_fields: Optional[List[CustomFieldCreate]] = None
     cards: List[CardCreate]
 
 
@@ -101,6 +114,7 @@ class DeckWithCardsResponse(BaseModel):
     last_modified: datetime
     progress: float
     card_count: int
+    custom_fields: Optional[List[CustomField]] = None
     cards: List[Card]
 
     class Config:

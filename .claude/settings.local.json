@@ -9,7 +9,8 @@
       "Bash(alembic upgrade:*)",
       "WebSearch",
       "Bash(alembic current:*)",
-      "Bash(alembic history:*)"
+      "Bash(alembic history:*)",
+      "Bash(npm run build:*)"
     ],
     "deny": []
   }

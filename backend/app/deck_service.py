@@ -8,6 +8,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from app.models import Deck as DeckORM, Card as CardORM, User as UserORM
 from app.schemas import DeckCreate, DeckWithCardsCreate, DeckWithCardsResponse, Card as CardSchema, CardCreate
 from app.voice_service import voice_generator
+from app.utils import label_to_field_name, validate_custom_fields
 
 logger = logging.getLogger(__name__)
 
@@ -21,7 +22,24 @@ class DeckService:
         # Get user's selected language
         user = self.db.query(UserORM).filter(UserORM.uid == user_id).first()
         user_language = user.selected_language if user and user.selected_language else 'en'
-        
+
+        # Process custom fields
+        custom_fields = None
+        if deck_data.custom_fields:
+            custom_fields = []
+            for field_create in deck_data.custom_fields:
+                field_name = label_to_field_name(field_create.label)
+                custom_fields.append({
+                    "name": field_name,
+                    "label": field_create.label
+                })
+
+        # Validate custom fields
+        if custom_fields:
+            is_valid, error_msg = validate_custom_fields(custom_fields)
+            if not is_valid:
+                raise ValueError(f"Invalid custom fields: {error_msg}")
+
         db_deck = DeckORM(
             name=deck_data.name,
             is_public=deck_data.is_public,
@@ -29,7 +47,8 @@ class DeckService:
             language=user_language,
             created_at=datetime.now(),
             progress=0.0,
-            card_count=0
+            card_count=0,
+            custom_fields=custom_fields
         )
         self.db.add(db_deck)
         self.db.commit()
@@ -46,6 +65,23 @@ class DeckService:
             # Start transaction
             # self.db.begin()
             
+            # Process custom fields
+            custom_fields = None
+            if deck_data.custom_fields:
+                custom_fields = []
+                for field_create in deck_data.custom_fields:
+                    field_name = label_to_field_name(field_create.label)
+                    custom_fields.append({
+                        "name": field_name,
+                        "label": field_create.label
+                    })
+
+            # Validate custom fields
+            if custom_fields:
+                is_valid, error_msg = validate_custom_fields(custom_fields)
+                if not is_valid:
+                    raise ValueError(f"Invalid custom fields: {error_msg}")
+
             # Create deck
             db_deck = DeckORM(
                 name=deck_data.name,
@@ -54,7 +90,8 @@ class DeckService:
                 language=user_language,
                 created_at=datetime.now(),
                 progress=0.0,
-                card_count=len(deck_data.cards)
+                card_count=len(deck_data.cards),
+                custom_fields=custom_fields
             )
             self.db.add(db_deck)
             self.db.flush()  # Get deck ID without committing
@@ -88,7 +125,8 @@ class DeckService:
                     total_attempts=0,
                     correct_answers=0,
                     created_at=datetime.now(),
-                    audio_path=audio_path
+                    audio_path=audio_path,
+                    custom_data=getattr(card_data, 'custom_data', None)
                 )
                 self.db.add(db_card)
                 db_cards.append(db_card)
@@ -112,6 +150,7 @@ class DeckService:
                 last_modified=db_deck.last_modified,
                 progress=db_deck.progress,
                 card_count=db_deck.card_count,
+                custom_fields=db_deck.custom_fields,
                 cards=card_schemas
             )
             
@@ -257,7 +296,8 @@ class DeckService:
                 total_attempts=0,
                 correct_answers=0,
                 created_at=datetime.now(),
-                audio_path=audio_path
+                audio_path=audio_path,
+                custom_data=getattr(card_data, 'custom_data', None)
             )
             
             self.db.add(db_card)
@@ -459,6 +499,7 @@ class DeckService:
             card.sentence_translation_1 = getattr(card_data, 'sentence_translation_1', None)
             card.example_sentence_2 = getattr(card_data, 'example_sentence_2', None)
             card.sentence_translation_2 = getattr(card_data, 'sentence_translation_2', None)
+            card.custom_data = getattr(card_data, 'custom_data', None)
             
             # Generate new audio if front text changed
             try:

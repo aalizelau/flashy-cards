@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Card as FlashCard } from '@/shared/types/api';
+import { Card as FlashCard, CustomField } from '@/shared/types/api';
 import FlashCardFront from './FlashCardFront';
 import FlashCardBack from './FlashCardBack';
 
@@ -9,6 +9,7 @@ interface FlashcardComponentProps {
   isSwapped?: boolean;
   onFlip: () => void;
   animateFlip?: boolean;
+  customFields?: CustomField[];
 }
 
 export const FlashcardComponent: React.FC<FlashcardComponentProps> = ({
@@ -16,6 +17,7 @@ export const FlashcardComponent: React.FC<FlashcardComponentProps> = ({
   isFlipped,
   onFlip,
   animateFlip = true,
+  customFields,
 }) => {
 
   useEffect(() => {
@@ -36,15 +38,17 @@ export const FlashcardComponent: React.FC<FlashcardComponentProps> = ({
           } ${isFlipped ? 'rotate-y-180' : ''}`}
       >
         <FlashCardFront word={flashcard.front} audioUrl={flashcard.audio_url} onClick={onFlip} />
-        <FlashCardBack 
-          front={flashcard.front} 
-          back={flashcard.back} 
-          audioUrl={flashcard.audio_url} 
-          onClick={onFlip} 
+        <FlashCardBack
+          front={flashcard.front}
+          back={flashcard.back}
+          audioUrl={flashcard.audio_url}
+          onClick={onFlip}
           example_sentence_1={flashcard.example_sentence_1}
           sentence_translation_1={flashcard.sentence_translation_1}
           example_sentence_2={flashcard.example_sentence_2}
           sentence_translation_2={flashcard.sentence_translation_2}
+          customFields={customFields}
+          customData={flashcard.custom_data}
         />
       </div>
     </div>

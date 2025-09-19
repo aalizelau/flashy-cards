@@ -3,9 +3,10 @@ import { Loader2, Zap } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/shared/components/ui/button';
 import { apiClient } from '@/shared/services/api';
-import { DeckWithCardsCreate, CardCreate } from '@/shared/types/api';
+import { DeckWithCardsCreate, CardCreate, CustomFieldCreate } from '@/shared/types/api';
 import { useAuth } from '@/features/auth/contexts/AuthContext';
 import { LANGUAGES } from '@/shared/components/LanguageSelector';
+import { labelToFieldName, validateCustomFields, processCustomFieldsForCreation } from '@/shared/utils/customFields';
 import ImportModeToggle from './ImportModeToggle';
 import IndividualCardsSection from './IndividualCardsSection';
 import BulkImportSection from './BulkImportSection';
@@ -42,6 +43,7 @@ function CreateDeck() {
   const [isLoading, setIsLoading] = useState(false);
   const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
   const [isPublic, setIsPublic] = useState(false);
+  const [customFields, setCustomFields] = useState<CustomFieldCreate[]>([]);
 
   // Helper function to get language display name
   const getLanguageDisplayName = (languageCode?: string | null): string => {
@@ -142,13 +144,46 @@ function CreateDeck() {
     setExpandedCards(newExpandedCards);
   };
 
+  // Custom field management functions
+  const addCustomField = () => {
+    if (customFields.length < 5) {
+      setCustomFields([...customFields, { label: '' }]);
+    }
+  };
+
+  const removeCustomField = (index: number) => {
+    setCustomFields(customFields.filter((_, i) => i !== index));
+  };
+
+  const updateCustomFieldLabel = (index: number, label: string) => {
+    const updated = [...customFields];
+    updated[index] = { label };
+    setCustomFields(updated);
+  };
+
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
-    
+
     if (!deckTitle.trim()) {
       newErrors.deckTitle = 'Deck title is required';
     }
-    
+
+    // Validate custom fields
+    if (customFields.length > 0) {
+      const processedFields = processCustomFieldsForCreation(customFields);
+      const validation = validateCustomFields(processedFields);
+      if (!validation.isValid) {
+        newErrors.customFields = validation.error || 'Invalid custom fields';
+      }
+
+      // Check for empty labels
+      for (let i = 0; i < customFields.length; i++) {
+        if (!customFields[i].label.trim()) {
+          newErrors[`customField_${i}`] = 'Field label cannot be empty';
+        }
+      }
+    }
+
     if (importMode === 'individual') {
       const validCards = flashcards.filter(card => card.front.trim() || card.back.trim());
       if (validCards.length === 0) {
@@ -165,7 +200,7 @@ function CreateDeck() {
         newErrors.bulkText = 'Please enter valid text to create flashcards';
       }
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -195,6 +230,9 @@ function CreateDeck() {
       const deckData: DeckWithCardsCreate = {
         name: deckTitle.trim(),
         is_public: isPublic,
+        custom_fields: customFields.filter(field => field.label.trim()).length > 0
+          ? customFields.filter(field => field.label.trim())
+          : undefined,
         cards: apiCards
       };
 
@@ -294,8 +332,63 @@ function CreateDeck() {
             </div>
           </div>
 
+          {/* Custom Fields Section */}
+          <div>
+            <h3 className="text-md font-semibold text-gray-700 mb-3">
+              Custom Fields (Optional)
+            </h3>
+            <p className="text-sm text-gray-600 mb-4">
+              Add up to 5 custom fields for your flashcards. Examples: "Example Sentence", "Notes", "Conjugation", "Pronunciation Guide"
+            </p>
+
+            {customFields.map((field, index) => (
+              <div key={index} className="flex items-center gap-3 mb-3">
+                <div className="flex-1">
+                  <input
+                    type="text"
+                    value={field.label}
+                    onChange={(e) => updateCustomFieldLabel(index, e.target.value)}
+                    placeholder={`Field ${index + 1} (e.g., "Example Sentence")`}
+                    className={`w-full px-4 py-2 text-sm border-2 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-100 ${
+                      errors[`customField_${index}`]
+                        ? 'border-red-300 focus:border-red-500'
+                        : 'border-gray-200 focus:border-blue-500'
+                    }`}
+                  />
+                  {errors[`customField_${index}`] && (
+                    <p className="mt-1 text-xs text-red-600">{errors[`customField_${index}`]}</p>
+                  )}
+                </div>
+                <div className="text-xs text-gray-500 flex-shrink-0 w-24">
+                  {field.label ? labelToFieldName(field.label) : 'field_name'}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => removeCustomField(index)}
+                  className="text-red-500 hover:text-red-700 text-sm font-medium"
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+
+            {customFields.length < 5 && (
+              <button
+                type="button"
+                onClick={addCustomField}
+                className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+              >
+                + Add Custom Field
+              </button>
+            )}
+
+            {errors.customFields && (
+              <p className="mt-2 text-sm text-red-600">{errors.customFields}</p>
+            )}
+          </div>
+
           {/* Import Mode Toggle */}
-          <ImportModeToggle 
+          <ImportModeToggle
             importMode={importMode}
             onModeChange={setImportMode}
           />

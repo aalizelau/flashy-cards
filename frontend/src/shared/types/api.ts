@@ -22,6 +22,15 @@ export interface AuthenticatedUser extends User {
   isEmailVerified: boolean;
 }
 
+export interface CustomField {
+  name: string;
+  label: string;
+}
+
+export interface CustomFieldCreate {
+  label: string;
+}
+
 export interface Deck {
   id: number;
   name: string;
@@ -31,6 +40,7 @@ export interface Deck {
   progress: number;
   card_count: number;
   original_author_name?: string;
+  custom_fields?: CustomField[];
 }
 
 export interface Card {
@@ -48,6 +58,7 @@ export interface Card {
   last_reviewed_at: string;
   created_at: string;
   audio_url?: string;
+  custom_data?: { [fieldName: string]: string };
 }
 
 export interface TestResult {
@@ -98,11 +109,13 @@ export interface CardCreate {
   sentence_translation_1?: string;
   example_sentence_2?: string;
   sentence_translation_2?: string;
+  custom_data?: { [fieldName: string]: string };
 }
 
 export interface DeckWithCardsCreate {
   name: string;
   is_public?: boolean;
+  custom_fields?: CustomFieldCreate[];
   cards: CardCreate[];
 }
 
@@ -113,6 +126,7 @@ export interface DeckWithCardsResponse {
   created_at: string;
   progress: number;
   card_count: number;
+  custom_fields?: CustomField[];
   cards: Card[];
 }
 

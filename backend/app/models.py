@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, ARRAY, Boolean, func
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, ARRAY, Boolean, func, JSON
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from .database import Base
@@ -34,6 +34,7 @@ class Deck(Base):
     card_count = Column(Integer, default=0)
     original_author_name = Column(String, nullable=True)  # For copied decks
     copied_from_deck_id = Column(Integer, nullable=True)  # Reference to original deck
+    custom_fields = Column(JSON, nullable=True)  # Array of {name: string, label: string}
 
     user = relationship("User", back_populates="decks")
     cards = relationship("Card", back_populates="deck")
@@ -55,6 +56,7 @@ class Card(Base):
     last_reviewed_at = Column(DateTime, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     audio_path = Column(String, nullable=True)  # Path to TTS audio file
+    custom_data = Column(JSON, nullable=True)  # {field_name: value} for custom fields
 
     deck = relationship("Deck", back_populates="cards")
 
