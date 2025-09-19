@@ -43,10 +43,6 @@ export const FlashcardComponent: React.FC<FlashcardComponentProps> = ({
           back={flashcard.back}
           audioUrl={flashcard.audio_url}
           onClick={onFlip}
-          example_sentence_1={flashcard.example_sentence_1}
-          sentence_translation_1={flashcard.sentence_translation_1}
-          example_sentence_2={flashcard.example_sentence_2}
-          sentence_translation_2={flashcard.sentence_translation_2}
           customFields={customFields}
           customData={flashcard.custom_data}
         />
