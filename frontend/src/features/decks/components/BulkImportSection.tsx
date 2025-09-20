@@ -86,7 +86,6 @@ function BulkImportSection({
 
     return `Example formats:\n\nBasic: ${basicFormat}${cardSeparator}${customFields && customFields.length > 0 ? `With custom fields: ${withCustomFieldsFormat}${cardSeparator}` : ''}`;
   };
-  // console.log(card.custom_data)
 
   return (
     <div className="space-y-6">

@@ -3,10 +3,10 @@ import { Loader2, Zap } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/shared/components/ui/button';
 import { apiClient } from '@/shared/services/api';
-import { DeckWithCardsCreate, CardCreate, CustomFieldCreate } from '@/shared/types/api';
+import { DeckWithCardsCreate, CardCreate, CustomField } from '@/shared/types/api';
 import { useAuth } from '@/features/auth/contexts/AuthContext';
 import { LANGUAGES } from '@/shared/components/LanguageSelector';
-import { labelToFieldName, validateCustomFields, processCustomFieldsForCreation } from '@/shared/utils/customFields';
+import { labelToFieldName, validateCustomFields } from '@/shared/utils/customFields';
 import ImportModeToggle from './ImportModeToggle';
 import IndividualCardsSection from './IndividualCardsSection';
 import BulkImportSection from './BulkImportSection';
@@ -40,7 +40,7 @@ function CreateDeck() {
   const [isLoading, setIsLoading] = useState(false);
   const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
   const [isPublic, setIsPublic] = useState(false);
-  const [customFields, setCustomFields] = useState<CustomFieldCreate[]>([]);
+  const [customFields, setCustomFields] = useState<CustomField[]>([]);
 
   // Helper function to get language display name
   const getLanguageDisplayName = (languageCode?: string | null): string => {
@@ -165,7 +165,7 @@ function CreateDeck() {
   // Custom field management functions
   const addCustomField = () => {
     if (customFields.length < 5) {
-      setCustomFields([...customFields, { label: '' }]);
+      setCustomFields([...customFields, { name: '', label: '' }]);
     }
   };
 
@@ -175,7 +175,9 @@ function CreateDeck() {
 
   const updateCustomFieldLabel = (index: number, label: string) => {
     const updated = [...customFields];
-    updated[index] = { label };
+    // Generate name from label using the utility function
+    const name = labelToFieldName(label);
+    updated[index] = { name, label };
     setCustomFields(updated);
   };
 
@@ -188,8 +190,7 @@ function CreateDeck() {
 
     // Validate custom fields
     if (customFields.length > 0) {
-      const processedFields = processCustomFieldsForCreation(customFields);
-      const validation = validateCustomFields(processedFields);
+      const validation = validateCustomFields(customFields);
       if (!validation.isValid) {
         newErrors.customFields = validation.error || 'Invalid custom fields';
       }
@@ -246,7 +247,7 @@ function CreateDeck() {
         name: deckTitle.trim(),
         is_public: isPublic,
         custom_fields: customFields.filter(field => field.label.trim()).length > 0
-          ? customFields.filter(field => field.label.trim())
+          ? customFields.filter(field => field.label.trim()).map(field => ({ label: field.label }))
           : undefined,
         cards: apiCards
       };
@@ -416,7 +417,7 @@ function CreateDeck() {
               languageDisplay={languageDisplay}
               expandedCards={expandedCards}
               customFields={customFields.filter(field => field.label.trim()).length > 0
-                ? processCustomFieldsForCreation(customFields.filter(field => field.label.trim()))
+                ? customFields.filter(field => field.label.trim())
                 : undefined}
               onUpdateFlashcard={updateFlashcard}
               onUpdateCustomField={updateCustomField}
@@ -439,7 +440,7 @@ function CreateDeck() {
               bulkCards={bulkCards}
               hasValidFormat={hasValidFormat}
               customFields={customFields.filter(field => field.label.trim()).length > 0
-                ? processCustomFieldsForCreation(customFields.filter(field => field.label.trim()))
+                ? customFields.filter(field => field.label.trim())
                 : undefined}
               onBulkTextChange={setBulkText}
               onTermDelimiterChange={setTermDelimiter}
