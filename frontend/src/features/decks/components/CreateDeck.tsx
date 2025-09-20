@@ -139,7 +139,7 @@ function CreateDeck() {
       if (card.id === id) {
         const customData = card.custom_data || {};
         if (value.trim()) {
-          customData[fieldName] = value.trim();
+          customData[fieldName] = value;
         } else {
           delete customData[fieldName];
         }
