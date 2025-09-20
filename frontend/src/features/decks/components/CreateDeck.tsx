@@ -84,10 +84,28 @@ function CreateDeck() {
       const front = parts[0]?.trim() || '';
       const back = parts[1]?.trim() || '';
 
+      // Handle custom fields if they exist
+      let custom_data: { [fieldName: string]: string } | undefined;
+      if (customFields && customFields.length > 0 && parts.length > 2) {
+        custom_data = {};
+        customFields.forEach((field, fieldIndex) => {
+          const fieldValue = parts[2 + fieldIndex]?.trim();
+          if (fieldValue) {
+            custom_data![field.name] = fieldValue;
+          }
+        });
+
+        // Only include custom_data if it has values
+        if (Object.keys(custom_data).length === 0) {
+          custom_data = undefined;
+        }
+      }
+
       return {
         id: `bulk-${index}-${Date.now()}`,
         front,
         back,
+        ...(custom_data && { custom_data }),
       };
     }).filter(card => card.front && card.back); // Only include cards with both front and back
   };
@@ -410,7 +428,7 @@ function CreateDeck() {
 
           {/* Bulk Import Mode */}
           {importMode === 'bulk' && (
-            <BulkImportSection 
+            <BulkImportSection
               bulkText={bulkText}
               termDelimiter={termDelimiter}
               cardDelimiter={cardDelimiter}
@@ -420,6 +438,9 @@ function CreateDeck() {
               languageDisplay={languageDisplay}
               bulkCards={bulkCards}
               hasValidFormat={hasValidFormat}
+              customFields={customFields.filter(field => field.label.trim()).length > 0
+                ? processCustomFieldsForCreation(customFields.filter(field => field.label.trim()))
+                : undefined}
               onBulkTextChange={setBulkText}
               onTermDelimiterChange={setTermDelimiter}
               onCardDelimiterChange={setCardDelimiter}

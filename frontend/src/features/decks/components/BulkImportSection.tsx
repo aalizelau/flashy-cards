@@ -1,15 +1,13 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/components/ui/select';
 import { Label } from '@/shared/components/ui/label';
 import { Input } from '@/shared/components/ui/input';
+import { CustomField } from '@/shared/types/api';
 
 interface Flashcard {
   id: string;
   front: string;
   back: string;
-  example_sentence_1?: string;
-  sentence_translation_1?: string;
-  example_sentence_2?: string;
-  sentence_translation_2?: string;
+  custom_data?: { [fieldName: string]: string };
 }
 
 type TermDelimiter = 'tab' | 'comma' | 'pipe' | 'semicolon' | 'custom';
@@ -30,6 +28,7 @@ interface BulkImportSectionProps {
   languageDisplay: string;
   bulkCards: Flashcard[];
   hasValidFormat: boolean;
+  customFields?: CustomField[];
   onBulkTextChange: (text: string) => void;
   onTermDelimiterChange: (delimiter: TermDelimiter) => void;
   onCardDelimiterChange: (delimiter: CardDelimiter) => void;
@@ -49,6 +48,7 @@ function BulkImportSection({
   languageDisplay,
   bulkCards,
   hasValidFormat,
+  customFields,
   onBulkTextChange,
   onTermDelimiterChange,
   onCardDelimiterChange,
@@ -70,6 +70,23 @@ function BulkImportSection({
     { value: 'double-newline', label: 'Double New Line' },
     { value: 'custom', label: 'Custom' }
   ];
+
+  // Generate dynamic placeholder text based on custom fields
+  const generatePlaceholderText = () => {
+    const delimiter = getDelimiterChar(termDelimiter);
+    const cardSeparator = getCardSeparator(cardDelimiter);
+
+    const basicFormat = `<word>${delimiter}<translation>`;
+    let withCustomFieldsFormat = basicFormat;
+
+    if (customFields && customFields.length > 0) {
+      const customFieldsPlaceholders = customFields.map(field => `<${field.label.toLowerCase()}>`).join(delimiter);
+      withCustomFieldsFormat = `${basicFormat}${delimiter}${customFieldsPlaceholders}`;
+    }
+
+    return `Example formats:\n\nBasic: ${basicFormat}${cardSeparator}${customFields && customFields.length > 0 ? `With custom fields: ${withCustomFieldsFormat}${cardSeparator}` : ''}`;
+  };
+  // console.log(card.custom_data)
 
   return (
     <div className="space-y-6">
@@ -158,7 +175,7 @@ function BulkImportSection({
         <textarea
           value={bulkText}
           onChange={(e) => onBulkTextChange(e.target.value)}
-          placeholder={`Example formats:\n\nBasic: <word>${getDelimiterChar(termDelimiter)}<translation>${getCardSeparator(cardDelimiter)}With one sentence: <word>${getDelimiterChar(termDelimiter)}<translation>${getDelimiterChar(termDelimiter)}<example sentence>${getDelimiterChar(termDelimiter)}<sentence translation>${getCardSeparator(cardDelimiter)}With two sentences: <word>${getDelimiterChar(termDelimiter)}<translation>${getDelimiterChar(termDelimiter)}<sentence1>${getDelimiterChar(termDelimiter)}<translation1>${getDelimiterChar(termDelimiter)}<sentence2>${getDelimiterChar(termDelimiter)}<translation2>`}
+          placeholder={generatePlaceholderText()}
           className={`w-full px-4 py-3 border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all duration-200 resize-none ${
             errors.bulkText 
               ? 'border-red-300 focus:border-red-500' 
@@ -207,55 +224,25 @@ function BulkImportSection({
                       </div>
                     </div>
 
-                    {/* Show sentence fields if they exist */}
-                    {(card.example_sentence_1 || card.sentence_translation_1 || card.example_sentence_2 || card.sentence_translation_2) && (
+                    {/* Show custom fields if they exist */}
+                    {customFields && customFields.length > 0 && card.custom_data && Object.keys(card.custom_data).length > 0 && (
                       <>
                         {/* Separator */}
                         <div className="my-3 border-t border-gray-200"></div>
-                        
-                        {/* Sentence 1 */}
-                        {(card.example_sentence_1 || card.sentence_translation_1) && (
-                          <div className="grid md:grid-cols-2 gap-4 mb-3">
-                            <div>
-                              <label className="block text-xs font-medium text-gray-400 uppercase tracking-wide mb-1">
-                                Sentence 1{languageDisplay ? ` (${languageDisplay})` : ''}
-                              </label>
-                              <div className="w-full h-12 px-3 bg-gray-50 border border-gray-200 rounded-md text-sm text-gray-600 flex items-center">
-                                {card.example_sentence_1 || '-'}
-                              </div>
-                            </div>
-                            <div>
-                              <label className="block text-xs font-medium text-gray-400 uppercase tracking-wide mb-1">
-                                Translation 1
-                              </label>
-                              <div className="w-full h-12 px-3 bg-gray-50 border border-gray-200 rounded-md text-sm text-gray-600 flex items-center">
-                                {card.sentence_translation_1 || '-'}
-                              </div>
-                            </div>
-                          </div>
-                        )}
 
-                        {/* Sentence 2 */}
-                        {(card.example_sentence_2 || card.sentence_translation_2) && (
-                          <div className="grid md:grid-cols-2 gap-4">
-                            <div>
+                        {/* Custom Fields */}
+                        <div className={`grid gap-4 ${customFields.length <= 4 ? 'md:grid-cols-2' : 'grid-cols-1'}`}>
+                          {customFields.map((field) => (
+                            <div key={field.name}>
                               <label className="block text-xs font-medium text-gray-400 uppercase tracking-wide mb-1">
-                                Sentence 2{languageDisplay ? ` (${languageDisplay})` : ''}
+                                {field.label}
                               </label>
                               <div className="w-full h-12 px-3 bg-gray-50 border border-gray-200 rounded-md text-sm text-gray-600 flex items-center">
-                                {card.example_sentence_2 || '-'}
+                                {card.custom_data?.[field.name] || '-'}
                               </div>
                             </div>
-                            <div>
-                              <label className="block text-xs font-medium text-gray-400 uppercase tracking-wide mb-1">
-                                Translation 2
-                              </label>
-                              <div className="w-full h-12 px-3 bg-gray-50 border border-gray-200 rounded-md text-sm text-gray-600 flex items-center">
-                                {card.sentence_translation_2 || '-'}
-                              </div>
-                            </div>
-                          </div>
-                        )}
+                          ))}
+                        </div>
                       </>
                     )}
                   </div>
