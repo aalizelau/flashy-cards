@@ -2,7 +2,7 @@ import React from 'react';
 import { Button } from '@/shared/components/ui/button';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/shared/components/ui/dropdown-menu';
 import { MoreVertical, Volume2, VolumeX } from 'lucide-react';
-import { Card as FlashCard } from '@/shared/types/api';
+import { Card as FlashCard, CustomField } from '@/shared/types/api';
 import ProgressDots from './ProgressDots';
 
 interface FlashcardTableProps {
@@ -12,6 +12,7 @@ interface FlashcardTableProps {
   onEditCard?: (card: FlashCard) => void;
   onDeleteCard?: (card: FlashCard) => void;
   readOnly?: boolean;
+  customFields?: CustomField[];
 }
 
 const FlashcardTable: React.FC<FlashcardTableProps> = ({
@@ -21,6 +22,7 @@ const FlashcardTable: React.FC<FlashcardTableProps> = ({
   onEditCard,
   onDeleteCard,
   readOnly = false,
+  customFields,
 }) => {
   const getProgressPercentage = (card: FlashCard): number =>
     Math.round(card.accuracy * 100);
@@ -84,7 +86,18 @@ const FlashcardTable: React.FC<FlashcardTableProps> = ({
                     </div>
                   </td>
                   <td className="py-1 px-3 align-middle max-w-[300px]">
-                    <span className="text-xs text-muted-foreground truncate block">{card.back}</span>
+                    <div>
+                      <span className="text-xs text-muted-foreground truncate block">{card.back}</span>
+                      {card.custom_data && Object.keys(card.custom_data).length > 0 && (
+                        <div className="mt-1 space-y-1">
+                          {Object.values(card.custom_data).map((value, index) => (
+                            <div key={index} className="text-xs text-gray-500 italic truncate">
+                              {value}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   </td>
                   <td className="py-1 px-3 align-middle">
                     <ProgressDots progress={percentage} />

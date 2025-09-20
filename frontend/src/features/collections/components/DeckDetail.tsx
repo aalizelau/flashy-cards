@@ -265,6 +265,7 @@ const DeckDetail: React.FC = () => {
                 onPlayAudio={playAudio}
                 onEditCard={handleEditCard}
                 onDeleteCard={handleDeleteCard}
+                customFields={selectedDeck?.custom_fields}
               />
             </div>
           </ScrollArea>

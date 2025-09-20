@@ -224,6 +224,7 @@ const CommunityDeckDetail: React.FC = () => {
                 playingAudio={playingAudio}
                 onPlayAudio={playAudio}
                 readOnly={true} // Read-only mode
+                customFields={undefined} // Public decks don't include custom field definitions
               />
             </div>
           </ScrollArea>
