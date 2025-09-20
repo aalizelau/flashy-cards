@@ -12,10 +12,6 @@ interface Flashcard {
   numericId?: number; // Original database ID for existing cards
   front: string;
   back: string;
-  example_sentence_1?: string;
-  sentence_translation_1?: string;
-  example_sentence_2?: string;
-  sentence_translation_2?: string;
   isNew?: boolean; // Flag to indicate if this is a new card
 }
 
@@ -113,10 +109,15 @@ function EditDeck() {
     }
   };
 
-  const updateFlashcard = (id: string, field: 'front' | 'back' | 'example_sentence_1' | 'sentence_translation_1' | 'example_sentence_2' | 'sentence_translation_2', value: string) => {
-    setFlashcards(flashcards.map(card => 
+  const updateFlashcard = (id: string, field: 'front' | 'back', value: string) => {
+    setFlashcards(flashcards.map(card =>
       card.id === id ? { ...card, [field]: value } : card
     ));
+  };
+
+  const updateCustomField = (id: string, fieldName: string, value: string) => {
+    // Custom fields not supported in EditDeck yet
+    console.warn('Custom fields not supported in EditDeck');
   };
 
   const toggleCardExpansion = (id: string) => {
@@ -330,12 +331,13 @@ function EditDeck() {
           </div>
 
           {/* Individual Cards Section */}
-          <IndividualCardsSection 
+          <IndividualCardsSection
             flashcards={flashcards}
             errors={errors}
             languageDisplay={languageDisplay}
             expandedCards={expandedCards}
             onUpdateFlashcard={updateFlashcard}
+            onUpdateCustomField={updateCustomField}
             onRemoveFlashcard={removeFlashcard}
             onAddFlashcard={addFlashcard}
             onToggleExpansion={toggleCardExpansion}
