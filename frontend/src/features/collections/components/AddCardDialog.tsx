@@ -130,8 +130,8 @@ const AddCardDialog: React.FC<AddCardDialogProps> = ({
               type="button"
               onClick={() => setExpandedView(!expandedView)}
               className={`p-2 rounded transition-all duration-200 ${
-                expandedView 
-                  ? 'text-blue-600 hover:text-blue-700' 
+                expandedView
+                  ? 'text-blue-600 hover:text-blue-700'
                   : 'text-gray-400 hover:text-blue-500'
               }`}
               aria-label="Toggle example sentence fields"

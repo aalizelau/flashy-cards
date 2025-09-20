@@ -1,7 +1,8 @@
-import { useRef, useEffect } from 'react';
-import { Plus, Trash2, Paperclip } from 'lucide-react';
+import { useRef, useEffect, useState } from 'react';
+import { Plus, Trash2, Paperclip, Eye } from 'lucide-react';
 import { CustomField } from '@/shared/types/api';
 import { getCustomFieldValue } from '@/shared/utils/customFields';
+import PreviewCardDialog from '../../collections/components/PreviewCardDialog';
 
 interface Flashcard {
   id: string;
@@ -40,12 +41,22 @@ function IndividualCardsSection({
   onToggleExpansion
 }: IndividualCardsSectionProps) {
   const lastCardRef = useRef<HTMLInputElement>(null);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewCardIndex, setPreviewCardIndex] = useState(0);
 
   useEffect(() => {
     if (lastCardRef.current) {
       lastCardRef.current.focus();
     }
   }, [flashcards.length]);
+
+  const handlePreviewCard = (cardIndex: number) => {
+    const card = flashcards[cardIndex];
+    if (!card.front && !card.back) return; // Don't preview empty cards
+
+    setPreviewCardIndex(cardIndex);
+    setPreviewOpen(true);
+  };
 
   return (
     <div className="space-y-4">
@@ -77,10 +88,19 @@ function IndividualCardsSection({
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
+                    onClick={() => handlePreviewCard(index)}
+                    disabled={!card.front && !card.back}
+                    className="text-gray-400 hover:text-blue-500 p-1 rounded transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    aria-label="Preview flashcard"
+                  >
+                    <Eye className="w-4 h-4" />
+                  </button>
+                  <button
+                    type="button"
                     onClick={() => onToggleExpansion(card.id)}
                     className={`p-1 rounded transition-all duration-200 ${
-                      expandedCards.has(card.id) 
-                        ? 'text-blue-600 hover:text-blue-700' 
+                      expandedCards.has(card.id)
+                        ? 'text-blue-600 hover:text-blue-700'
                         : 'text-gray-400 hover:text-blue-500'
                     }`}
                     aria-label={customFields && customFields.length > 0 ? "Toggle custom fields" : "Toggle additional fields"}
@@ -238,6 +258,20 @@ function IndividualCardsSection({
             <Plus className="w-6 h-6" />
         </button>
       </div>
+
+      {/* Preview Card Dialog */}
+      <PreviewCardDialog
+        open={previewOpen}
+        onOpenChange={setPreviewOpen}
+        cardData={{
+          front: flashcards[previewCardIndex]?.front || '',
+          back: flashcards[previewCardIndex]?.back || '',
+          exampleSentence1: flashcards[previewCardIndex]?.example_sentence_1,
+          sentenceTranslation1: flashcards[previewCardIndex]?.sentence_translation_1,
+          exampleSentence2: flashcards[previewCardIndex]?.example_sentence_2,
+          sentenceTranslation2: flashcards[previewCardIndex]?.sentence_translation_2,
+        }}
+      />
     </div>
   );
 }

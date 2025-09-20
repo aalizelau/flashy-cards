@@ -55,7 +55,6 @@ function CreateDeck() {
 
   const languageDisplay = getLanguageDisplayName(userProfile?.selected_language);
 
-
   const getDelimiterChar = (delimiter: TermDelimiter): string => {
     switch (delimiter) {
       case 'tab': return '\t';
