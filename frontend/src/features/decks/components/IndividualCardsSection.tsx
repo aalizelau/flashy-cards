@@ -149,14 +149,6 @@ function IndividualCardsSection({
                 {/* Custom fields */}
                 <div className="p-6 pt-4">
                   <div className="space-y-4">
-                    <div className="flex items-center justify-between mb-4">
-                      <h4 className="text-xs font-semibold text-gray-600 uppercase">
-                        Custom Fields
-                      </h4>
-                      <span className="text-xs text-gray-500">
-                        {customFields.length} {customFields.length === 1 ? 'field' : 'fields'}
-                      </span>
-                    </div>
 
                     {/* Render custom fields in a grid - 2 per row for up to 4, single column for 5 */}
                     <div className={`grid gap-4 ${customFields.length <= 4 ? 'md:grid-cols-2' : 'grid-cols-1'}`}>
