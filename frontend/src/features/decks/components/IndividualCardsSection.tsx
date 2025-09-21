@@ -3,6 +3,7 @@ import { Plus, Trash2, Paperclip, Eye } from 'lucide-react';
 import { CustomField } from '@/shared/types/api';
 import { getCustomFieldValue } from '@/shared/utils/customFields';
 import PreviewCardDialog from '../../collections/components/PreviewCardDialog';
+import { Input } from '@/shared/components/ui/input';
 
 interface Flashcard {
   id: string;
@@ -132,10 +133,9 @@ function IndividualCardsSection({
                 <label className="block text-xs font-semibold text-gray-700 mb-2 uppercase">
                   Translation 
                 </label>
-                <input
+                <Input
                   value={card.back}
                   onChange={(e) => onUpdateFlashcard(card.id, 'back', e.target.value)}
-                  className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 transition-all duration-200 resize-none h-12"
                 />
               </div>
             </div>
@@ -157,11 +157,9 @@ function IndividualCardsSection({
                           <label className="block text-xs font-semibold text-gray-500 mb-2 uppercase">
                             {field.label}
                           </label>
-                          <input
+                          <Input
                             value={getCustomFieldValue(card.custom_data, field.name)}
                             onChange={(e) => onUpdateCustomField(card.id, field.name, e.target.value)}
-                            className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 transition-all duration-200 resize-none h-12"
-                            placeholder={`Enter ${field.label.toLowerCase()}...`}
                           />
                         </div>
                       ))}

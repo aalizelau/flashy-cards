@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Loader2, Zap, Info, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/shared/components/ui/button';
+import { Input } from '@/shared/components/ui/input';
 import { apiClient } from '@/shared/services/api';
 import { DeckWithCardsCreate, CardCreate, CustomField } from '@/shared/types/api';
 import { useAuth } from '@/features/auth/contexts/AuthContext';
@@ -302,17 +303,12 @@ function CreateDeck() {
             <label htmlFor="deckTitle" className="block text-md font-semibold text-gray-700 mb-3">
               Deck Title
             </label>
-            <input
+            <Input
               type="text"
               id="deckTitle"
               value={deckTitle}
               onChange={(e) => setDeckTitle(e.target.value)}
               placeholder="e.g., Food Vocabulary, Travel Phrases, Common Greetings"
-              className={`w-full px-4 py-2 text-lg border-2 rounded-xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-100 ${
-                errors.deckTitle 
-                  ? 'border-red-300 focus:border-red-500' 
-                  : 'border-gray-200 focus:border-blue-500'
-              }`}
             />
             {errors.deckTitle && (
               <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
@@ -366,16 +362,11 @@ function CreateDeck() {
             {customFields.map((field, index) => (
               <div key={index} className="flex items-center gap-3 mb-3">
                 <div className="flex-1">
-                  <input
+                  <Input
                     type="text"
                     value={field.label}
                     onChange={(e) => updateCustomFieldLabel(index, e.target.value)}
                     placeholder={`Field ${index + 1}`}
-                    className={`w-full px-4 py-2 text-md border-2 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-100 ${
-                      errors[`customField_${index}`]
-                        ? 'border-red-300 focus:border-red-500'
-                        : 'border-gray-200 focus:border-blue-500'
-                    }`}
                   />
                   {errors[`customField_${index}`] && (
                     <p className="mt-1 text-xs text-red-600">{errors[`customField_${index}`]}</p>

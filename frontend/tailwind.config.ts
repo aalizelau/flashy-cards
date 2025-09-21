@@ -50,10 +50,6 @@ export default {
 					DEFAULT: 'hsl(var(--muted))',
 					foreground: 'hsl(var(--muted-foreground))'
 				},
-				accent: {
-					DEFAULT: 'var(--accent)',
-					foreground: 'hsl(var(--accent-foreground))'
-				},
 				'vibrant-dark-blue': 'var(--sharp-blue)',
 				'vibrant-yellow': 'var(--vibrant-yellow)',
 				'vibrant-green': 'hsl(var(--vibrant-green))',
@@ -62,6 +58,7 @@ export default {
 				'main-secondary': 'var(--main-secondary)',
 				'main-primary': 'var(--main-primary)',
 				'main-dark-gray': 'var(--main-dark-gray)',
+				'accent':'hsl(var(--accent))',
 				'home-light-gray': 'hsl(var(--home-light-gray))',
 				'home-gray-green': 'hsl(var(--home-gray-green))',
 				'home-gray-neutral': 'hsl(var(--home-gray-neutral))',

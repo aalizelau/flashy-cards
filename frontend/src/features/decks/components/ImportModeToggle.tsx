@@ -18,7 +18,7 @@ function ImportModeToggle({ importMode, onModeChange }: ImportModeToggleProps) {
             onClick={() => onModeChange('individual')}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 transition-all duration-200 ${
               importMode === 'individual'
-                ? 'border-accent bg-sharp-blue/10 '
+                ? 'border-accent bg-accent/10 '
                 : 'border-gray-200 hover:border-gray-300'
             }`}
           >
@@ -31,7 +31,7 @@ function ImportModeToggle({ importMode, onModeChange }: ImportModeToggleProps) {
             onClick={() => onModeChange('bulk')}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 transition-all duration-200 ${
               importMode === 'bulk'
-                ? 'border-muted-foreground/80 bg-muted-foreground/10'
+                ? 'border-accent bg-accent/10'
                 : 'border-gray-200 hover:border-gray-300'
             }`}
           >
