@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Loader2, Zap } from 'lucide-react';
+import { Loader2, Zap, Info, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/shared/components/ui/button';
 import { apiClient } from '@/shared/services/api';
@@ -350,12 +350,18 @@ function CreateDeck() {
 
           {/* Custom Fields Section */}
           <div>
-            <h3 className="text-md font-semibold text-gray-700 mb-3">
-              Custom Fields (Optional)
-            </h3>
-            <p className="text-sm text-gray-600 mb-4">
-              Add up to 5 custom fields for your flashcards. Examples: "Example Sentence", "Notes", "Conjugation", "Pronunciation Guide"
-            </p>
+            <div className="flex items-center gap-2 mb-3">
+              <h3 className="text-md font-semibold text-gray-700">
+                Custom Fields
+              </h3>
+              <div className="relative group">
+                <Info className="w-4 h-4 text-gray-400 hover:text-gray-600 cursor-help" />
+                <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none w-64 z-10">
+                  Add optional fields for your flashcards, like example sentences, conjugation, or notes.
+                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-900"></div>
+                </div>
+              </div>
+            </div>
 
             {customFields.map((field, index) => (
               <div key={index} className="flex items-center gap-3 mb-3">
@@ -364,8 +370,8 @@ function CreateDeck() {
                     type="text"
                     value={field.label}
                     onChange={(e) => updateCustomFieldLabel(index, e.target.value)}
-                    placeholder={`Field ${index + 1} (e.g., "Example Sentence")`}
-                    className={`w-full px-4 py-2 text-sm border-2 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-100 ${
+                    placeholder={`Field ${index + 1}`}
+                    className={`w-full px-4 py-2 text-md border-2 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-100 ${
                       errors[`customField_${index}`]
                         ? 'border-red-300 focus:border-red-500'
                         : 'border-gray-200 focus:border-blue-500'
@@ -375,15 +381,13 @@ function CreateDeck() {
                     <p className="mt-1 text-xs text-red-600">{errors[`customField_${index}`]}</p>
                   )}
                 </div>
-                <div className="text-xs text-gray-500 flex-shrink-0 w-24">
-                  {field.label ? labelToFieldName(field.label) : 'field_name'}
-                </div>
                 <button
                   type="button"
                   onClick={() => removeCustomField(index)}
-                  className="text-red-500 hover:text-red-700 text-sm font-medium"
+                  className="text-red-500 hover:text-red-700 p-2 rounded-md hover:bg-red-50 transition-colors"
+                  title="Remove field"
                 >
-                  Remove
+                  <Trash2 className="w-4 h-4" />
                 </button>
               </div>
             ))}
@@ -392,9 +396,9 @@ function CreateDeck() {
               <button
                 type="button"
                 onClick={addCustomField}
-                className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                className="text-muted-foreground hover:text-blue-800 text-sm font-medium"
               >
-                + Add Custom Field
+                + New Field
               </button>
             )}
 
