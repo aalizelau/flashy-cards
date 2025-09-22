@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { apiClient } from '@/shared/services/api';
-import { DeckWithCardsCreate, CardCreate, Deck, Card } from '@/shared/types/api';
+import { DeckWithCardsCreate, CardCreate, Deck, Card, CustomField } from '@/shared/types/api';
 import { useAuth } from '@/features/auth/contexts/AuthContext';
 import { LANGUAGES } from '@/shared/components/LanguageSelector';
+import { useCustomFields } from '@/shared/hooks/useCustomFields';
 import IndividualCardsSection from './IndividualCardsSection';
 
 interface Flashcard {
@@ -12,6 +13,7 @@ interface Flashcard {
   numericId?: number; // Original database ID for existing cards
   front: string;
   back: string;
+  custom_data?: { [fieldName: string]: string };
   isNew?: boolean; // Flag to indicate if this is a new card
 }
 
@@ -31,6 +33,20 @@ function EditDeck() {
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
+
+  // Use the shared custom fields hook
+  const {
+    customFields,
+    setCustomFields,
+    addCustomField,
+    removeCustomField: removeCustomFieldFromList,
+    updateCustomFieldLabel,
+    validateCustomFieldsState,
+    cleanupCardCustomData
+  } = useCustomFields();
+
+  // Track original custom fields for comparison
+  const [originalCustomFields, setOriginalCustomFields] = useState<CustomField[]>([]);
 
   // Helper function to get language display name
   const getLanguageDisplayName = (languageCode?: string | null): string => {
@@ -60,17 +76,20 @@ function EditDeck() {
         setOriginalDeckTitle(deck.name); // Store original title for comparison
         setIsPublic(deck.is_public);
         setOriginalIsPublic(deck.is_public); // Store original public status for comparison
-        
+
+        // Load custom fields if they exist
+        if (deck.custom_fields) {
+          setCustomFields(deck.custom_fields);
+          setOriginalCustomFields(deck.custom_fields);
+        }
+
         // Convert cards to flashcard format, preserving numeric IDs
         const convertedCards: Flashcard[] = cards.map((card: Card, index: number) => ({
           id: card.id?.toString() || `existing-${index}`,
           numericId: card.id, // Preserve original database ID
           front: card.front,
           back: card.back,
-          example_sentence_1: card.example_sentence_1 || undefined,
-          sentence_translation_1: card.sentence_translation_1 || undefined,
-          example_sentence_2: card.example_sentence_2 || undefined,
-          sentence_translation_2: card.sentence_translation_2 || undefined,
+          custom_data: card.custom_data,
           isNew: false, // Existing cards
         }));
 
@@ -94,10 +113,7 @@ function EditDeck() {
       id: Date.now().toString(),
       front: '',
       back: '',
-      example_sentence_1: undefined,
-      sentence_translation_1: undefined,
-      example_sentence_2: undefined,
-      sentence_translation_2: undefined,
+      custom_data: undefined,
       isNew: true // Mark as new card
     };
     setFlashcards([...flashcards, newCard]);
@@ -116,8 +132,21 @@ function EditDeck() {
   };
 
   const updateCustomField = (id: string, fieldName: string, value: string) => {
-    // Custom fields not supported in EditDeck yet
-    console.warn('Custom fields not supported in EditDeck');
+    setFlashcards(flashcards.map(card => {
+      if (card.id === id) {
+        const customData = card.custom_data || {};
+        if (value.trim()) {
+          customData[fieldName] = value;
+        } else {
+          delete customData[fieldName];
+        }
+        return {
+          ...card,
+          custom_data: Object.keys(customData).length > 0 ? customData : undefined
+        };
+      }
+      return card;
+    }));
   };
 
   const toggleCardExpansion = (id: string) => {
@@ -130,18 +159,47 @@ function EditDeck() {
     setExpandedCards(newExpandedCards);
   };
 
+  // Handle custom field removal with data cleanup
+  const removeCustomField = (index: number) => {
+    const fieldToRemove = customFields[index];
+    if (!fieldToRemove) return;
+
+    // Remove field from definition
+    removeCustomFieldFromList(index);
+
+    // Clean up card data - remove this field from all cards
+    if (fieldToRemove.name) {
+      setFlashcards(flashcards.map(card => ({
+        ...card,
+        custom_data: cleanupCardCustomData(card.custom_data, fieldToRemove.name)
+      })));
+    }
+  };
+
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
-    
+
     if (!deckTitle.trim()) {
       newErrors.deckTitle = 'Deck title is required';
     }
-    
+
+    // Validate custom fields
+    if (customFields.length > 0) {
+      const validation = validateCustomFieldsState();
+      if (!validation.isValid) {
+        if (validation.fieldIndex !== undefined) {
+          newErrors[`customField_${validation.fieldIndex}`] = validation.error || 'Invalid custom field';
+        } else {
+          newErrors.customFields = validation.error || 'Invalid custom fields';
+        }
+      }
+    }
+
     const validCards = flashcards.filter(card => card.front.trim() || card.back.trim());
     if (validCards.length === 0) {
       newErrors.flashcards = 'At least one flashcard with content is required';
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -159,9 +217,10 @@ function EditDeck() {
       // Filter out empty cards
       const validCards = flashcards.filter(card => card.front.trim() && card.back.trim());
       
-      // Check if deck title or public status has changed
+      // Check if deck title, public status, or custom fields have changed
       const titleHasChanged = originalDeckTitle !== deckTitle.trim();
       const publicStatusHasChanged = originalIsPublic !== isPublic;
+      const customFieldsHaveChanged = JSON.stringify(originalCustomFields) !== JSON.stringify(customFields);
       
       // Categorize cards by operation needed
       const cardsToDelete: Flashcard[] = [];
@@ -183,13 +242,10 @@ function EditDeck() {
           // Check if card has been modified
           const originalCard = originalCards.find(orig => orig.id === card.id);
           if (originalCard) {
-            const hasChanged = 
+            const hasChanged =
               originalCard.front !== card.front ||
               originalCard.back !== card.back ||
-              originalCard.example_sentence_1 !== card.example_sentence_1 ||
-              originalCard.sentence_translation_1 !== card.sentence_translation_1 ||
-              originalCard.example_sentence_2 !== card.example_sentence_2 ||
-              originalCard.sentence_translation_2 !== card.sentence_translation_2;
+              JSON.stringify(originalCard.custom_data || {}) !== JSON.stringify(card.custom_data || {});
             
             if (hasChanged) {
               cardsToUpdate.push(card);
@@ -208,20 +264,20 @@ function EditDeck() {
       }
       
       // 2. Update existing cards and/or deck metadata (PATCH) if there are any changes
-      if (cardsToUpdate.length > 0 || titleHasChanged || publicStatusHasChanged) {
+      if (cardsToUpdate.length > 0 || titleHasChanged || publicStatusHasChanged || customFieldsHaveChanged) {
         const apiCards: CardCreate[] = cardsToUpdate.map(card => ({
           id: card.numericId,
           front: card.front.trim(),
           back: card.back.trim(),
-          ...(card.example_sentence_1 && { example_sentence_1: card.example_sentence_1.trim() }),
-          ...(card.sentence_translation_1 && { sentence_translation_1: card.sentence_translation_1.trim() }),
-          ...(card.example_sentence_2 && { example_sentence_2: card.example_sentence_2.trim() }),
-          ...(card.sentence_translation_2 && { sentence_translation_2: card.sentence_translation_2.trim() })
+          ...(card.custom_data && Object.keys(card.custom_data).length > 0 && { custom_data: card.custom_data })
         }));
 
         const deckData: DeckWithCardsCreate = {
           name: deckTitle.trim(),
           is_public: isPublic,
+          custom_fields: customFields.filter(field => field.label.trim()).length > 0
+            ? customFields.filter(field => field.label.trim())
+            : undefined,
           cards: apiCards
         };
 
@@ -233,10 +289,7 @@ function EditDeck() {
         const cardData: CardCreate = {
           front: card.front.trim(),
           back: card.back.trim(),
-          ...(card.example_sentence_1 && { example_sentence_1: card.example_sentence_1.trim() }),
-          ...(card.sentence_translation_1 && { sentence_translation_1: card.sentence_translation_1.trim() }),
-          ...(card.example_sentence_2 && { example_sentence_2: card.example_sentence_2.trim() }),
-          ...(card.sentence_translation_2 && { sentence_translation_2: card.sentence_translation_2.trim() })
+          ...(card.custom_data && Object.keys(card.custom_data).length > 0 && { custom_data: card.custom_data })
         };
         
         await apiClient.addCardToDeck(deckIdNum, cardData);
@@ -330,12 +383,78 @@ function EditDeck() {
             </div>
           </div>
 
+          {/* Custom Fields Section */}
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-md font-semibold text-gray-700">
+                Custom Fields {customFields.length > 0 && `(${customFields.length}/5)`}
+              </h3>
+              {customFields.length < 5 && (
+                <button
+                  type="button"
+                  onClick={addCustomField}
+                  className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                >
+                  + Add Field
+                </button>
+              )}
+            </div>
+
+            {errors.customFields && (
+              <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
+                {errors.customFields}
+              </p>
+            )}
+
+            {customFields.length > 0 && (
+              <div className="space-y-3">
+                {customFields.map((field, index) => (
+                  <div key={index} className="flex items-center gap-3">
+                    <div className="flex-1">
+                      <input
+                        type="text"
+                        value={field.label}
+                        onChange={(e) => updateCustomFieldLabel(index, e.target.value)}
+                        placeholder="Field label (e.g., Example Sentence, Pronunciation)"
+                        className={`w-full px-3 py-2 text-sm border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all duration-200 ${
+                          errors[`customField_${index}`]
+                            ? 'border-red-300 focus:border-red-500'
+                            : 'border-gray-200 focus:border-blue-500'
+                        }`}
+                      />
+                      {errors[`customField_${index}`] && (
+                        <p className="mt-1 text-xs text-red-600">{errors[`customField_${index}`]}</p>
+                      )}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => removeCustomField(index)}
+                      className="text-gray-400 hover:text-red-500 p-2 rounded transition-colors"
+                      aria-label="Remove field"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {customFields.length === 0 && (
+              <p className="text-sm text-gray-500 italic">
+                No custom fields. Add custom fields to store additional information for each flashcard (e.g., example sentences, pronunciation).
+              </p>
+            )}
+          </div>
+
           {/* Individual Cards Section */}
           <IndividualCardsSection
             flashcards={flashcards}
             errors={errors}
             languageDisplay={languageDisplay}
             expandedCards={expandedCards}
+            customFields={customFields}
             onUpdateFlashcard={updateFlashcard}
             onUpdateCustomField={updateCustomField}
             onRemoveFlashcard={removeFlashcard}

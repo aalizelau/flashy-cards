@@ -28,10 +28,6 @@ class CustomField(BaseModel):
     name: str
     label: str
 
-
-class CustomFieldCreate(BaseModel):
-    label: str
-
 class Card(BaseModel):
     id: int
     deck_id: int
@@ -52,7 +48,7 @@ class DeckBase(BaseModel):
 
 
 class DeckCreate(DeckBase):
-    custom_fields: Optional[List[CustomFieldCreate]] = None
+    custom_fields: Optional[List[CustomField]] = None
 
 
 class DeckOut(BaseModel):
@@ -94,7 +90,7 @@ class CardCreate(BaseModel):
 class DeckWithCardsCreate(BaseModel):
     name: str
     is_public: bool = False
-    custom_fields: Optional[List[CustomFieldCreate]] = None
+    custom_fields: Optional[List[CustomField]] = None
     cards: List[CardCreate]
 
 

@@ -2,7 +2,7 @@
  * Utility functions for custom field management
  */
 
-import { CustomField, CustomFieldCreate } from '../types/api';
+import { CustomField } from '../types/api';
 
 /**
  * Convert a user-provided label to a valid field name.
@@ -75,12 +75,12 @@ export function validateCustomFields(customFields: CustomField[]): { isValid: bo
 }
 
 /**
- * Convert CustomFieldCreate array to CustomField array with auto-generated names.
+ * Convert field labels to CustomField objects with auto-generated names.
  */
-export function processCustomFieldsForCreation(fields: CustomFieldCreate[]): CustomField[] {
-  return fields.map(field => ({
-    name: labelToFieldName(field.label),
-    label: field.label
+export function processCustomFieldsForCreation(labels: string[]): CustomField[] {
+  return labels.map(label => ({
+    name: labelToFieldName(label),
+    label: label
   }));
 }
 

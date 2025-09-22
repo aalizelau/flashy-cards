@@ -27,10 +27,6 @@ export interface CustomField {
   label: string;
 }
 
-export interface CustomFieldCreate {
-  label: string;
-}
-
 export interface Deck {
   id: number;
   name: string;
@@ -115,7 +111,7 @@ export interface CardCreate {
 export interface DeckWithCardsCreate {
   name: string;
   is_public?: boolean;
-  custom_fields?: CustomFieldCreate[];
+  custom_fields?: CustomField[];
   cards: CardCreate[];
 }
 

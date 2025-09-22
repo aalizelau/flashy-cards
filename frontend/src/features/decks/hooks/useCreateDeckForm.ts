@@ -4,7 +4,7 @@ import { useAuth } from '@/features/auth/contexts/AuthContext';
 import { apiClient } from '@/shared/services/api';
 import { DeckWithCardsCreate, CardCreate, CustomField } from '@/shared/types/api';
 import { LANGUAGES } from '@/shared/components/LanguageSelector';
-import { labelToFieldName, validateCustomFields } from '@/shared/utils/customFields';
+import { useCustomFields } from '@/shared/hooks/useCustomFields';
 
 interface Flashcard {
   id: string;
@@ -36,7 +36,16 @@ export const useCreateDeckForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
   const [isPublic, setIsPublic] = useState(false);
-  const [customFields, setCustomFields] = useState<CustomField[]>([]);
+
+  // Use the shared custom fields hook
+  const {
+    customFields,
+    setCustomFields,
+    addCustomField,
+    removeCustomField,
+    updateCustomFieldLabel,
+    validateCustomFieldsState
+  } = useCustomFields();
 
   // Helper function to get language display name
   const getLanguageDisplayName = (languageCode?: string | null): string => {
@@ -159,24 +168,7 @@ export const useCreateDeckForm = () => {
     setExpandedCards(newExpandedCards);
   };
 
-  // Custom field management functions
-  const addCustomField = () => {
-    if (customFields.length < 5) {
-      setCustomFields([...customFields, { name: '', label: '' }]);
-    }
-  };
-
-  const removeCustomField = (index: number) => {
-    setCustomFields(customFields.filter((_, i) => i !== index));
-  };
-
-  const updateCustomFieldLabel = (index: number, label: string) => {
-    const updated = [...customFields];
-    // Generate name from label using the utility function
-    const name = labelToFieldName(label);
-    updated[index] = { name, label };
-    setCustomFields(updated);
-  };
+  // Custom field management functions are now provided by useCustomFields hook
 
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
@@ -187,15 +179,12 @@ export const useCreateDeckForm = () => {
 
     // Validate custom fields
     if (customFields.length > 0) {
-      const validation = validateCustomFields(customFields);
+      const validation = validateCustomFieldsState();
       if (!validation.isValid) {
-        newErrors.customFields = validation.error || 'Invalid custom fields';
-      }
-
-      // Check for empty labels
-      for (let i = 0; i < customFields.length; i++) {
-        if (!customFields[i].label.trim()) {
-          newErrors[`customField_${i}`] = 'Field label cannot be empty';
+        if (validation.fieldIndex !== undefined) {
+          newErrors[`customField_${validation.fieldIndex}`] = validation.error || 'Invalid custom field';
+        } else {
+          newErrors.customFields = validation.error || 'Invalid custom fields';
         }
       }
     }
@@ -244,7 +233,7 @@ export const useCreateDeckForm = () => {
         name: deckTitle.trim(),
         is_public: isPublic,
         custom_fields: customFields.filter(field => field.label.trim()).length > 0
-          ? customFields.filter(field => field.label.trim()).map(field => ({ label: field.label }))
+          ? customFields.filter(field => field.label.trim())
           : undefined,
         cards: apiCards
       };

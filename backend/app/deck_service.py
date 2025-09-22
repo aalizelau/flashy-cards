@@ -339,9 +339,14 @@ class DeckService:
                     deck.original_author_name = None
                     deck.copied_from_deck_id = None
 
-            # Update deck name and public status
+            # Update deck name, public status, and custom fields
             deck.name = deck_data.name
             deck.is_public = deck_data.is_public
+            # Convert CustomField objects to plain dicts for JSON storage
+            if deck_data.custom_fields:
+                deck.custom_fields = [field.dict() for field in deck_data.custom_fields]
+            else:
+                deck.custom_fields = None
             
             # Process cards from request
             updated_cards = []
