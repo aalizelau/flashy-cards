@@ -46,7 +46,7 @@ export const TestConfigModal: React.FC<TestConfigModalProps> = ({
   const [testType, setTestType] = useState<TestType>('all_words')
   const [wordCount, setWordCount] = useState(10)
   const [swapSides, setSwapSides] = useState(false)
-  const [progressThreshold, setProgressThreshold] = useState(70)
+  const [progressThreshold, setProgressThreshold] = useState(50)
   const [dynamicStats, setDynamicStats] = useState<TestStats | null>(testStats)
   const [isLoadingStats, setIsLoadingStats] = useState(false)
 

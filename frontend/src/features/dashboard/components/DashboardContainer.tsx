@@ -82,9 +82,9 @@ const DashboardContainer: React.FC = () => {
       params.set('swap', 'true');
     }
 
-    // Add default threshold for unfamiliar cards (70% since dashboard doesn't have threshold UI)
+    // Add default threshold for unfamiliar cards (50% since dashboard doesn't have threshold UI)
     if (currentTestType === 'test_unfamiliar') {
-      params.set('threshold', '70');
+      params.set('threshold', '50');
     }
 
     navigate(`/test?${params.toString()}`);
