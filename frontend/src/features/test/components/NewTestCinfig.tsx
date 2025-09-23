@@ -152,7 +152,7 @@ export const TestConfigModal: React.FC<TestConfigModalProps> = ({
         <div className="bg-gradient-to-r from-primary/5 to-primary/10 p-6 border-b border-section-border">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-4xl font-bold text-main-foreground font-alumni-sans">Configure Test</h2>
+              <h2 className="text-4xl font-semibold text-main-foreground font-alumni-sans">Configure Test</h2>
               {/* <p className="text-sm text-text-secondary mt-1">{deck.name}</p> */}
             </div>
             <button 
@@ -203,7 +203,7 @@ export const TestConfigModal: React.FC<TestConfigModalProps> = ({
                           </div>
                         </div>
                         <div className={`text-sm font-medium px-2 py-1 rounded-md ${
-                          count > 0
+                          isSelected 
                             ? 'bg-primary/10 text-primary'
                             : 'bg-muted text-muted-foreground'
                         }`}>
@@ -238,7 +238,7 @@ export const TestConfigModal: React.FC<TestConfigModalProps> = ({
                     />
                   </div>
                   <div className="text-right">
-                    <div className="text-3xl font-bold text-primary">
+                    <div className="text-3xl font-bold text-muted-foreground">
                       {progressThreshold}%
                     </div>
                     <div className="text-xs text-text-secondary">
@@ -264,7 +264,7 @@ export const TestConfigModal: React.FC<TestConfigModalProps> = ({
                     />
                   </div>
                   <div className="text-right">
-                    <div className="text-3xl font-bold text-primary">
+                    <div className="text-3xl font-bold text-muted-foreground">
                       {wordCount}
                     </div>
                     <div className="text-xs text-text-secondary">
@@ -315,7 +315,7 @@ export const TestConfigModal: React.FC<TestConfigModalProps> = ({
                            font-semibold transition-all duration-200 ${
                   availableCards === 0
                     ? 'bg-muted text-muted-foreground cursor-not-allowed'
-                    : 'bg-gradient-to-r from-primary/5 to-primary/10 text-main-foreground hover:from-primary/90 hover:to-primary shadow-md hover:shadow-lg transform hover:scale-[1.02] active:scale-[0.98]'
+                    : 'bg-primary/10 text-main-foreground hover:from-primary/90 hover:to-primary shadow-md hover:shadow-lg transform hover:scale-[1.02] active:scale-[0.98]'
                 }`}
               >
                 {availableCards === 0 ? 'No Cards Available' : 'Next'}
@@ -328,7 +328,7 @@ export const TestConfigModal: React.FC<TestConfigModalProps> = ({
                            font-semibold transition-all duration-200 ${
                   availableCards === 0
                     ? 'bg-muted text-muted-foreground cursor-not-allowed'
-                    : 'bg-gradient-to-r from-primary/5 to-primary/10 text-main-foreground hover:from-primary/90 hover:to-primary shadow-md hover:shadow-lg transform hover:scale-[1.02] active:scale-[0.98]'
+                    : 'bg-primary/10 text-main-foreground hover:from-primary/90 hover:to-primary shadow-md hover:shadow-lg transform hover:scale-[1.02] active:scale-[0.98]'
                 }`}
               >
                 {availableCards === 0 ? 'No Cards Available' : 'Start Test'}
