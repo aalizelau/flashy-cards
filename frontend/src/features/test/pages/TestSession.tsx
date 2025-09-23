@@ -18,6 +18,8 @@ const TestSession: React.FC = () => {
   const deckIdsString = searchParams.get('deck_ids');
   const deckIds = deckIdsString ? deckIdsString.split(',').map(id => parseInt(id)) : undefined;
   const isSwapped = searchParams.get('swap') === 'true';
+  const thresholdString = searchParams.get('threshold');
+  const threshold = thresholdString ? parseFloat(thresholdString) : undefined;
 
   // Check if we should start in review mode (from URL params)
   useEffect(() => {
@@ -45,10 +47,11 @@ const TestSession: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-bg">
       {mode === 'testing' && (
-        <TestingMode 
+        <TestingMode
           testType={testType}
           deckIds={deckIds}
           limit={limit}
+          threshold={threshold}
           isSwapped={isSwapped}
           onComplete={handleTestComplete}
           onBackToBrowser={handleBackToDashboard}

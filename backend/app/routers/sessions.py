@@ -30,14 +30,20 @@ def create_study_session(
         # Ensure user exists in database
         user_service = UserService(db)
         user_service.get_or_create_user(current_user["firebase_token"])
-        
+
+        # Convert percentage threshold to decimal if provided
+        decimal_threshold = None
+        if request.threshold is not None:
+            decimal_threshold = request.threshold / 100.0 if request.threshold > 1 else request.threshold
+
         session_service = SessionService(db)
         return session_service.create_study_session(
             test_type=request.test_type,
             user_id=user_id,
             request=http_request,
             deck_ids=request.deck_ids,
-            limit=request.limit
+            limit=request.limit,
+            threshold=decimal_threshold
         )
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))

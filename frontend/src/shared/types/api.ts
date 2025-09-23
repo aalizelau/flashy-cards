@@ -138,6 +138,7 @@ export interface StudySessionRequest {
   test_type: 'test_all' | 'test_by_decks' | 'test_unfamiliar' | 'test_newly_added';
   deck_ids?: number[];
   limit: number;
+  threshold?: number;
 }
 
 export interface PublicDeck {

@@ -65,23 +65,28 @@ const DashboardContainer: React.FC = () => {
 
   const handleTestStart = (wordCount: number, swapSides: boolean) => {
     setShowTestConfig(false);
-    
+
     // Build URL with test parameters
     const params = new URLSearchParams({
       type: currentTestType,
       limit: wordCount.toString()
     });
-    
+
     // Add deck_ids for test_by_decks
     if (currentTestType === 'test_by_decks' && selectedDeckIds.length > 0) {
       params.set('deck_ids', selectedDeckIds.join(','));
     }
-    
+
     // Add swap parameter
     if (swapSides) {
       params.set('swap', 'true');
     }
-    
+
+    // Add default threshold for unfamiliar cards (70% since dashboard doesn't have threshold UI)
+    if (currentTestType === 'test_unfamiliar') {
+      params.set('threshold', '70');
+    }
+
     navigate(`/test?${params.toString()}`);
   };
 

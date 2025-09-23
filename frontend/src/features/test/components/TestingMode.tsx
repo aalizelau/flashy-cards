@@ -11,12 +11,13 @@ interface TestingModeProps {
   testType: 'test_all' | 'test_by_decks' | 'test_unfamiliar' | 'test_newly_added';
   deckIds?: number[];
   limit: number;
+  threshold?: number;
   isSwapped?: boolean;
   onComplete: (results: TestResult[]) => void;
   onBackToBrowser?: () => void;
 }
 
-export const TestingMode: React.FC<TestingModeProps> = ({ testType, deckIds, limit, isSwapped = false, onComplete, onBackToBrowser }) => {
+export const TestingMode: React.FC<TestingModeProps> = ({ testType, deckIds, limit, threshold, isSwapped = false, onComplete, onBackToBrowser }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [animateFlip, setAnimateFlip] = useState(true); 
@@ -33,7 +34,8 @@ export const TestingMode: React.FC<TestingModeProps> = ({ testType, deckIds, lim
         const sessionRequest: StudySessionRequest = {
           test_type: testType,
           limit,
-          ...(deckIds && { deck_ids: deckIds })
+          ...(deckIds && { deck_ids: deckIds }),
+          ...(threshold !== undefined && { threshold })
         };
         
         const studySession = await startTestSessionMutation.mutateAsync(sessionRequest);
@@ -44,7 +46,7 @@ export const TestingMode: React.FC<TestingModeProps> = ({ testType, deckIds, lim
     };
 
     initializeTestSession();
-  }, [testType, deckIds, limit]);
+  }, [testType, deckIds, limit, threshold]);
 
   // Keyboard event listener for arrow keys
   useEffect(() => {

@@ -117,6 +117,7 @@ class CreateSessionRequest(BaseModel):
     test_type: str
     deck_ids: Optional[List[int]] = None
     limit: int
+    threshold: Optional[float] = None
 
 class TestResult(BaseModel):
     card_id: int
