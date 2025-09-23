@@ -7,6 +7,7 @@ import type { Deck, TestStats } from "@/shared/types/api"
 import '@/styles/Slider.css'
 import { Switch } from "@/shared/components/ui/switch";
 import { Label } from "@/shared/components/ui/label";
+import { apiClient } from "@/shared/services/api";
 
 export type TestType = 'all_words' | 'newly_added' | 'not_familiar'
 
@@ -46,6 +47,8 @@ export const TestConfigModal: React.FC<TestConfigModalProps> = ({
   const [wordCount, setWordCount] = useState(10)
   const [swapSides, setSwapSides] = useState(false)
   const [progressThreshold, setProgressThreshold] = useState(70)
+  const [dynamicStats, setDynamicStats] = useState<TestStats | null>(testStats)
+  const [isLoadingStats, setIsLoadingStats] = useState(false)
 
   const testTypeOptions: TestTypeOption[] = [
     {
@@ -72,8 +75,36 @@ export const TestConfigModal: React.FC<TestConfigModalProps> = ({
   ]
 
   const currentOption = testTypeOptions.find(option => option.type === testType)!
-  const availableCards = currentOption.getAvailableCount(testStats)
+  const availableCards = currentOption.getAvailableCount(dynamicStats)
   const maxWords = Math.max(1, availableCards)
+
+  // Update stats when threshold changes (for unfamiliar test type)
+  useEffect(() => {
+    if (testType === 'not_familiar' && selectedDeckIds && selectedDeckIds.length > 0) {
+      const fetchStats = async () => {
+        setIsLoadingStats(true)
+        try {
+          const stats = await apiClient.getTestStats('test_unfamiliar', selectedDeckIds, progressThreshold)
+          setDynamicStats(stats)
+        } catch (error) {
+          console.error('Failed to fetch threshold-based stats:', error)
+        } finally {
+          setIsLoadingStats(false)
+        }
+      }
+
+      // Debounce the API call
+      const timeoutId = setTimeout(fetchStats, 300)
+      return () => clearTimeout(timeoutId)
+    }
+  }, [testType, progressThreshold, selectedDeckIds])
+
+  // Reset dynamic stats when test type changes
+  useEffect(() => {
+    if (testType !== 'not_familiar') {
+      setDynamicStats(testStats)
+    }
+  }, [testType, testStats])
 
   useEffect(() => {
     setWordCount(Math.min(10, maxWords))
@@ -176,7 +207,7 @@ export const TestConfigModal: React.FC<TestConfigModalProps> = ({
                             ? 'bg-primary/10 text-primary'
                             : 'bg-muted text-muted-foreground'
                         }`}>
-                          {count} cards
+                          {isLoadingStats && option.type === 'not_familiar' ? '...' : `${count} cards`}
                         </div>
                       </div>
                     </button>
@@ -237,7 +268,7 @@ export const TestConfigModal: React.FC<TestConfigModalProps> = ({
                       {wordCount}
                     </div>
                     <div className="text-xs text-text-secondary">
-                      of {availableCards}
+                      of {isLoadingStats && testType === 'not_familiar' ? '...' : availableCards}
                     </div>
                   </div>
                 </div>

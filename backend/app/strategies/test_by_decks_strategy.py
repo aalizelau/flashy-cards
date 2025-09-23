@@ -5,14 +5,14 @@ import random
 
 
 class TestByDecksStrategy(TestStrategyInterface):
-    def get_cards(self, user_id: str, deck_ids: List[int] = None, limit: int = 20) -> List[Card]:
+    def get_cards(self, user_id: str, deck_ids: List[int] = None, limit: int = 20, threshold: float = None) -> List[Card]:
         if not deck_ids:
             return []
-        
+
         # Get user's selected language
         user = self.db.query(User).filter(User.uid == user_id).first()
         user_language = user.selected_language if user and user.selected_language else 'en'
-        
+
         from app.models import Deck
         cards = self.db.query(Card).join(Deck).filter(
             Deck.user_id == user_id,
@@ -22,7 +22,7 @@ class TestByDecksStrategy(TestStrategyInterface):
         random.shuffle(cards)
         return cards[:limit]
     
-    def get_stats(self, user_id: str, deck_ids: List[int] = None) -> dict:
+    def get_stats(self, user_id: str, deck_ids: List[int] = None, threshold: float = None) -> dict:
         if not deck_ids:
             return {"available_cards": 0, "total_decks": None, "newly_added_count": 0, "unfamiliar_count": 0, "total_cards": 0}
 
@@ -39,7 +39,10 @@ class TestByDecksStrategy(TestStrategyInterface):
 
         available_cards = base_query.count()
         newly_added_count = base_query.filter(Card.total_attempts == 0).count()
-        unfamiliar_count = base_query.filter(Card.accuracy < 0.5).count()
+
+        # Use provided threshold or default to 0.5 (50%) for unfamiliar count
+        accuracy_threshold = threshold if threshold is not None else 0.5
+        unfamiliar_count = base_query.filter(Card.accuracy < accuracy_threshold).count()
 
         return {
             "available_cards": available_cards,

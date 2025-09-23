@@ -150,14 +150,22 @@ class ApiClient {
   }
 
   // Get test statistics
-  async getTestStats(testType: string, deckIds?: number[]): Promise<TestStats> {
+  async getTestStats(testType: string, deckIds?: number[], threshold?: number): Promise<TestStats> {
     let endpoint = `/study/test/${testType}/stats`;
-    
-    if (testType === 'test_by_decks' && deckIds && deckIds.length > 0) {
-      const deckIdsParam = deckIds.join(',');
-      endpoint += `?deck_ids=${deckIdsParam}`;
+    const params = new URLSearchParams();
+
+    if (deckIds && deckIds.length > 0) {
+      params.set('deck_ids', deckIds.join(','));
     }
-    
+
+    if (threshold !== undefined) {
+      params.set('threshold', threshold.toString());
+    }
+
+    if (params.toString()) {
+      endpoint += `?${params.toString()}`;
+    }
+
     return this.request<TestStats>(endpoint);
   }
 

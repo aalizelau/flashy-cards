@@ -9,9 +9,9 @@ class TestStrategyInterface(ABC):
         self.db = db
     
     @abstractmethod
-    def get_cards(self, user_id: str, deck_ids: List[int] = None, limit: int = 20) -> List[Card]:
+    def get_cards(self, user_id: str, deck_ids: List[int] = None, limit: int = 20, threshold: float = None) -> List[Card]:
         pass
-    
+
     @abstractmethod
-    def get_stats(self, user_id: str, deck_ids: List[int] = None) -> dict:
+    def get_stats(self, user_id: str, deck_ids: List[int] = None, threshold: float = None) -> dict:
         pass

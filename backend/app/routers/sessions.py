@@ -64,22 +64,28 @@ def complete_study_session(
 def get_test_stats(
     test_type: str,
     deck_ids: str = None,
+    threshold: float = None,
     db: Session = Depends(get_db),
     current_user = Depends(get_current_user)
 ):
     try:
         user_id = current_user["uid"]
-        
+
         # Ensure user exists in database
         user_service = UserService(db)
         user_service.get_or_create_user(current_user["firebase_token"])
-        
+
         # Parse deck_ids from comma-separated string if provided
         parsed_deck_ids = None
         if deck_ids:
             parsed_deck_ids = [int(x.strip()) for x in deck_ids.split(",") if x.strip()]
-        
+
+        # Convert percentage threshold to decimal if provided
+        decimal_threshold = None
+        if threshold is not None:
+            decimal_threshold = threshold / 100.0 if threshold > 1 else threshold
+
         session_service = SessionService(db)
-        return session_service.get_test_stats(test_type, user_id, parsed_deck_ids)
+        return session_service.get_test_stats(test_type, user_id, parsed_deck_ids, decimal_threshold)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))

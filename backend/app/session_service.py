@@ -45,9 +45,9 @@ class SessionService:
         
         return result
     
-    def create_study_session(self, test_type: str, user_id: str, request: Request, deck_ids: List[int] = None, limit: int = 20) -> StudySession:
+    def create_study_session(self, test_type: str, user_id: str, request: Request, deck_ids: List[int] = None, limit: int = 20, threshold: float = None) -> StudySession:
         strategy = self._get_strategy(test_type)
-        cards = strategy.get_cards(user_id, deck_ids, limit)
+        cards = strategy.get_cards(user_id, deck_ids, limit, threshold)
         
         if not cards:
             raise HTTPException(status_code=404, detail="No cards found for the specified criteria")
@@ -64,9 +64,9 @@ class SessionService:
             cards=card_models  
         )
     
-    def get_test_stats(self, test_type: str, user_id: str, deck_ids: List[int] = None) -> TestStats:
+    def get_test_stats(self, test_type: str, user_id: str, deck_ids: List[int] = None, threshold: float = None) -> TestStats:
         strategy = self._get_strategy(test_type)
-        stats = strategy.get_stats(user_id, deck_ids)
+        stats = strategy.get_stats(user_id, deck_ids, threshold)
         return TestStats(
             available_cards=stats["available_cards"],
             total_decks=stats.get("total_decks"),
