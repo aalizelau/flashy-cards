@@ -69,7 +69,10 @@ class SessionService:
         stats = strategy.get_stats(user_id, deck_ids)
         return TestStats(
             available_cards=stats["available_cards"],
-            total_decks=stats.get("total_decks")
+            total_decks=stats.get("total_decks"),
+            newly_added_count=stats.get("newly_added_count"),
+            unfamiliar_count=stats.get("unfamiliar_count"),
+            total_cards=stats.get("total_cards")
         )
 
     def complete_session(self, results: List[TestResult]) :

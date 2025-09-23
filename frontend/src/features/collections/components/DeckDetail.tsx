@@ -22,7 +22,7 @@ import {
 import { GraduationCap, User, BookOpen, Clock } from 'lucide-react';
 import { useDecks, useDeckCards, useDeleteDeck, useAllUserCards } from '@/shared/hooks/useApi';
 import { Card as FlashCard, TestStats } from '@/shared/types/api';
-import { TestConfigModal } from '@/features/test/components/Popup';
+import { TestConfigModal, TestConfig } from '@/features/test/components/NewTestCinfig';
 import { apiClient } from '@/shared/services/api';
 
 const DeckDetail: React.FC = () => {
@@ -94,13 +94,14 @@ const DeckDetail: React.FC = () => {
 
   const handleStartTest = async () => {
     setIsLoadingStats(true);
-    
+
     try {
-      // Use different test types based on whether this is "All Words" or a regular deck
-      const testType = isAllWordsView ? 'test_all' : 'test_by_decks';
+      // For the new component, we need to get stats for all test types
+      // We'll get stats for the current deck (or all cards for "All Words" view)
       const deckIds = isAllWordsView ? [] : [deckId];
-      
-      const stats = await apiClient.getTestStats(testType, deckIds);
+
+      // Get comprehensive stats that include all test types
+      const stats = await apiClient.getTestStats('test_by_decks', deckIds);
       setTestStats(stats);
       setShowTestConfig(true);
     } catch (error) {
@@ -113,26 +114,39 @@ const DeckDetail: React.FC = () => {
     }
   };
 
-  const handleTestStart = (wordCount: number, swapSides: boolean) => {
+  const handleTestStart = (config: TestConfig) => {
     setShowTestConfig(false);
-    
-    // Build URL with test parameters based on whether this is "All Words" or regular deck
-    const testType = isAllWordsView ? 'test_all' : 'test_by_decks';
+
+    // Map the new test types to backend types
+    const testTypeMap = {
+      'all_words': 'test_all',
+      'newly_added': 'test_newly_added',
+      'not_familiar': 'test_unfamiliar'
+    };
+
+    const backendTestType = testTypeMap[config.testType];
     const params = new URLSearchParams({
-      type: testType,
-      limit: wordCount.toString()
+      type: backendTestType,
+      limit: config.wordCount.toString()
     });
-    
-    // Only add deck_ids for regular decks, not for "All Words"
-    if (!isAllWordsView) {
+
+    // Add deck_ids based on test type and current view
+    if (config.testType !== 'all_words' && !isAllWordsView && config.deckIds) {
+      params.set('deck_ids', config.deckIds.join(','));
+    } else if (config.testType !== 'all_words' && !isAllWordsView) {
       params.set('deck_ids', deckId.toString());
     }
-    
+
     // Add swap parameter if enabled
-    if (swapSides) {
+    if (config.swapSides) {
       params.set('swap', 'true');
     }
-    
+
+    // Add progress threshold for unfamiliar cards
+    if (config.testType === 'not_familiar' && config.progressThreshold) {
+      params.set('threshold', config.progressThreshold.toString());
+    }
+
     navigate(`/test?${params.toString()}`);
   };
 
@@ -301,7 +315,7 @@ const DeckDetail: React.FC = () => {
             card_count: totalWords
           } : selectedDeck!}
           testStats={testStats}
-          testType={isAllWordsView ? "test_all" : "test_by_decks"}
+          selectedDeckIds={isAllWordsView ? [] : [deckId]}
           onStart={handleTestStart}
           onClose={handleTestConfigClose}
         />

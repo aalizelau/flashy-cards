@@ -28,19 +28,31 @@ class TestUnfamiliarStrategy(TestStrategyInterface):
         # Get user's selected language
         user = self.db.query(User).filter(User.uid == user_id).first()
         user_language = user.selected_language if user and user.selected_language else 'en'
-        
+
         from app.models import Deck
-        query = self.db.query(Card).join(Deck).filter(
+        unfamiliar_query = self.db.query(Card).join(Deck).filter(
             Deck.user_id == user_id,
             Deck.language == user_language,
             Card.accuracy < 0.5
         )
-        
+
+        base_query = self.db.query(Card).join(Deck).filter(
+            Deck.user_id == user_id,
+            Deck.language == user_language
+        )
+
         if deck_ids:
-            query = query.filter(Card.deck_id.in_(deck_ids))
-        
-        available_cards = query.count()
+            unfamiliar_query = unfamiliar_query.filter(Card.deck_id.in_(deck_ids))
+            base_query = base_query.filter(Card.deck_id.in_(deck_ids))
+
+        available_cards = unfamiliar_query.count()
+        total_cards = base_query.count()
+        newly_added_count = base_query.filter(Card.total_attempts == 0).count()
+
         return {
             "available_cards": available_cards,
-            "total_decks": None
+            "total_decks": None,
+            "newly_added_count": newly_added_count,
+            "unfamiliar_count": available_cards,
+            "total_cards": total_cards
         }

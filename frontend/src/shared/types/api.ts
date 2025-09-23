@@ -129,6 +129,9 @@ export interface DeckWithCardsResponse {
 export interface TestStats {
   available_cards: number;
   total_decks: number | null;
+  newly_added_count?: number;
+  unfamiliar_count?: number;
+  total_cards?: number;
 }
 
 export interface StudySessionRequest {

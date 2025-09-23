@@ -22,16 +22,26 @@ class TestAllStrategy(TestStrategyInterface):
         # Get user's selected language
         user = self.db.query(User).filter(User.uid == user_id).first()
         user_language = user.selected_language if user and user.selected_language else 'en'
-        
-        available_cards = self.db.query(Card).join(Deck).filter(
+
+        base_query = self.db.query(Card).join(Deck).filter(
             Deck.user_id == user_id,
             Deck.language == user_language
-        ).count()
+        )
+
+        available_cards = base_query.count()
         total_decks = self.db.query(Deck).filter(
             Deck.user_id == user_id,
             Deck.language == user_language
         ).count()
+
+        # Calculate additional counts
+        newly_added_count = base_query.filter(Card.total_attempts == 0).count()
+        unfamiliar_count = base_query.filter(Card.accuracy < 0.5).count()
+
         return {
             "available_cards": available_cards,
-            "total_decks": total_decks
+            "total_decks": total_decks,
+            "newly_added_count": newly_added_count,
+            "unfamiliar_count": unfamiliar_count,
+            "total_cards": available_cards
         }

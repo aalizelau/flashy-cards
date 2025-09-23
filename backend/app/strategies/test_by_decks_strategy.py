@@ -24,19 +24,27 @@ class TestByDecksStrategy(TestStrategyInterface):
     
     def get_stats(self, user_id: str, deck_ids: List[int] = None) -> dict:
         if not deck_ids:
-            return {"available_cards": 0, "total_decks": None}
-        
+            return {"available_cards": 0, "total_decks": None, "newly_added_count": 0, "unfamiliar_count": 0, "total_cards": 0}
+
         # Get user's selected language
         user = self.db.query(User).filter(User.uid == user_id).first()
         user_language = user.selected_language if user and user.selected_language else 'en'
-        
+
         from app.models import Deck
-        available_cards = self.db.query(Card).join(Deck).filter(
+        base_query = self.db.query(Card).join(Deck).filter(
             Deck.user_id == user_id,
             Deck.language == user_language,
             Card.deck_id.in_(deck_ids)
-        ).count()
+        )
+
+        available_cards = base_query.count()
+        newly_added_count = base_query.filter(Card.total_attempts == 0).count()
+        unfamiliar_count = base_query.filter(Card.accuracy < 0.5).count()
+
         return {
             "available_cards": available_cards,
-            "total_decks": None
+            "total_decks": None,
+            "newly_added_count": newly_added_count,
+            "unfamiliar_count": unfamiliar_count,
+            "total_cards": available_cards
         }
