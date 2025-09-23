@@ -189,6 +189,33 @@ export const TestConfigModal: React.FC<TestConfigModalProps> = ({
           {/* Step 2: Configuration Options */}
           {currentStep === 2 && (
             <div className="space-y-6">
+                {/* Progress Threshold (only for 'not_familiar') */}
+                {testType === 'not_familiar' && (
+                <div className="flex items-center justify-between p-4 bg-section-background rounded-xl border border-section-border">
+                  <div className="flex-1 pr-4">
+                    <Label className="text-sm font-medium text-text-primary mb-2 block">
+                      Progress Threshold
+                    </Label>
+                    <input
+                      type="range"
+                      min="10"
+                      max="90"
+                      step="10"
+                      value={progressThreshold}
+                      onChange={handleProgressThresholdChange}
+                      className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+                    />
+                  </div>
+                  <div className="text-right">
+                    <div className="text-3xl font-bold text-primary">
+                      {progressThreshold}%
+                    </div>
+                    <div className="text-xs text-text-secondary">
+                      below
+                    </div>
+                  </div>
+                </div>
+              )}
               {/* Word Count Selection */}
               {availableCards > 0 && (
                 <div className="flex items-center justify-between p-4 bg-section-background rounded-xl border border-section-border">
@@ -232,44 +259,6 @@ export const TestConfigModal: React.FC<TestConfigModalProps> = ({
                   onCheckedChange={setSwapSides}
                 />
               </div>
-
-              {/* Progress Threshold (only for 'not_familiar') */}
-              {testType === 'not_familiar' && (
-                <div className="space-y-3 p-4 bg-section-background rounded-xl border border-section-border">
-                  <h3 className="text-md font-semibold text-text-primary">Progress Threshold</h3>
-                  <div className="space-y-4">
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-primary mb-2">
-                        Below {progressThreshold}%
-                      </div>
-                      <p className="text-sm text-text-secondary">
-                        Show cards with progress below this threshold
-                      </p>
-                    </div>
-                    <div className="relative">
-                      <input
-                        type="range"
-                        min="10"
-                        max="90"
-                        step="10"
-                        value={progressThreshold}
-                        onChange={handleProgressThresholdChange}
-                        className="w-full h-2 bg-progress-track rounded-lg appearance-none cursor-pointer
-                                   [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5
-                                   [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:bg-progress-thumb
-                                   [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:cursor-pointer
-                                   [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:transition-all
-                                   [&::-webkit-slider-thumb]:hover:scale-110"
-                      />
-                      <div className="flex justify-between text-xs text-text-secondary mt-2">
-                        <span>10%</span>
-                        <span>50%</span>
-                        <span>90%</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
             </div>
           )}
         </div>
