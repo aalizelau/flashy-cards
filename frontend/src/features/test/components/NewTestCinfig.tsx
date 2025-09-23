@@ -191,32 +191,26 @@ export const TestConfigModal: React.FC<TestConfigModalProps> = ({
             <div className="space-y-6">
               {/* Word Count Selection */}
               {availableCards > 0 && (
-                <div className="space-y-4">
-                  <h3 className="text-md font-semibold text-text-primary">Number of Cards</h3>
-                  <div className="text-center space-y-4">
-                    <div className="space-y-2">
-                      <div className="text-4xl font-bold text-primary">
-                        {wordCount}
-                      </div>
-                      <div className="text-sm text-text-secondary">
-                        out of {availableCards} available
-                      </div>
+                <div className="flex items-center justify-between p-4 bg-section-background rounded-xl border border-section-border">
+                  <div className="flex-1 pr-4">
+                    <Label className="text-sm font-medium text-text-primary mb-2 block">
+                      Number of Cards
+                    </Label>
+                    <input
+                      type="range"
+                      min="1"
+                      max={maxWords}
+                      value={wordCount}
+                      onChange={handleWordCountChange}
+                      className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+                    />
+                  </div>
+                  <div className="text-right">
+                    <div className="text-3xl font-bold text-primary">
+                      {wordCount}
                     </div>
-
-                    <div className="relative">
-                      <input
-                        type="range"
-                        min="1"
-                        max={maxWords}
-                        value={wordCount}
-                        onChange={handleWordCountChange}
-                        className="w-full h-2 bg-progress-track rounded-lg appearance-none cursor-pointer
-                                   [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5
-                                   [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:bg-progress-thumb
-                                   [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:cursor-pointer
-                                   [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:transition-all
-                                   [&::-webkit-slider-thumb]:hover:scale-110"
-                      />
+                    <div className="text-xs text-text-secondary">
+                      of {availableCards}
                     </div>
                   </div>
                 </div>
