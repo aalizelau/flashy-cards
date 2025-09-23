@@ -223,7 +223,7 @@ export const TestConfigModal: React.FC<TestConfigModalProps> = ({
                 {/* Progress Threshold (only for 'not_familiar') */}
                 {testType === 'not_familiar' && (
                 <div className="flex items-center justify-between p-4 bg-section-background rounded-xl border border-section-border">
-                  <div className="flex-1 pr-4">
+                  <div className="w-80">
                     <Label className="text-sm font-medium text-text-primary mb-2 block">
                       Progress Threshold
                     </Label>
@@ -250,7 +250,7 @@ export const TestConfigModal: React.FC<TestConfigModalProps> = ({
               {/* Word Count Selection */}
               {availableCards > 0 && (
                 <div className="flex items-center justify-between p-4 bg-section-background rounded-xl border border-section-border">
-                  <div className="flex-1 pr-4">
+                  <div className="w-80">
                     <Label className="text-sm font-medium text-text-primary mb-2 block">
                       Number of Cards
                     </Label>
@@ -263,7 +263,7 @@ export const TestConfigModal: React.FC<TestConfigModalProps> = ({
                       className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
                     />
                   </div>
-                  <div className="text-right">
+                  <div className="flex items-baseline gap-2">
                     <div className="text-3xl font-bold text-muted-foreground">
                       {wordCount}
                     </div>
