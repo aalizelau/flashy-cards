@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { useState, useEffect } from "react"
-import { X, Play, Users, Clock, Target, TrendingUp, BookOpen } from "lucide-react"
+import { X, WalletCards, Clock, Flame } from "lucide-react"
 import type { Deck, TestStats } from "@/shared/types/api"
 import '@/styles/Slider.css'
 import { Switch } from "@/shared/components/ui/switch";
@@ -55,7 +55,7 @@ export const TestConfigModal: React.FC<TestConfigModalProps> = ({
       type: 'all_words',
       label: 'All Words',
       description: 'Test all available cards in the deck',
-      icon: <BookOpen className="w-5 h-5" />,
+      icon: <WalletCards className="w-5 h-5" />,
       getAvailableCount: (stats) => stats?.total_cards ?? deck.card_count
     },
     {
@@ -69,7 +69,7 @@ export const TestConfigModal: React.FC<TestConfigModalProps> = ({
       type: 'not_familiar',
       label: 'Not Familiar',
       description: 'Practice cards below your progress threshold',
-      icon: <Target className="w-5 h-5" />,
+      icon: <Flame className="w-5 h-5" />,
       getAvailableCount: (stats) => stats?.unfamiliar_count ?? 0
     }
   ]
@@ -177,8 +177,7 @@ export const TestConfigModal: React.FC<TestConfigModalProps> = ({
                     <button
                       key={option.type}
                       onClick={() => handleTestTypeChange(option.type)}
-                      className={`p-4 rounded-xl border-2 text-left transition-all duration-200
-                                 hover:scale-[1.02] active:scale-[0.98] ${
+                      className={`p-4 rounded-xl border-2 text-left transition-all duration-200 ${
                         isSelected
                           ? 'border-option-selected bg-option-selected-bg shadow-[var(--shadow-option)]'
                           : 'border-option-border bg-option-background hover:border-option-selected/30'
