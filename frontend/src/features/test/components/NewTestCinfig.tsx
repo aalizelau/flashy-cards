@@ -97,7 +97,7 @@ export const TestConfigModal: React.FC<TestConfigModalProps> = ({
       const timeoutId = setTimeout(fetchStats, 300)
       return () => clearTimeout(timeoutId)
     }
-  }, [testType, progressThreshold, selectedDeckIds])
+  }, [progressThreshold, selectedDeckIds])
 
   // Reset dynamic stats when test type changes
   useEffect(() => {
