@@ -124,7 +124,12 @@ const DeckDetail: React.FC = () => {
       'not_familiar': 'test_unfamiliar'
     };
 
-    const backendTestType = testTypeMap[config.testType];
+    // When testing from a specific deck (not "All Words" view), use test_by_decks
+    // to ensure deck_ids parameter is respected
+    let backendTestType = testTypeMap[config.testType];
+    if (!isAllWordsView && config.testType === 'all_words') {
+      backendTestType = 'test_by_decks';
+    }
     const params = new URLSearchParams({
       type: backendTestType,
       limit: config.wordCount.toString()
@@ -132,12 +137,9 @@ const DeckDetail: React.FC = () => {
 
     // Add deck_ids based on current view context
     // If we're NOT in the "All Words" view, always restrict to current deck
+    // If we're in "All Words" view, never restrict (no deck_ids parameter)
     if (!isAllWordsView && deckId) {
       params.set('deck_ids', deckId.toString());
-    }
-    // Only for "All Words" view with specific deck selection (non-all_words test types)
-    else if (isAllWordsView && config.testType !== 'all_words' && config.deckIds) {
-      params.set('deck_ids', config.deckIds.join(','));
     }
 
     // Add swap parameter if enabled
