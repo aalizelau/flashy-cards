@@ -130,11 +130,14 @@ const DeckDetail: React.FC = () => {
       limit: config.wordCount.toString()
     });
 
-    // Add deck_ids based on test type and current view
-    if (config.testType !== 'all_words' && !isAllWordsView && config.deckIds) {
-      params.set('deck_ids', config.deckIds.join(','));
-    } else if (config.testType !== 'all_words' && !isAllWordsView) {
+    // Add deck_ids based on current view context
+    // If we're NOT in the "All Words" view, always restrict to current deck
+    if (!isAllWordsView && deckId) {
       params.set('deck_ids', deckId.toString());
+    }
+    // Only for "All Words" view with specific deck selection (non-all_words test types)
+    else if (isAllWordsView && config.testType !== 'all_words' && config.deckIds) {
+      params.set('deck_ids', config.deckIds.join(','));
     }
 
     // Add swap parameter if enabled
