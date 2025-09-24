@@ -305,6 +305,7 @@ const DeckDetail: React.FC = () => {
         open={showEditCardDialog}
         onOpenChange={setShowEditCardDialog}
         onSuccess={handleEditCardSuccess}
+        customFields={selectedDeck?.custom_fields}
       />
 
       {/* Test Configuration Modal */}
