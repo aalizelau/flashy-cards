@@ -35,10 +35,6 @@ const EditCardDialog: React.FC<EditCardDialogProps> = ({
   const { userProfile } = useAuth();
   const [front, setFront] = useState('');
   const [back, setBack] = useState('');
-  const [exampleSentence1, setExampleSentence1] = useState('');
-  const [sentenceTranslation1, setSentenceTranslation1] = useState('');
-  const [exampleSentence2, setExampleSentence2] = useState('');
-  const [sentenceTranslation2, setSentenceTranslation2] = useState('');
   const [expandedView, setExpandedView] = useState(false);
   const [customFieldValues, setCustomFieldValues] = useState<{ [fieldName: string]: string }>({});
   const [errors, setErrors] = useState<{ front?: string; back?: string; submit?: string }>({});
@@ -59,10 +55,6 @@ const EditCardDialog: React.FC<EditCardDialogProps> = ({
     if (card && open) {
       setFront(card.front);
       setBack(card.back);
-      setExampleSentence1(card.example_sentence_1 || '');
-      setSentenceTranslation1(card.sentence_translation_1 || '');
-      setExampleSentence2(card.example_sentence_2 || '');
-      setSentenceTranslation2(card.sentence_translation_2 || '');
 
       // Initialize custom field values
       const initialCustomValues: { [fieldName: string]: string } = {};
@@ -71,9 +63,9 @@ const EditCardDialog: React.FC<EditCardDialogProps> = ({
       });
       setCustomFieldValues(initialCustomValues);
 
-      // Auto-expand if any sentence fields or custom fields have content
+      // Auto-expand if custom fields have content
       const hasCustomContent = Object.values(initialCustomValues).some(value => value.trim());
-      setExpandedView(!!(card.example_sentence_1 || card.sentence_translation_1 || card.example_sentence_2 || card.sentence_translation_2 || hasCustomContent));
+      setExpandedView(hasCustomContent);
       setErrors({});
     }
   }, [card, open, customFields]);
@@ -123,10 +115,6 @@ const EditCardDialog: React.FC<EditCardDialogProps> = ({
       const cardData: CardCreate = {
         front: front.trim(),
         back: back.trim(),
-        ...(exampleSentence1.trim() && { example_sentence_1: exampleSentence1.trim() }),
-        ...(sentenceTranslation1.trim() && { sentence_translation_1: sentenceTranslation1.trim() }),
-        ...(exampleSentence2.trim() && { example_sentence_2: exampleSentence2.trim() }),
-        ...(sentenceTranslation2.trim() && { sentence_translation_2: sentenceTranslation2.trim() }),
         ...(hasCustomData && { custom_data: customData }),
       };
 
@@ -158,18 +146,20 @@ const EditCardDialog: React.FC<EditCardDialogProps> = ({
         <DialogHeader>
           <div className="flex items-center justify-between">
             <DialogTitle className="font-alumni-sans text-3xl text-main-foreground">Edit Card</DialogTitle>
-            <button
-              type="button"
-              onClick={() => setExpandedView(!expandedView)}
-              className={`p-2 rounded transition-all duration-200 ${
-                expandedView 
-                  ? 'text-blue-600 hover:text-blue-700' 
-                  : 'text-gray-400 hover:text-blue-500'
-              }`}
-              aria-label="Toggle example sentence fields"
-            >
-              <Paperclip className="w-5 h-5" />
-            </button>
+            {customFields && customFields.length > 0 && (
+              <button
+                type="button"
+                onClick={() => setExpandedView(!expandedView)}
+                className={`p-2 rounded transition-all duration-200 ${
+                  expandedView
+                    ? 'text-blue-600 hover:text-blue-700'
+                    : 'text-gray-400 hover:text-blue-500'
+                }`}
+                aria-label="Toggle custom fields"
+              >
+                <Paperclip className="w-5 h-5" />
+              </button>
+            )}
           </div>
         </DialogHeader>
         
@@ -204,88 +194,27 @@ const EditCardDialog: React.FC<EditCardDialogProps> = ({
             )}
           </div>
 
-          {/* Expanded section with sentence fields */}
-          {expandedView && (
+          {/* Expanded section with custom fields */}
+          {expandedView && customFields && customFields.length > 0 && (
             <>
               {/* Separator line */}
               <div className="border-t border-gray-200 my-4"></div>
 
-              {/* Example sentence fields */}
-              <div className="space-y-4">
-                {/* Sentence 1 */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="example_sentence_1">
-                      Sentence 1{languageDisplay ? ` (${languageDisplay})` : ''}
+              {/* Custom fields grid - 2 columns for ≤4 fields, 1 column for 5 fields */}
+              <div className={`grid gap-4 ${customFields.length <= 4 ? 'md:grid-cols-2' : 'grid-cols-1'}`}>
+                {customFields.map((field) => (
+                  <div key={field.name} className="space-y-2">
+                    <Label htmlFor={`custom_${field.name}`}>
+                      {field.label}
                     </Label>
                     <Input
-                      id="example_sentence_1"
-                      value={exampleSentence1}
-                      onChange={(e) => setExampleSentence1(e.target.value)}
+                      id={`custom_${field.name}`}
+                      value={customFieldValues[field.name] || ''}
+                      onChange={(e) => handleCustomFieldChange(field.name, e.target.value)}
                       disabled={updateCardMutation.isPending}
                     />
                   </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="sentence_translation_1">Translation 1</Label>
-                    <Input
-                      id="sentence_translation_1"
-                      value={sentenceTranslation1}
-                      onChange={(e) => setSentenceTranslation1(e.target.value)}
-                      disabled={updateCardMutation.isPending}
-                    />
-                  </div>
-                </div>
-
-                {/* Sentence 2 */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="example_sentence_2">
-                      Sentence 2{languageDisplay ? ` (${languageDisplay})` : ''}
-                    </Label>
-                    <Input
-                      id="example_sentence_2"
-                      value={exampleSentence2}
-                      onChange={(e) => setExampleSentence2(e.target.value)}
-                      disabled={updateCardMutation.isPending}
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="sentence_translation_2">Translation 2</Label>
-                    <Input
-                      id="sentence_translation_2"
-                      value={sentenceTranslation2}
-                      onChange={(e) => setSentenceTranslation2(e.target.value)}
-                      disabled={updateCardMutation.isPending}
-                    />
-                  </div>
-                </div>
-
-                {/* Custom Fields */}
-                {customFields && customFields.length > 0 && (
-                  <>
-                    {/* Separator line for custom fields */}
-                    <div className="border-t border-gray-200 my-4"></div>
-
-                    {/* Custom fields grid - 2 columns for ≤4 fields, 1 column for 5 fields */}
-                    <div className={`grid gap-4 ${customFields.length <= 4 ? 'md:grid-cols-2' : 'grid-cols-1'}`}>
-                      {customFields.map((field) => (
-                        <div key={field.name} className="space-y-2">
-                          <Label htmlFor={`custom_${field.name}`}>
-                            {field.label}
-                          </Label>
-                          <Input
-                            id={`custom_${field.name}`}
-                            value={customFieldValues[field.name] || ''}
-                            onChange={(e) => handleCustomFieldChange(field.name, e.target.value)}
-                            disabled={updateCardMutation.isPending}
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  </>
-                )}
+                ))}
               </div>
             </>
           )}
