@@ -10,7 +10,7 @@ from app.auth_middleware import get_current_user
 
 VOICES_DIR = "voices"
 
-app = FastAPI(title="Flashcard API", version="1.0.0")
+app = FastAPI(title="Flashcard API", version="1.0.0", redirect_slashes=False)
 
 
 @app.on_event("startup")

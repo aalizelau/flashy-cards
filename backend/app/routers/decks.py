@@ -87,7 +87,7 @@ def copy_public_deck(
             raise HTTPException(status_code=404, detail="Public deck not found")
         raise HTTPException(status_code=400, detail=str(e))
 
-@router.get("/", response_model=list[schemas.DeckOut]) 
+@router.get("", response_model=list[schemas.DeckOut])
 def read_decks(
     db: Session = Depends(get_db),
     current_user = Depends(get_current_user)
@@ -122,7 +122,7 @@ def get_deck_by_id(
             raise HTTPException(status_code=404, detail="Deck not found or access denied")
         raise HTTPException(status_code=400, detail=str(e))
 
-@router.post("/", response_model=schemas.DeckOut)
+@router.post("", response_model=schemas.DeckOut)
 def create_deck(
     deck_data: DeckCreate,
     db: Session = Depends(get_db),

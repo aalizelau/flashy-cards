@@ -18,7 +18,7 @@ def get_db():
     finally:
         db.close()
 
-@router.get("/", response_model=TestAnalytics)
+@router.get("", response_model=TestAnalytics)
 def get_analytics(
     db: Session = Depends(get_db),
     current_user = Depends(get_current_user)
