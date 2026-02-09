@@ -12,6 +12,8 @@ services:
         - VITE_API_ADDRESS
     ports:
       - "5000:80"
+    networks:
+      - frontend-net
 
   api:
     build: ./backend
@@ -30,6 +32,9 @@ services:
       - "8000:80"
     volumes:
       - voices_data:/code/voices
+    networks:
+      - backend-net
+      - frontend-net
 
   db:
     image: postgres:14-alpine
@@ -39,22 +44,32 @@ services:
       - POSTGRES_DB
     volumes:
       - db_data:/var/lib/postgresql/data
+    networks:
+      - backend-net
 
   pgadmin:
     image: dpage/pgadmin4
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin.com
-      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_DEFAULT_EMAIL: aalizelau@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: xK9#mW2vLp7QbT4r
     ports:
       - "5050:80"
     depends_on:
       - db
+    networks:
+      - backend-net
 
   redis:
     image: redis:7-alpine
     volumes:
       - redis_data:/data
     command: redis-server --appendonly yes
+    networks:
+      - backend-net
+
+networks:
+  frontend-net:
+  backend-net:
 
 volumes:
   db_data:
